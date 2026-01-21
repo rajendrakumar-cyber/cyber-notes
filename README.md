@@ -10,4 +10,7 @@
 - `mkdir` — creates a folder
 - `rmdir` — deletes an empty folder
 - `ls -la` — shows all files with details
+<<<<<<< HEAD
 "# cyber-notes" 
+=======
+>>>>>>> 14e1f60d4d628d2398c657e5db44d5ce2fbb54af
