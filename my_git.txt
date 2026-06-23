@@ -1,0 +1,105 @@
+─(white㉿white)-[~/Music/PICO-CTF]
+└─$ cd challenge 
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/challenge]
+└─$ ls
+README.md
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/challenge]
+└─$ cat  README.md            
+# MyGit
+
+### If you want the flag, make sure to push the flag!
+
+Only flag.txt pushed by ```root:root@picoctf``` will be updated with the flag.
+
+GOOD LUCK!
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/challenge]
+└─$ git push -u origin master                                          
+
+** WARNING: connection is not using a post-quantum key exchange algorithm.
+** This session may be vulnerable to "store now, decrypt later" attacks.
+** The server may need to be upgraded. See https://openssh.com/pq.html
+git@foggy-cliff.picoctf.net's password: 
+branch 'master' set up to track 'origin/master'.
+Everything up-to-date
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/challenge]
+└─$ git push -u origin master
+
+** WARNING: connection is not using a post-quantum key exchange algorithm.
+** This session may be vulnerable to "store now, decrypt later" attacks.
+** The server may need to be upgraded. See https://openssh.com/pq.html
+git@foggy-cliff.picoctf.net's password: 
+branch 'master' set up to track 'origin/master'.
+Everything up-to-date
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/challenge]
+└─$ git log                  
+commit aa44ed9c37ade9fb5fc39a7de8498f658545678b (HEAD -> master, origin/master, origin/HEAD)
+Author: git <git@picoctf>
+Date:   Fri Mar 6 20:16:55 2026 +0000
+
+    Challenge commit
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/challenge]
+└─$ >....                                                                                                                                                              
+
+Only flag.txt pushed by ```root:root@picoctf``` will be updated with the flag.
+
+GOOD LUCK!
+                     
+──(white㉿white)-[~/Music/PICO-CTF/challenge]
+└─$ git config user.name "root"                                        
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/challenge]
+└─$ git config user.email "root@picoctf"
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/challenge]
+└─$ echo "dummy_flag " > flag.txt                                                   
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/challenge]
+└─$ git add flag.txt                    
+                                                                                                              
+┌──(white㉿white)-[~/Music/PICO-CTF/challenge]
+└─$ git commit -m "pushing as root"          
+[master 01ba86d] pushing as root
+ 1 file changed, 1 insertion(+)
+ create mode 100644 flag.txt
+                                                                                                              
+┌──(white㉿white)-[~/Music/PICO-CTF/challenge]
+└─$ git push -u origin master      
+
+** WARNING: connection is not using a post-quantum key exchange algorithm.
+** This session may be vulnerable to "store now, decrypt later" attacks.
+** The server may need to be upgraded. See https://openssh.com/pq.html
+git@foggy-cliff.picoctf.net's password: 
+Permission denied, please try again.
+git@foggy-cliff.picoctf.net's password: 
+Enumerating objects: 4, done.
+Counting objects: 100% (4/4), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 276 bytes | 276.00 KiB/s, done.
+Total 3 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Author matched and flag.txt found in commit...
+remote: Congratulations! You have successfully impersonated the root user
+remote: Here's your flag: picoCTF{1mp3rs0n4t4_g17_345y_cd8540cd}
+To ssh://foggy-cliff.picoctf.net:63373/git/challenge.git
+   aa44ed9..01ba86d  master -> master
+branch 'master' set up to track 'origin/master'.
+                                                                                                              
+┌──(white㉿white)-[~/Music/PICO-CTF/challenge]
+└─$ git pull                                        
+** WARNING: connection is not using a post-quantum key exchange algorithm.
+** This session may be vulnerable to "store now, decrypt later" attacks.
+** The server may need to be upgraded. See https://openssh.com/pq.html
+git@foggy-cliff.picoctf.net's password: 
+Already up to date.
+                                                                                                              
+┌──(white㉿white)-[~/Music/PICO-CTF/challenge]
+└─$ cat flag.txt  
+dummy_flag 
+==========================
+picoCTF{1mp3rs0n4t4_g17_345y_cd8540cd}

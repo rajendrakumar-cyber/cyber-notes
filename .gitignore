@@ -1,0 +1,7 @@
+# Exclude large ZIP archives and extracted folders
+*.zip
+big-zip-files/
+files/
+
+# Exclude large PowerPoint templates
+*.pptx

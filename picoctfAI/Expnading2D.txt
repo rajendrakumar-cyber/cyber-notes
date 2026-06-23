@@ -1,0 +1,188 @@
+The Goal
+The challenge required sending a sequence of 8 inputs to a 2D perceptron such that the last 8 outputs matched the binary pattern for the ASCII character 'p'.
+
+Target Binary: 01110000
+ASCII Value: 112 ('p')
+2. The Perceptron Logic
+The server acted as a "black box" neuron with a hidden decision boundary (a line).
+
+Output 1 (Fires): If the point $(x, y)$ was on one side of the line ($w_1x + w_2y + b \geq 0$).
+Output 0 (Quiet): If the point was on the other side ($w_1x + w_2y + b < 0$).
+Constraint: You could not send the exact same $(x, y)$ pair twice in a row.
+3. The Strategy: "Map and Map"
+Since the line's position was random for every connection, the solution involved dynamic mapping rather than a fixed formula.
+
+Step A: Discover the Boundaries
+
+By testing simple points like 0 0, we found it output 0.
+By testing 10 0 and 10 10, we found they output 1.
+Deduction: The "positive" side (where the neuron fires) included the right side of the graph (high positive $x$). The "negative" side included the origin.
+Step B: Construct the Sequence To get the pattern 01110000, we needed to send 8 points in a specific order:
+
+Bit 1 (0): A point on the "quiet" side (e.g., 0 0).
+Bit 2 (1): A point on the "firing" side (e.g., 10 0).
+Bit 3 (1): A different point on the "firing" side (e.g., 10 10).
+Bit 4 (1): Another different point on the "firing" side (e.g., 10 1).
+Bit 5 (0): A point on the "quiet" side (e.g., 0 0 again, since the previous was 10 1, this is allowed).
+Bit 6 (0): A different quiet point (e.g., 0 1).
+Bit 7 (0): Another different quiet point (e.g., -1 0).
+Bit 8 (0): Another different quiet point (e.g., 0 -1).
+Step C: The Sliding Window The server didn't wait for 8 inputs to check. It maintained a sliding window of the last 8 outputs.
+
+After sending the initial sequence, the window was slightly off (00111000).
+By sending one final quiet point (0 -2), the window shifted:
+The oldest 0 fell off.
+The new 0 entered.
+The window became: 0 1 1 1 0 0 0 0.
+Result: The server detected the match and awarded the flag.
+The Winning Sequence
+The exact set of inputs that solved it was:
+
+0 0 (0)
+10 0 (1)
+10 10 (1)
+10 1 (1)
+0 0 (0)
+0 1 (0)
+-1 0 (0)
+0 -1 (0)
+0 -2 (0) -> Triggered the match!
+Flag: academy{2d_n3ur0n_m3t_892056ff}
+
+Great job figuring out the input format and the sliding window behavior! This is a classic example of reverse engineering a neural network's decision boundary through active probing.
+===============================================================
+                                                                                                              
+┌──(white㉿white)-[~/Music/picoftf/picoctfAI]
+└─$ nc aureolin-pixie.cylabacademy.net 56344
+Welcome to Neuron Meet 2D-0!
+Probe the 2D perceptron to coax out the ASCII for 'p'.
+Send two numbers (x, y) to see if the perceptron fires (1) or stays quiet (0).
+- Bounds: [-10.0, 10.0] for both x and y
+- Output rule: w1*x + w2*y + b >= 0 -> 1, else 0.
+- No back-to-back repeats of the same (x, y) pair.
+- Goal: make the last 8 outputs read 01110000 (ASCII 'p').
+- Command: RESET to clear the firing history.
+- Format: x,y or x y (comma or space separated)
+Type HELP for a reminder or EXIT to quit.
+
+[1/128] (x,y)> 12
+Expected two numbers (x, y). Try again.
+[2/128] (x,y)> 500
+Expected two numbers (x, y). Try again.
+[3/128] (x,y)> 00
+Expected two numbers (x, y). Try again.
+[4/128] (x,y)> (0,0) 
+Both inputs must be numbers. Try again.
+[5/128] (x,y)> (1.,2)  
+Both inputs must be numbers. Try again.
+[6/128] (x,y)> (1,2)
+Both inputs must be numbers. Try again.
+[7/128] (x,y)> 0-1
+Expected two numbers (x, y). Try again.
+[8/128] (x,y)> 0 -1
+Perceptron stays quiet.
+Recent outputs (1/8): 0
+[9/128] (x,y)> 0 1
+Perceptron stays quiet.
+Recent outputs (2/8): 00
+[10/128] (x,y)> 1 0
+Perceptron stays quiet.
+Recent outputs (3/8): 000
+[11/128] (x,y)> 2 0
+Perceptron stays quiet.
+Recent outputs (4/8): 0000
+[12/128] (x,y)> 0 -2
+Perceptron stays quiet.
+Recent outputs (5/8): 00000
+[13/128] (x,y)> 0 -3
+Perceptron stays quiet.
+Recent outputs (6/8): 000000
+[14/128] (x,y)> 0 -4
+Perceptron stays quiet.
+Recent outputs (7/8): 0000000
+[15/128] (x,y)> 0 -5
+Perceptron stays quiet.
+Recent outputs (8/8): 00000000
+[16/128] (x,y)> 0 -1
+0 1
+1 0
+2 0
+0 -2
+0 -3
+0 -4
+0 -5Perceptron stays quiet.
+Recent outputs (8/8): 00000000
+[17/128] (x,y)> Perceptron stays quiet.
+Recent outputs (8/8): 00000000
+[18/128] (x,y)> Perceptron stays quiet.
+Recent outputs (8/8): 00000000
+[19/128] (x,y)> Perceptron stays quiet.
+Recent outputs (8/8): 00000000
+[20/128] (x,y)> Perceptron stays quiet.
+Recent outputs (8/8): 00000000
+[21/128] (x,y)> Perceptron stays quiet.
+Recent outputs (8/8): 00000000
+[22/128] (x,y)> Perceptron stays quiet.
+Recent outputs (8/8): 00000000
+[23/128] (x,y)> -10 -10
+Expected two numbers (x, y). Try again.
+[24/128] (x,y)> 0 0
+Perceptron stays quiet.
+Recent outputs (8/8): 00000000
+[25/128] (x,y)> 10 0
+Perceptron fires!
+Recent outputs (8/8): 00000001
+[26/128] (x,y)> 10 10
+Perceptron fires!
+Recent outputs (8/8): 00000011
+[27/128] (x,y)> 10 11
+Both x and y must be within [-10.0, 10.0].
+[28/128] (x,y)> 0 0
+10 0
+10 10
+9 0
+0 1
+-1 0
+0 -1
+-5 0Perceptron stays quiet.
+Recent outputs (8/8): 00000110
+[29/128] (x,y)> Perceptron fires!
+Recent outputs (8/8): 00001101
+[30/128] (x,y)> Perceptron fires!
+Recent outputs (8/8): 00011011
+[31/128] (x,y)> Perceptron fires!
+Recent outputs (8/8): 00110111
+[32/128] (x,y)> Perceptron stays quiet.
+Recent outputs (8/8): 01101110
+[33/128] (x,y)> Perceptron stays quiet.
+Recent outputs (8/8): 11011100
+[34/128] (x,y)> Perceptron stays quiet.
+Recent outputs (8/8): 10111000
+[35/128] (x,y)> 0 0
+10 0
+10 10
+10 1
+0 0
+0 1
+-1 0
+0 -1Expected two numbers (x, y). Try again.
+[36/128] (x,y)> Perceptron fires!
+Recent outputs (8/8): 01110001
+[37/128] (x,y)> Perceptron fires!
+Recent outputs (8/8): 11100011
+[38/128] (x,y)> Perceptron fires!
+Recent outputs (8/8): 11000111
+[39/128] (x,y)> Perceptron stays quiet.
+Recent outputs (8/8): 10001110
+[40/128] (x,y)> Perceptron stays quiet.
+Recent outputs (8/8): 00011100
+[41/128] (x,y)> Perceptron stays quiet.
+Recent outputs (8/8): 00111000
+[42/128] (x,y)> -1 -1
+Expected two numbers (x, y). Try again.
+[43/128] (x,y)> 0 -2
+Perceptron stays quiet.
+Recent outputs (8/8): 01110000
+Pattern matched! ASCII 'p' unlocked. Here is your flag:
+academy{2d_n3ur0n_m3t_892056ff}
+                              
