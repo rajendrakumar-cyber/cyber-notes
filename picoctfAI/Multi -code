@@ -1,0 +1,36 @@
+ I will decode the Base64 flag string using a shell command.
+● Bash(echo "NjM3NjcwNjI1MDQ3NTMyNTM3NDI2MTcyNjY2NzcyNzE1ZjcyNjE3MDMwNzE3NjYxNzQ1ZjczNzM2ZjM2NzA2ZTZlMzIyNTM3NDQ=" | base64 -d) (ctrl+o to expand)
+
+  I will convert the hex string to ASCII.
+
+● Bash(python3 -c 'print(bytes.fromhex("637670625047532537426172666772715f72617030717661745f73736f36706e6e32253744").decode())') (ctrl+o to expand)
+
+  I will apply ROT13 decoding to the URL-decoded string.
+
+● Bash(python3 -c 'import codecs; print(codecs.encode("cvpbPGS%7Barfgrq_rap0qvat_sso6pnn2%7D", "rot_13"))') (ctrl+o to expand)
+
+  I will perform the decoding in the exact logical order: Base64 decode, Hex decode, URL decode, and then ROT13 decode.
+
+● Bash(python3 -c 'import base64, urllib.parse, codecs; b64_decoded = base64.b64decode("NjM3NjcwNjI1MDQ3NTMyNTM3NDI2MTcyNjY2NzcyNzE1ZjcyNjE3MDMwNz...) (ctrl+o to
+expand)
+
+  To peel back the layers and retrieve the flag, the encodings must be decoded in the following order:
+
+  1. Base64 Decoding
+      • Input:  NjM3NjcwNjI1MDQ3NTMyNTM3NDI2MTcyNjY2NzcyNzE1ZjcyNjE3MDMwNzE3NjYxNzQ1ZjczNzM2ZjM2NzA2ZTZlMzIyNTM3NDQ= 
+      • Output:  637670625047532537426172666772715f72617030717661745f73736f36706e6e32253744 
+  2. Hex Decoding
+      • Input:  637670625047532537426172666772715f72617030717661745f73736f36706e6e32253744 
+      • Output:  cvpbPGS%7Barfgrq_rap0qvat_sso6pnn2%7D 
+  3. URL Decoding
+      • Input:  cvpbPGS%7Barfgrq_rap0qvat_sso6pnn2%7D  (Decodes  %7B  to  {  and  %7D  to  } )
+      • Output:  cvpbPGS{arfgrq_rap0qvat_sso6pnn2} 
+  4. ROT13 Decoding
+      • Input:  cvpbPGS{arfgrq_rap0qvat_sso6pnn2} 
+      • Output:  picoCTF{nested_enc0ding_ffb6caa2} 
+
+
+  ### Final Flag
+
+   picoCTF{nested_enc0ding_ffb6caa2} 
+
