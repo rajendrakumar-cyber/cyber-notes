@@ -1,0 +1,60 @@
+                                                                                                                                                                      
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ ls
+message.txt
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ cat message.txt
+TOP SECRET
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ git status
+On branch master
+nothing to commit, working tree clean
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ git log   
+commit ef0b7cc6b98367fa168573c931e0f7098ef59182 (HEAD -> master)
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:06:20 2024 +0000
+
+    remove sensitive info
+
+commit ea859bf3b5d94ee74ce5ee1afa3edd7d4d6b35f0
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:06:20 2024 +0000
+
+    create flag
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ git checkout ef0b7cc6b98367fa168573c931e0f7098ef59182    
+Note: switching to 'ef0b7cc6b98367fa168573c931e0f7098ef59182'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at ef0b7cc remove sensitive info
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ git checkout ea859bf3b5d94ee74ce5ee1afa3edd7d4d6b35f0
+Previous HEAD position was ef0b7cc remove sensitive info
+HEAD is now at ea859bf create flag
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ cat message.txt
+picoCTF{s@n1t1z3_cf09a485}
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ 
