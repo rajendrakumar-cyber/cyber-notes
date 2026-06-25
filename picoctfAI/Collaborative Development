@@ -1,0 +1,150 @@
+──(white㉿white)-[~/Music/PICO-CTF/files]
+└─$ cd drop-in  
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ ls
+flag.py
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ git branch -a                                        
+  feature/part-1
+  feature/part-2
+  feature/part-3
+* main
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ git config!                                          
+git: 'config!' is not a git command. See 'git --help'.
+
+The most similar command is
+        config
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ git status 
+On branch main
+nothing to commit, working tree clean
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ git log   
+commit d7d09540eb1a24ed1299b230d143e6e93f9807eb (HEAD -> main)
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:52 2024 +0000
+
+    init flag printer
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ git checkout d7d09540eb1a24ed1299b230d143e6e93f9807e 
+Note: switching to 'd7d09540eb1a24ed1299b230d143e6e93f9807e'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at d7d0954 init flag printer
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ cat flag.      
+cat: flag.: No such file or directory
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ cat flag.py 
+print("Printing the flag...")
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ git branch -a
+* (HEAD detached at d7d0954)
+  feature/part-1
+  feature/part-2
+  feature/part-3
+  main
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ cat diff   
+cat: diff: No such file or directory
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ cat diffs
+cat: diffs: No such file or directory
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ la
+flag.py  .git
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ ls -la 
+total 16
+drwxr-xr-x 3 white white 4096 Jun 25 15:29 .
+drwxrwxr-x 3 white white 4096 Jun 25 15:29 ..
+-rw-r--r-- 1 white white   30 Mar 12  2024 flag.py
+drwxr-xr-x 8 white white 4096 Jun 25 15:31 .git
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ git log --oneline --all
+b2e0542 (feature/part-1) add part 1
+e1629c7 (feature/part-2) add part 2
+8fccfcd (feature/part-3) add part 3
+d7d0954 (HEAD, main) init flag printer
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ cat flag.py
+print("Printing the flag...")
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ git chekout main                                    
+git: 'chekout' is not a git command. See 'git --help'.
+
+The most similar command is
+        checkout
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ git checkout main
+Switched to branch 'main'
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ cat flag.py      
+print("Printing the flag...")
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ git checkout feature/part-1
+cat flag.py
+Switched to branch 'feature/part-1'
+print("Printing the flag...")
+print("picoCTF{t3@mw0rk_", end='')                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ git checkout feature/part-2
+cat flag.py
+Switched to branch 'feature/part-2'
+print("Printing the flag...")
+
+print("m@k3s_th3_dr3@m_", end='')                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ git checkout feature/part-3
+cat flag.py
+Switched to branch 'feature/part-3'
+print("Printing the flag...")
+
+print("w0rk_7ae8dd33}")
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ cat flag.py
+print("Printing the flag...")
+
+print("w0rk_7ae8dd33}")
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ "picoCTF{t3@mw0rk_m@k3s_th3_dr3@m_w0rk_7ae8dd33}
