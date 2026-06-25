@@ -1,0 +1,76 @@
+ere is a simple explanation of how this conversion works.
+
+  Computers do not understand letters directly. They represent every character as a number. The standard map for this is the ASCII table.
+  ──────
+  ### Step 1: Converting Letters to Hexadecimal (Hex)
+
+  First, we look up each letter of the word  wmhtd  in the ASCII table to find its hexadecimal number representation:
+
+                        Character                       |                    Decimal Value                    |                  Hexadecimal Value
+  ------------------------------------------------------|-----------------------------------------------------|-----------------------------------------------------
+                            w                           |                         119                         |                         77
+                            m                           |                         109                         |                         6d
+                            h                           |                         104                         |                         68
+                            t                           |                         116                         |                         74
+                            d                           |                         100                         |                         64
+
+  So, in the computer's memory, the word  wmhtd  is stored as the sequence of bytes:
+   77 ,  6d ,  68 ,  74 ,  64 .
+  ──────
+  ### Step 2: Understanding Endianness (Byte Ordering)
+
+  Endianness refers to the order in which bytes of a multi-byte word are stored or transmitted.
+
+  #### 1. Big Endian (Most Significant Byte First)
+
+  Big Endian stores the bytes in their natural reading order (left-to-right). This matches how we write words and numbers.
+
+  • Order: Byte 1, Byte 2, Byte 3, Byte 4, Byte 5
+  • Mapping:  77  →  6d  →  68  →  74  →  64 
+  • Result:  776d687464 
+
+  #### 2. Little Endian (Least Significant Byte First)
+
+  Little Endian stores the bytes in reversed order (right-to-left). This is how x86 and x64 computer processors (like Intel and AMD) organize data in memory.
+
+  • Order: Byte 5, Byte 4, Byte 3, Byte 2, Byte 1
+  • Mapping:  64  →  74  →  68  →  6d  →  77 
+  • Result:  6474686d77 
+  ──────
+  ### Visual Comparison
+
+                    Word                  |             Byte Sequence              |       Big Endian (Left-to-Right)       |     Little Endian (Right-to-Left)
+  ----------------------------------------|----------------------------------------|----------------------------------------|---------------------------------------
+                   wmhtd                  |         77   6d   68   74   64         |               776d687464               |              6474686d77 
+  ──────
+  ### Summary of Work
+
+  • Explained Endianness Concepts: Provided a clear explanation of character-to-hex conversion (ASCII) and byte ordering (Big Endian vs. Little Endian) using tables
+  and visual comparisons.
+
+──(white㉿white)-[~/Music/PICO-CTF/home]
+└─$ nc titan.picoctf.net 54886
+Welcome to the Endian CTF!
+You need to find both the little endian and big endian representations of a word.
+If you get both correct, you will receive the flag.
+Word: wmhtd
+Enter the Little Endian representation: pico
+Incorrect Little Endian representation. Try again!
+Enter the Little Endian representation: flag
+Incorrect Little Endian representation. Try again!
+Enter the Little Endian representation: 1044032
+Incorrect Little Endian representation. Try again!
+Enter the Little Endian representation: 78776c6679
+Incorrect Little Endian representation. Try again!
+Enter the Little Endian representation: 79666c7778
+Incorrect Little Endian representation. Try again!
+Enter the Little Endian representation: wmhtd
+Incorrect Little Endian representation. Try again!
+Enter the Little Endian representation: 6474686d77
+Correct Little Endian representation!
+Enter the Big Endian representation: 776d687464
+Correct Big Endian representation!
+Congratulations! You found both endian representations correctly!
+Your Flag is: picoCTF{3ndi4n_sw4p_su33ess_25c5f083}
+
+                                                        
