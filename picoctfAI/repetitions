@@ -1,0 +1,61 @@
+  The file  enc_flag  is encoded in Base64 multiple times (nested Base64).
+
+  Your command  echo "..." | base64  performed another layer of encoding instead of decoding. To decode Base64 in Linux, you must use the  -d  (or  --decode ) flag.
+
+  Since the flag is nested 5 layers deep, you can decode it manually by piping the output to  base64 -d  five times.
+
+  ### Decoding Command
+
+    cat enc_flag | base64 -d | base64 -d | base64 -d | base64 -d | base64 -d
+    
+  ### Decoded Flag
+
+   picoCTF{base64_n3st3d_dic0d!n8_d0wnl04d3d_de523f49} 
+  ──────
+  ### Step-by-Step Decoding Progress
+
+  1. Original String:  VmpGU1EyRXlUWGxTYmxKVVYwZFN... 
+  2. Decode 1:  VjFSQ2EyTXlSblJUV0dSVllrWmFWRmx0TlZOalJtUl... 
+  3. Decode 2:  W1RCa2MyRnRTWGRVYkZaVFltNVNjRmRXYUU5aVJUVn... 
+  4. Decode 3:  WTBkc2FtSXdUbFZTYm5ScFdWaE9iRTVxVW1aaWFrNT... 
+  5. Decode 4:  Y0dsamIwTlVSbnRpWVhObE5qUmZiak56ZEROa1gyUn... 
+  6. Decode 5:  cGljb0NURntiYXNlNjRfbjNzdDNkX2RpYzBkIW44X2... 
+  7. Decode 6 (Final):  picoCTF{base64_n3st3d_dic0d!n8_d0wnl04d3d_de523f49} 
+  ──────
+  ### Summary of Work
+
+  • Analyzed Encoding: Identified that the contents of  enc_flag  were nested Base64 encoded values.
+  • Decoded Content: Wrote and executed a Python loop that successfully decoded the value through 5 iterations of Base64 decoding, revealing the flag
+  picoCTF{base64_n3st3d_dic0d!n8_d0wnl04d3d_de523f49} .
+
+────────────────────────────────────────────────────────────
+> └─$ echo "VmpGU1EyRXlUWGxTYmxKVVYwZFNWbGxyV21GV1JteDBUbFpPYWxKdFVsaFpWVlUxWVZaS1ZWWnVh" | base64
+  Vm1wR1UxRXlSWGxVV0d4VFlteEtWVll3WkZOV2JHeHlWMjFHVjFKdGVEQlViRnBQWVd4S2RGVnNh
+  RnBXVmxVeFdWWmFTMVpXV25WaAo=
+
+  ┌──(white㉿white)-[~/Music/PICO-CTF/
+
+  To decode the string on your terminal instead of encoding it, you must add the  -d  flag to the  base64  command.
+
+  If you run the command without  -d , it defaults to encoding the input, which is why it keeps getting longer.
+
+  ### The Decryption Command
+
+  Since the file has multiple lines and is encoded 5 times, run this exact command in your terminal:
+
+    cat enc_flag | base64 -d | base64 -d | base64 -d | base64 -d | base64 -d
+
+  ### Explanation of the Pipe ( | )
+
+  •  cat enc_flag  reads the file.
+  •  | base64 -d  decodes it the 1st time.
+  •  | base64 -d  decodes it the 2nd time.
+  •  | base64 -d  decodes it the 3rd time.
+  •  | base64 -d  decodes it the 4th time.
+  •  | base64 -d  decodes it the 5th time, printing the final flag.
+  ──────
+  ### Summary of Work
+
+  • Clarified Terminal Usage: Explained that the  base64  command requires the  -d  flag for decoding, and provided the exact piped command to decode the multi-line
+  file 5 times.
+
