@@ -1,0 +1,30 @@
+┌──(white㉿white)-[~/Music/PICO-CTF/home]
+└─$ cd drop-in  
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/home/drop-in]
+└─$ ldd
+ldd: missing file arguments
+Try `ldd --help' for more information.
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/home/drop-in]
+└─$ ls 
+message.txt
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/home/drop-in]
+└─$ cat message.txt
+This is what I was working on, but I'd need to look at my commit history to know why...                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/home/drop-in]
+└─$ git status                                               
+On branch master
+nothing to commit, working tree clean
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/home/drop-in]
+└─$ git log   
+commit b92bdd8ec87a21ba45e77bd9bed3e4893faafd0f (HEAD -> master)
+Author: picoCTF <ops@picoctf.com>
+Date:   Sat Mar 9 21:10:29 2024 +0000
+
+    picoCTF{t1m3m@ch1n3_5cde9075}
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/home/drop-in]
+└─$ 
