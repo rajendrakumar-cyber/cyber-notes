@@ -1,0 +1,439 @@
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ python3 message.py 
+  File "/home/white/Music/PICO-CTF/files/drop-in/message.py", line 1
+    print("Hello, World!"
+         ^
+SyntaxError: '(' was never closed
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ nano message.py           
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ python3 message.py
+Hello, World!
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ git status                 
+On branch master
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   message.py
+
+no changes added to commit (use "git add" and/or "git commit -a")
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ git log                
+commit 83afd3ebd7899251a19d290df92fd1bfc9998adb (HEAD -> master)
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 760de15c177831fee8b2965e57d1461423ad5ed0
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 7fce0961829b0262ed95799aa430822cac6c6a0b
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit daa2679f1c00642ef399fadcd52cf8f9c16020f7
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 7b07ab4c87df7198ce8c0ece9f67e8b7f1ddb9f8
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit ce6f53e9ec9c806561d26d7dde9fa2be8631a39f
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 81e4152cf926c532e66d48bc4080c552d6bb5541
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit c5834754acc74e7d59d0176d60b733c45bda9391
+Author: picoCTF <ops@picoctf.com>
+commit 760de15c177831fee8b2965e57d1461423ad5ed0
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 7fce0961829b0262ed95799aa430822cac6c6a0b
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit daa2679f1c00642ef399fadcd52cf8f9c16020f7
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 7b07ab4c87df7198ce8c0ece9f67e8b7f1ddb9f8
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit ce6f53e9ec9c806561d26d7dde9fa2be8631a39f
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 81e4152cf926c532e66d48bc4080c552d6bb5541
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit c5834754acc74e7d59d0176d60b733c45bda9391
+Author: picoCTF <ops@picoctf.com>
+commit 760de15c177831fee8b2965e57d1461423ad5ed0
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 7fce0961829b0262ed95799aa430822cac6c6a0b
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit daa2679f1c00642ef399fadcd52cf8f9c16020f7
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 7b07ab4c87df7198ce8c0ece9f67e8b7f1ddb9f8
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit ce6f53e9ec9c806561d26d7dde9fa2be8631a39f
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 81e4152cf926c532e66d48bc4080c552d6bb5541
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit c5834754acc74e7d59d0176d60b733c45bda9391
+Author: picoCTF <ops@picoctf.com>
+commit 760de15c177831fee8b2965e57d1461423ad5ed0
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 7fce0961829b0262ed95799aa430822cac6c6a0b
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit daa2679f1c00642ef399fadcd52cf8f9c16020f7
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 7b07ab4c87df7198ce8c0ece9f67e8b7f1ddb9f8
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit ce6f53e9ec9c806561d26d7dde9fa2be8631a39f
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 81e4152cf926c532e66d48bc4080c552d6bb5541
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit c5834754acc74e7d59d0176d60b733c45bda9391
+Author: picoCTF <ops@picoctf.com>
+commit 760de15c177831fee8b2965e57d1461423ad5ed0
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 7fce0961829b0262ed95799aa430822cac6c6a0b
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit daa2679f1c00642ef399fadcd52cf8f9c16020f7
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 7b07ab4c87df7198ce8c0ece9f67e8b7f1ddb9f8
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit ce6f53e9ec9c806561d26d7dde9fa2be8631a39f
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 81e4152cf926c532e66d48bc4080c552d6bb5541
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit c5834754acc74e7d59d0176d60b733c45bda9391
+Author: picoCTF <ops@picoctf.com>
+commit 760de15c177831fee8b2965e57d1461423ad5ed0
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 7fce0961829b0262ed95799aa430822cac6c6a0b
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit daa2679f1c00642ef399fadcd52cf8f9c16020f7
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 7b07ab4c87df7198ce8c0ece9f67e8b7f1ddb9f8
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit ce6f53e9ec9c806561d26d7dde9fa2be8631a39f
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 81e4152cf926c532e66d48bc4080c552d6bb5541
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit c5834754acc74e7d59d0176d60b733c45bda9391
+Author: picoCTF <ops@picoctf.com>
+commit 760de15c177831fee8b2965e57d1461423ad5ed0
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 7fce0961829b0262ed95799aa430822cac6c6a0b
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit daa2679f1c00642ef399fadcd52cf8f9c16020f7
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 7b07ab4c87df7198ce8c0ece9f67e8b7f1ddb9f8
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit ce6f53e9ec9c806561d26d7dde9fa2be8631a39f
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 81e4152cf926c532e66d48bc4080c552d6bb5541
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit c5834754acc74e7d59d0176d60b733c45bda9391
+Author: picoCTF <ops@picoctf.com>
+commit 83afd3ebd7899251a19d290df92fd1bfc9998adb (HEAD -> master)
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 760de15c177831fee8b2965e57d1461423ad5ed0
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 7fce0961829b0262ed95799aa430822cac6c6a0b
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit daa2679f1c00642ef399fadcd52cf8f9c16020f7
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 7b07ab4c87df7198ce8c0ece9f67e8b7f1ddb9f8
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit ce6f53e9ec9c806561d26d7dde9fa2be8631a39f
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 81e4152cf926c532e66d48bc4080c552d6bb5541
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit c5834754acc74e7d59d0176d60b733c45bda9391
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 6a25a3c73308327cff74f10ce4b9dd808115a62c
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 02499e54a508323d04b7670c1a9e571ee0c7517e
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 14cc9e58d2500cf54cfe8cdea72f1eb74798b81b
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit fcfdde9f250d79cfcb8588e791c0bb106f58482d
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+commit 9d6900b4f5ad96d5062ab380a0dda051aee524f5
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:03 2024 +0000
+
+    important business work
+
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ git log --oneline --all
+
+83afd3e (HEAD -> master) important business work
+760de15 important business work
+7fce096 important business work
+daa2679 important business work
+7b07ab4 important business work
+ce6f53e important business work
+81e4152 important business work
+c583475 important business work
+6a25a3c important business work
+02499e5 important business work
+14cc9e5 important business work
+fcfdde9 important business work
+9d6900b important business work
+e499623 important business work
+a4b3d2b important business work
+ec0cdcc important business work
+605855f important business work
+35384c4 important business work
+0e8044c important business work
+dc7e53c important business work
+63e646a important business work
+30b85c2 important business work
+d1888cc important business work
+3c8c74d important business work
+d7e9b11 important business work
+6867b21 important business work
+3ca1d58 important business work
+496c762 important business work
+e7f50eb important business work
+0ddd949 important business work
+c8c8ae5 important business work
+ad94de9 important business work
+de6c5c8 important business work
+513665a important business work
+21d4a3d important business work
+33bcd03 important business work
+b51b3eb important business work
+87d6565 important business work
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ git blame message.py   
+00000000 (Not Committed Yet 2026-06-25 15:42:21 +0530 1) print("Hello, World!")
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ git log message.py     
+commit 0351e0474493168ca76441c24630c17554fd09ca
+Author: picoCTF{@sk_th3_1nt3rn_d2d29f22} <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:01 2024 +0000
+
+    optimize file size of prod code
+
+commit c9e851509190f5887e91339ee18087e3e77ebfda
+Author: picoCTF <ops@picoctf.com>
+Date:   Tue Mar 12 00:07:01 2024 +0000
+
+    create top secret project
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files/drop-in]
+└─$ 
