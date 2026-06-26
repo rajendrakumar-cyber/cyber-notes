@@ -1,0 +1,37 @@
+──(white㉿white)-[~]
+└─$ nc saturn.picoctf.net 64798
+Please md5 hash the text between quotes, excluding the quotes: 'a sunset'
+Answer: 
+Time's up. Press Ctrl-C to disconnect. Feel free to reconnect and try again.
+                                                                                                                                                                       
+┌──(white㉿white)-[~]
+└─$ nc saturn.picoctf.net 64798
+Please md5 hash the text between quotes, excluding the quotes: 'Japanese'
+Answer: 
+42a1975e5330e2dc1130d24e13271705 
+42a1975e5330e2dc1130d24e13271705 
+Incorrect. Try again?
+Answer: 
+4ddf5374f011f4bee0cdbe1b99b7d5bb
+4ddf5374f011f4bee0cdbe1b99b7d5bb
+Incorrect. Goodbye. Better luck next time!
+                                                                                                                                                                       
+┌──(white㉿white)-[~]
+└─$ nc saturn.picoctf.net 64798
+Please md5 hash the text between quotes, excluding the quotes: 'clowns'
+Answer: 
+f9b12092c70ec2d9ae6d9ff68b061b27
+f9b12092c70ec2d9ae6d9ff68b061b27
+Correct.
+Please md5 hash the text between quotes, excluding the quotes: 'a high school bathroom'
+Answer: 
+98219c442a477b6dc1756d2a6d49d8df 
+98219c442a477b6dc1756d2a6d49d8df 
+Correct.
+Please md5 hash the text between quotes, excluding the quotes: 'hangnails'
+Answer: 
+7e3193d5ef5d764bfd8874dda4b5253a
+7e3193d5ef5d764bfd8874dda4b5253a
+Correct.
+picoCTF{4ppl1c4710n_r3c31v3d_3eb82b73}
+                                        
