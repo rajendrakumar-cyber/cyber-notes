@@ -1,0 +1,35 @@
+─(white㉿white)-[~/Music/PICO-CTF/files]
+  └─$ nc saturn.picoctf.net 64837
+  'picoCTF{gl17ch_m3_n07_' + chr(0x62) + chr(0x64) + chr(0x61) + chr(0x36) + chr(0x38) + chr(0x66) + chr(0x37) + chr(0x35) + '}'
+
+  ┌──(white㉿white)-[~/Musi
+
+▸ Thought for 11s, 835 tokens
+  Decoding the Glitch
+  The output returned by the server is a Python string concatenation expression. You can evaluate this expression directly using Python to obtain the flag.
+
+  ### Evaluation Steps
+
+  •  chr(0x62)  ->  'b' 
+  •  chr(0x64)  ->  'd' 
+  •  chr(0x61)  ->  'a' 
+  •  chr(0x36)  ->  '6' 
+  •  chr(0x38)  ->  '8' 
+  •  chr(0x66)  ->  'f' 
+  •  chr(0x37)  ->  '7' 
+  •  chr(0x35)  ->  '5' 
+
+  Combining these characters with the rest of the string:
+
+   'picoCTF{gl17ch_m3_n07_' + 'b' + 'd' + 'a' + '6' + '8' + 'f' + '7' + '5' + '}' 
+  ──────
+  ### Solved Flag
+
+   picoCTF{gl17ch_m3_n07_bda68f75} 
+  ──────
+  ### How to Evaluate in Terminal
+
+  To run this evaluation in your terminal, use Python's command-line interface:
+
+    python3 -c "print('picoCTF{gl17ch_m3_n07_' + chr(0x62) + chr(0x64) + chr(0x61) + chr(0x36) + chr(0x38) + chr(0x66) + chr(0x37) + chr(0x35) + '}')"
+
