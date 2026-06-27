@@ -1,0 +1,21 @@
+                                                                                                                                                                     
+┌──(white㉿white)-[~/Music/PICO-CTF/files]
+└─$  fls -r -o 2048 disk.img | grep "home/"
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files]
+└─$ nc saturn.picoctf.net 58734
+What is the size of the Linux partition in the given disk image?
+Length in sectors: 1,048,576
+1,048,576
+This script encountered an error. Did you input a regular decimal number?
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files]
+└─$ nc saturn.picoctf.net 58734
+What is the size of the Linux partition in the given disk image?
+Length in sectors:  202752
+ 202752
+Great work!
+picoCTF{mm15_f7w!}
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files]
+└─$ 
