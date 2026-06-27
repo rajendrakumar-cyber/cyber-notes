@@ -1,0 +1,96 @@
+Bash(python3 -c ') (ctrl+o to expand)
+  Using a Caesar cipher shift of 15 (rotating backwards by 15 characters, or rotating forwards by 11), the decrypted message is:
+
+  "crossingtherubiconmiazexly"
+
+  ### Analysis of the Result:
+
+  • Ciphertext:  rgdhhxcviwtgjqxrdcbxpotman 
+  • Shift Value: 15 (or ROT-11)
+  • Plaintext:  crossingtherubiconmiazexly  (translates to the phrase "crossing the rubicon" followed by the suffix  miazexly ).
+
+  The final formatted flag would be:
+   picoCTF{crossingtherubiconmiazexly} 
+
+────────────────────────────────────────────────────────────
+> (white㉿white)-[~/Music/PICO-CTF/files]
+  └─$ cat enc_flag | base64 -d                                                                                    
+  b'd3BqdkpBTXtqaGx6aHlfazNqeTl3YTNrXzc4MjUwaG1qfQ=='
+  
+  ┌──(white㉿white)-[~/Music/PICO
+  I will run a python snippet to decode the Base64 string  d3BqdkpBTXtqaGx6aHlfazNqeTl3YTNrXzc4MjUwaG1qfQ==  and inspect the result.
+● Bash(python3 -c "import base64; print(base64.b64decode('d3BqdkpBTXtqaGx6aHlfazNqeTl3YTNrXzc4MjUwaG1qfQ==').decode('utf-8'))") (ctrl+o to expand)
+▸ Thought for 4s, 852 tokens
+  Analyzing the Encrypted String
+  I will run a Python script to perform the Caesar cipher decryption with a shift of 7 to get the final flag.
+
+● Bash(python3 -c ') (ctrl+o to expand)
+
+  The decoded Base64 string is:
+   wpjvJAM{jhlzhy_k3jy9wa3k_78250hmj} 
+
+  Applying a Caesar cipher decryption (shifting each letter backward by 7 places) reveals the flag:
+
+   picoCTF{caesar_d3cr9pt3d_78250afc} 
+
+────────────────────────────────────────────────────────────
+> how to decrytp it
+
+  Here is the step-by-step process of how to decode and decrypt it using standard terminal commands:
+  ──────
+  ### Step 1: Base64 Decoding
+
+  First, you decode the base64-encoded string. You did this in your terminal with:
+
+    echo "d3BqdkpBTXtqaGx6aHlfazNqeTl3YTNrXzc4MjUwaG1qfQ==" | base64 -d
+
+  This produced the cipher text:
+   wpjvJAM{jhlzhy_k3jy9wa3k_78250hmj} 
+  ──────
+  ### Step 2: Caesar Cipher Decryption (Shift 7)
+
+  Since the flag format is  picoCTF  and the text starts with  wpjvJAM , we can calculate the character shift:
+
+  •  w  (23rd letter) →  p  (16th letter) is a shift of -7.
+
+  You can decrypt this shift of 7 directly in the Linux terminal using the  tr  (translate) command. Since uppercase and lowercase letters are shifted separately,
+  you map them like this:
+
+    echo "wpjvJAM{jhlzhy_k3jy9wa3k_78250hmj}" | tr 'h-za-gH-ZA-G' 'a-zA-Z'
+
+  #### How the  tr  command works:
+
+  • It shifts the alphabet starting point by 7 characters.
+  •  h  gets mapped to  a ,  i  to  b , ...,  g  to  z .
+  • Numbers and special characters (like  { ,  _ ,  } ) are left unchanged.
+  ──────
+  ### Alternative: All-in-One Python Command
+
+  You can also run a single Python command in your terminal to do both steps:
+
+    python3 -c '
+    import base64
+    encoded = "d3BqdkpBTXtqaGx6aHlfazNqeTl3YTNrXzc4MjUwaG1qfQ=="
+    ciphertext = base64.b64decode(encoded).decode("utf-8")
+    flag = "".join(chr((ord(c) - 97 - 7) % 26 + 97) if c.islower() else chr((ord(c) - 65 - 7) % 26 + 65) if c.isupper() else c for c in ciphertext)
+    print(flag)
+    '
+
+──(white㉿white)-[~/Music/PICO-CTF/files]
+└─$ ls
+app1.py  app.py  data.enc  disk.img  disk.img.gz  haproxy.cfg  mount_point
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files]
+└─$ cat data.enc    
+picoCTF{rgdhhxcviwtgjqxrdcbxpotman}
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files]
+└─$ ls
+app1.py  app.py  data.enc  disk.img  disk.img.gz  enc_flag  haproxy.cfg  mount_point
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files]
+└─$ cat enc_flag | base64 -d                                                                                    
+b'd3BqdkpBTXtqaGx6aHlfazNqeTl3YTNrXzc4MjUwaG1qfQ=='
+                                                                                                                                                                       
+┌──(white㉿white)-[~/Music/PICO-CTF/files]
+└─$ 
