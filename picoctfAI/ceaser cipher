@@ -1,0 +1,112 @@
+1. Alphabet Size: The alphabet contains only 16 lowercase characters ( a  through  p ).
+  2. Key Constraints: The key is a single character ( len(key) == 1 ) chosen from the 16-character alphabet.
+  3. Decryption Logic:
+      • Because the key has a length of 1, we can brute-force all 16 possible key values ( a  through  p ).
+      • We reverse the Caesar shift ( (t1 - t2) % 16 ) to get the Base16 encoded string.
+      • We decode the Base16 string back to original ASCII bytes by combining every 2 characters (high 4 bits and low 4 bits).
+  ### Script Execution Results
+  Running the decryption script against all 16 possible keys yielded the following candidate plaintexts:
+
+  • Key  a  to  o  resulted in non-printable or chaotic strings (e.g.,  CR=RS = ,  2A,AB , etc.).
+  • Key  p  decrypted to a perfectly clean, thematic ASCII string:  et_tu?_77866c61  (referencing the Latin phrase "Et tu, Brute?").
+  ──────
+  ### The Flag
+
+    picoCTF{et_tu?_77866c61}
+    
+
+────────────────────────────────────────────────────────────
+> much more simple
+
+   picoCTF{et_tu?_77866c61} 
+
+────────────────────────────────────────────────────────────
+> how to i do manually
+
+▸ Thought for 1s, 3.0k tokens
+  Clarifying Manual Steps
+  Here is the manual step-by-step process using the key  p  (which corresponds to shift index  15  in the alphabet  a=0  to  p=15 ):
+
+  ### 1. Shift Decryption
+
+  For each letter in the ciphertext, convert it to its 0-15 alphabet index, subtract  15  (modulo 16), and convert back to a letter:
+
+   Cipher                                 | Index                                  | Subtract 15 (mod 16)                   | Decrypted Letter
+  ----------------------------------------|----------------------------------------|----------------------------------------|---------------------------------------
+   f                                      | 5                                      | (5 - 15) % 16 = 6                      | g
+   e                                      | 4                                      | (4 - 15) % 16 = 5                      | f
+   g                                      | 6                                      | (6 - 15) % 16 = 7                      | h
+   d                                      | 3                                      | (3 - 15) % 16 = 4                      | e
+   ...                                    | ...                                    | ...                                    | ...
+
+  Applying this to the whole ciphertext ( fegdeogdgecoeocgcgchcfcffccfca ) gives the decrypted Base16 string:
+   gf he fp he hf dp fp dh dh di dg dg gd dg db 
+  ──────
+  ### 2. Base16 Decoding
+
+  Group the letters into pairs. The first letter gives the upper 4 bits (binary), and the second gives the lower 4 bits. Combine them to find the ASCII character
+  code:
+
+  1.  gf 
+      •  g  = 6 ( 0110 )
+      •  f  = 5 ( 0101 )
+      • Binary:  01100101  (101 in decimal) →  e 
+  2.  he 
+      •  h  = 7 ( 0111 )
+      •  e  = 4 ( 0100 )
+      • Binary:  01110100  (116 in decimal) →  t 
+  3.  fp 
+      •  f  = 5 ( 0101 )
+      •  p  = 15 ( 1111 )
+      • Binary:  01011111  (95 in decimal) →  _ 
+
+
+  Repeating this pattern for all pairs yields the final plaintext:  et_tu?_77866c61 
+
+────────────────────────────────────────────────────────────
+> how to i solve
+
+  To solve this challenge, you can run a simple Python script that brute-forces all 16 possible keys, reverses the shift, and decodes the Base16 string.
+
+  ### Python Solution
+
+  Save the code below to a file, e.g.,  solve.py , and run it with  python3 solve.py :
+
+    import string
+    
+    ALPHABET = string.ascii_lowercase[:16]  # 'abcdefghijklmnop'
+    ciphertext = "fegdeogdgecoeocgcgchcfcffccfca"
+
+    # Try all 16 possible keys
+    for key in ALPHABET:
+        key_offset = ord(key) - ord("a")
+        dec_b16 = ""
+        
+        # 1. Reverse the Caesar shift
+        for c in ciphertext:
+            c_offset = ord(c) - ord("a")
+            dec_b16 += ALPHABET[(c_offset - key_offset) % 16]
+            
+        # 2. Reverse the Base16 encoding
+        try:
+            plain = ""
+            for i in range(0, len(dec_b16), 2):
+                high_4_bits = ALPHABET.index(dec_b16[i])
+                low_4_bits = ALPHABET.index(dec_b16[i+1])
+                byte_value = (high_4_bits << 4) | low_4_bits
+                plain += chr(byte_value)
+                
+            # Only print readable flags
+            if plain.isprintable():
+                print(f"Key '{key}': picoCTF{{{plain}}}")
+        except:
+            pass
+
+  ### Running the script
+
+    python3 solve.py
+
+  It will print the candidate flags, and you can easily pick out the correct readable one:
+
+    Key 'p': picoCTF{et_tu?_77866c61}
+
