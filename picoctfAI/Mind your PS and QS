@@ -1,0 +1,78 @@
+## Step 1: Factoring n
+
+  In RSA, the modulus n is the product of two prime numbers (n = p × q). Normally, n is very large (e.g., 2048 or 4096 bits) to prevent factoring. However, here n
+  is only around 269 bits.
+
+  Because it is so small, we can query its factors from Factordb.com, which quickly gives:
+
+  • p =  1891771437429478964908181306574287207137 
+  • q =  501332739776173570344039681219489434626477 
+  ──────
+  ### Step 2: Compute φ(n)
+
+  Euler's totient function φ(n) is calculated as:
+
+    φ(n) = (p - 1) × (q - 1)
+    
+  Using our prime factors:
+
+  • φ(n) =  948406957756830799684818171639547165784627291604421779562211279090623253303102736 
+  ──────
+  ### Step 3: Compute the Private Key d
+
+  The decryption key d is the modular multiplicative inverse of e modulo φ(n):
+
+    d ≡ e⁻¹ pmodφ(n)
+    
+  Using Python's built-in  pow(e, -1, phi) :
+
+  • d =  884846436603417758257007788481079361309852264660893046200243867623910360343719009 
+  ──────
+  ### Step 4: Decrypt the Ciphertext
+
+  We calculate the message integer m using:
+
+    m ≡ cᵈ pmod n
+    
+  Using Python's  pow(c, d, n) :
+
+  • m =  11116130282638848455850989345758525049386348633716611317135061616781255866122 
+  ──────
+  ### Step 5: Convert m to String
+
+  Converting the integer m to bytes gives the following raw string (which is reversed/little-endian byte order):
+
+    \n}19ea7cd1_do0g_0n_N_11ams{FTCocip
+
+  Reversing the characters of this string to read it in the correct direction gives:
+
+    picoCTF{sma11_N_n0_g0od_1dc7ae91}
+
+
+────────────────────────────────────────────────────────────
+> how to use in cmd line
+
+  You can solve the entire challenge directly from the command line using a Python one-liner.
+
+  ### 1. Factor N via curl
+
+  You can retrieve the factors p and q using  curl :
+
+    curl -s "http://factordb.com/api?query=948406957756830799684818171639547165784816468744946013083947881743680617123566349" | jq .factors
+    ──────
+  ### 2. Decrypt the Flag in One Line
+
+  Once you have the factors, paste this single command into your terminal to compute the private key, decrypt, reverse the bytes, and print the flag:
+
+    python3 -c "
+    c = 15341890103764929939105506004034128738090325640037083301857608662849501626260517
+    n = 948406957756830799684818171639547165784816468744946013083947881743680617123566349
+    e = 65537
+    p = 1891771437429478964908181306574287207137
+    q = 501332739776173570344039681219489434626477
+
+    d = pow(e, -1, (p - 1) * (q - 1))
+    m = pow(c, d, n)
+    print(m.to_bytes((m.bit_length() + 7) // 8, 'big')[::-1].decode().strip())
+    "
+
