@@ -1,0 +1,51 @@
+### Step-by-Step Solution
+
+  1. Obtain the Encryption of 2 (C₂):
+  We queried the oracle at  nc titan.picoctf.net 60894  to encrypt the value  2  using option  E , which returned:
+
+    C₂ ≡ 2ᵉ pmod N = 5067313465613043...230
+    
+  2. Multiply the Ciphertexts:
+  Using the multiplicative property of RSA:
+
+    (M₁·M₂)ᵉ ≡ Mᵉ₁·Mᵉ₂ pmod N
+    
+  We multiplied the ciphertext from password.enc (
+
+    C
+     pass
+    
+  ) by C₂:
+
+    C    = C    ·C₂
+     new    pass
+
+  3. Decrypt the Modified Ciphertext:
+  We sent the product
+
+    C
+     new
+
+  to the oracle's decryption option  D . The oracle decrypted it modulo N and returned the plaintext as hex:
+
+    2·password ≡ 0x68726a6aca
+
+  4. Recover the Password:
+  Converting the hex result to an integer and dividing by 2 yields the password:
+
+               0x68726a6aca
+    password = ──────────── = 0x3439353565
+                    2
+
+  Decoding  0x3439353565  to ASCII bytes gives:
+
+    password = "4955e"
+
+  5. Decrypt the Flag:
+  We then ran OpenSSL to decrypt secret.enc using the recovered password  4955e :
+    openssl enc -aes-256-cbc -d -in secret.enc -pass pass:4955e
+
+
+  ### Output Flag
+
+   picoCTF{su((3ss_(r@ck1ng_r3@_4955eb5d} 
