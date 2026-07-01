@@ -1,0 +1,52 @@
+The eax register is a 32-bit register in x86-64 architecture. In assembly, eax is often used to hold the return value of a function.
+Step 2: Read the Assembly Line by Line
+Table
+Address	Instruction	What it does
+<+0>	endbr64	Indirect branch target — security feature, ignore for this challenge
+<+4>	push rbp	Save the old base pointer (stack frame setup)
+<+5>	mov rbp, rsp	Set up new base pointer (stack frame setup)
+<+8>	mov DWORD PTR [rbp-0x4], edi	Store 1st function argument (32-bit integer) on stack
+<+11>	mov QWORD PTR [rbp-0x10], rsi	Store 2nd function argument (64-bit pointer) on stack
+<+15>	mov eax, 0x30	← THIS IS THE KEY LINE — puts 0x30 into eax
+<+20>	pop rbp	Restore old base pointer (stack frame teardown)
+<+21>	ret	Return to caller — eax still holds 0x30
+Step 3: Apply the Hint
+"Find the one line that pertains to this question and don't second guess yourself!"
+The hint tells you to ignore the noise. Most of the instructions are just:
+Setting up the stack frame (push rbp, mov rbp, rsp)
+Storing arguments (mov ... edi, mov ... rsi)
+Tearing down the stack frame (pop rbp, ret)
+Only one line actually puts a value into eax:
+asm
+mov    eax,0x30
+This is the line that answers the question.
+Step 4: Convert Hex to Decimal
+The value in eax is 0x30 (hexadecimal).
+Conversion:
+plain
+0x30 = (3 × 16¹) + (0 × 16⁰)
+     = 48 + 0
+     = 48
+Or use Python to verify:
+Python
+>>> 0x30
+48
+Step 5: Format the Flag
+The challenge says: "Put your answer in the picoCTF flag format: picoCTF{n} where n is the contents of the eax register in decimal."
+Flag:
+plain
+picoCTF{48}
+Summary Table
+Table
+Step	Action
+1	Identify that eax holds the return value
+2	Scan assembly for any instruction that modifies eax
+3	Find mov eax, 0x30 at <+15>
+4	Convert 0x30 hex → 48 decimal
+5	Wrap in flag format: picoCTF{48}
+Key Takeaway for Future Challenges
+When you see assembly dumps:
+Ignore setup/teardown noise (push/pop rbp, endbr64)
+Ignore argument storage (mov ... edi, mov ... rsi) unless the question asks about arguments
+Focus on the register the question asks about
+mov eax, <value> is almost always the answer when the question is about return values
