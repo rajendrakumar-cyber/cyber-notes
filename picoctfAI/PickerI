@@ -1,0 +1,38 @@
+└─$ nc saturn.picoctf.net 50832
+Try entering "getRandomNumber" without the double quotes...
+==> getRandomNumber
+4
+Try entering "getRandomNumber" without the double quotes...
+==> getRandomNumber
+4
+Try entering "getRandomNumber" without the double quotes...
+==>                                                                                                                                                                        
+┌──(white㉿white)-[~/gemini]
+└─$ nc saturn.picoctf.net 50832
+saturn.picoctf.net [13.59.203.175] 50832 (?) : Connection refused
+                                                                                                                                                                       
+┌──(white㉿white)-[~/gemini]
+└─$ nc saturn.picoctf.net 57875
+Try entering "getRandomNumber" without the double quotes...
+==> getRandomNumber
+4
+Try entering "getRandomNumber" without the double quotes...
+==> eval()
+eval expected at least 1 argument, got 0
+                                                                                                                                                                       
+┌──(white㉿white)-[~/gemini]
+└─$ nc saturn.picoctf.net 57875
+Try entering "getRandomNumber" without the double quotes...
+==> win
+0x70 0x69 0x63 0x6f 0x43 0x54 0x46 0x7b 0x34 0x5f 0x64 0x31 0x34 0x6d 0x30 0x6e 0x64 0x5f 0x31 0x6e 0x5f 0x37 0x68 0x33 0x5f 0x72 0x30 0x75 0x67 0x68 0x5f 0x36 0x65 0x30 0x34 0x34 0x34 0x30 0x64 0x7d 
+Try entering "getRandomNumber" without the double quotes...
+==> win()
+0x70 0x69 0x63 0x6f 0x43 0x54 0x46 0x7b 0x34 0x5f 0x64 0x31 0x34 0x6d 0x30 0x6e 0x64 0x5f 0x31 0x6e 0x5f 0x37 0x68 0x33 0x5f 0x72 0x30 0x75 0x67 0x68 0x5f 0x36 0x65 0x30 0x34 0x34 0x34 0x30 0x64 0x7d 
+'NoneType' object is not callable
+                                                                                                                                                                       
+┌──(white㉿white)-[~/gemini]
+└─$ picoCTF{4_d14m0nd_1n_7h3_r0ugh_6e04440d}
+picoCTF{4_d14m0nd_1n_7h3_r0ugh_6e04440d}: command not found
+                                                                                                                                                                       
+┌──(white㉿white)-[~/gemini]
+└─$ 
