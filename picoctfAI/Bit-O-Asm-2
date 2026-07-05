@@ -1,0 +1,52 @@
+Read each instruction and understand its effect:
+Table
+Address	Instruction	What It Does
+<+0>	endbr64	Security feature, ignore it
+<+4>	push rbp	Save old base pointer
+<+5>	mov rbp,rsp	Set up stack frame
+<+8>	mov DWORD PTR [rbp-0x14],edi	Store 1st function argument (integer)
+<+11>	mov QWORD PTR [rbp-0x20],rsi	Store 2nd function argument (pointer)
+<+15>	mov DWORD PTR [rbp-0x4],0x9fe1a	Store 0x9fe1a at stack location [rbp-0x4]
+<+22>	mov eax,DWORD PTR [rbp-0x4]	Load that value into eax
+<+25>	pop rbp	Restore old base pointer
+<+26>	ret	Return to caller (with eax as return value)
+Step 2: Identify the Key Instructions
+The critical path is:
+plain
+<+15>:  mov DWORD PTR [rbp-0x4], 0x9fe1a    → writes 0x9fe1a to memory
+<+22>:  mov eax, DWORD PTR [rbp-0x4]        → reads that same value into eax
+So eax = 0x9fe1a
+Step 3: Convert Hex to Decimal Manually
+Method: Expand by place value
+Hex digits: 9 f e 1 a
+Decimal values of each digit:
+9 = 9
+f = 15
+e = 14
+1 = 1
+a = 10
+Now multiply each by its place value (powers of 16, right to left):
+Table
+Position (from right)	Hex Digit	Decimal	× 16^position	Result
+0	a	10	× 16⁰ = × 1	10
+1	1	1	× 16¹ = × 16	16
+2	e	14	× 16² = × 256	3,584
+3	f	15	× 16³ = × 4,096	61,440
+4	9	9	× 16⁴ = × 65,536	589,824
+Add them up:
+plain
+     10
++    16
++ 3,584
++ 61,440
++ 589,824
+---------
+= 654,874
+Step 4: Verify with Quick Checks
+0x9fe1a has 5 hex digits → it's less than 0x100000 (1,048,576) ✓
+0xA0000 = 10 × 65,536 = 655,360
+Our value 0x9fe1a is slightly less than 0xA0000 → answer should be slightly less than 655,360 ✓
+654,874 fits perfectly!
+Final Answer
+plain
+picoCTF{654874}
