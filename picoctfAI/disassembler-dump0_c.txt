@@ -1,0 +1,36 @@
+disassembler-dump0_c.txt   picoCTF{2619997}
+plain
+<+15>: mov [rbp-0xc], 0x9fe1a     → val1 = 0x9fe1a (654874)
+<+22>: mov [rbp-0x8], 0x4          → val2 = 0x4 (4)
+<+29>: mov eax, [rbp-0xc]          → eax = 654874
+<+32>: imul eax, [rbp-0x8]         → eax = 654874 × 4 = 2619496
+<+36>: add eax, 0x1f5              → eax = 2619496 + 501 = 2619997
+<+44>: mov eax, [rbp-0x4]          → eax = final result
+<+48>: ret                          → return
+Answer: 2619997
+Flag: picoCTF{2619997}
+6. Common Pitfalls
+Table
+Mistake	Why It's Wrong
+Forgetting imul is multiplication	imul = signed multiply, not "immediate"
+Confusing hex a with decimal 10	In hex, a = 10, but 0xa = 10 decimal. It's correct, just don't mix bases
+Ignoring add after imul	Some challenges have multiple operations — trace ALL the way to ret
+Stopping at first mov eax	The LAST mov eax before ret is what matters
+7. Quick Verification Trick
+If you're unsure about your hex→decimal conversion:
+0x9fe1a is close to 0xA0000
+0xA0000 = 10 × 65536 = 655,360
+0x9fe1a is slightly less → ~654,874 ✅
+8. Flag Format
+plain
+picoCTF{decimal_value}
+Always decimal, never hex in the flag!
+9. Cheat Sheet: Common Powers of 16
+Table
+Power	Value
+16⁰	1
+16¹	16
+16²	256
+16³	4,096
+16⁴	65,536
+16⁵	1,048,576
