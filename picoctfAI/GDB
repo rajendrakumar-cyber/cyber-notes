@@ -1,0 +1,240 @@
+ Basic Approach (Always Follow This)
+plain
+┌─────────────────────────────────────────┐
+│  1. Read assembly top to bottom         │
+│  2. Track eax (return value register)   │
+│  3. Ignore setup: endbr64, push, mov rbp│
+│  4. Focus on last mov eax before ret    │
+│  5. Convert hex → decimal for flag      │
+└─────────────────────────────────────────┘
+2. Common Instructions
+Table
+Instruction	Meaning	Example
+mov eax, imm	Move value into eax	mov eax, 0x86342
+mov eax, [addr]	Load from memory	mov eax, [rbp-0x4]
+add eax, val	Add to eax	add eax, 0x1f5
+sub eax, val	Subtract from eax	sub eax, 0x65
+imul eax, val	Multiply eax	imul eax, 0x4
+cmp a, b	Compare a and b	cmp eax, 0x2710
+jle label	Jump if ≤	jle 0x5555...
+jl label	Jump if <	jl 0x40112c
+jmp label	Always jump	jmp 0x401136
+ret	Return (eax = result)	—
+3. Hex to Decimal (Manual Method)
+Example: Convert 0x9fe1a
+Table
+Position (right→left)	Digit	Decimal	× 16^pos	Result
+0	a	10	× 1	10
+1	1	1	× 16	16
+2	e	14	× 256	3,584
+3	f	15	× 4,096	61,440
+4	9	9	× 65,536	589,824
+Total = 10 + 16 + 3,584 + 61,440 + 589,824 = 654,874
+Hex Digit Reference:
+plain
+0-9 = 0-9
+a=10, b=11, c=12, d=13, e=14, f=15
+Powers of 16:
+Table
+Power	Value
+16⁰	1
+16¹	16
+16²	256
+16³	4,096
+16⁴	65,536
+16⁵	1,048,576
+4. Challenge Types
+Type A: Simple Move (debugger0_a)
+plain
+mov eax, 0x86342
+ret
+→ eax = 0x86342 = 549,698
+Type B: Math Operations (disassembler-dump0_c)
+plain
+mov eax, 0x9fe1a      → eax = 654,874
+imul eax, 0x4         → eax = 654,874 × 4 = 2,619,496
+add eax, 0x1f5        → eax = 2,619,496 + 501 = 2,619,997
+→ eax = 2,619,997
+Type C: Conditional (disassembler-dump0_d)
+plain
+cmp [rbp-0x4], 0x2710     → compare 654,874 with 10,000
+jle <main+37>             → jump if ≤ (FALSE, 654874 > 10000)
+sub [rbp-0x4], 0x65       → execute this: 654,874 - 101 = 654,773
+jmp <main+41>             → skip the add
+mov eax, [rbp-0x4]        → eax = 654,773
+→ eax = 654,773
+Type D: Loop (debugger0_b)
+plain
+result = 0x1e0da (123,098)
+limit = 0x25f (607)
+counter = 0
+
+while (counter < limit):
+    result = result + counter
+    counter = counter + 1
+
+return result
+Loop adds: 0 + 1 + 2 + ... + 606 = 183,921
+Final: 123,098 + 183,921 = 307,019
+→ eax = 307,019
+5. GDB Commands
+Table
+Command	What It Does
+gdb filename	Open file in GDB
+set disassembly-flavor intel	Use Intel syntax
+disassemble main	Show main function assembly
+break *main+15	Set breakpoint at address
+run	Execute program
+stepi or si	Execute 1 instruction
+continue or c	Continue to next breakpoint
+info registers eax	Show eax value
+print/d $eax	Print eax in decimal
+print/x $eax	Print eax in hex
+quit	Exit GDB
+6. Quick GDB Session Template
+bash
+# Terminal
+gdb debugger0_a
+gdb
+# Inside GDB
+set disassembly-flavor intel
+disassemble main
+
+# If simple: just read the mov eax value
+# If complex: set breakpoint and run
+break *main+56
+run
+info registers eax
+quit
+7. Flag Format
+plain
+picoCTF{decimal_value}
+Always decimal, never hex!
+8. Loop Detection Checklist
+Look for this pattern:
+plain
+1. Initialize variables
+2. jmp forward (to condition check)
+3. ← LOOP BODY (work + increment)
+4. Condition check: cmp + conditional jump back
+5. After loop: mov eax, result
+9. Sanity Check Tips
+Table
+Check	Example
+0xA0000 ≈ 655,360	0x9fe1a ≈ 654,874 ✓
+0x1000 = 4,096	0x2710 = 10,000 ✓
+0x200 = 512	0x25f = 607 ✓
+n numbers × avg value ≈ sum	607 × 303 ≈ 183,921 ✓
+10. All Solved Flags
+Table
+Challenge	Flag
+disassembler-dump0_b	picoCTF{654874}
+disassembler-dump0_c	picoCTF{2619997}
+disassembler-dump0_d	picoCTF{654773}
+debugger0_a	picoCTF{549698}
+debugger0_b	picoCTF{307019}
+┌──(white㉿white)-[~/white/Music/PICO-CTF/files]
+└─$ gdb debugger0_a 
+GNU gdb (Debian 17.2-1) 17.2
+Copyright (C) 2025 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<https://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from debugger0_a...
+(No debugging symbols found in debugger0_a)
+(gdb) apropos word 
+if -- Execute nested commands once IF the conditional expression is non zero.
+maintenance info sections -- List the BFD sections of the exec and core files.
+set style disassembler mnemonic -- Disassembler mnemonic display styling.
+show style disassembler mnemonic -- Disassembler mnemonic display styling.
+while -- Execute nested commands WHILE the conditional expression is non zero.
+x -- Examine memory: x/FMT ADDRESS.
+(gdb) wc
+❌️ Undefined command: "wc".  Try "help".
+(gdb)  set disassembly-flavor intel
+(gdb) disassemble main
+Dump of assembler code for function main:
+   0x0000000000001129 <+0>:     endbr64
+   0x000000000000112d <+4>:     push   rbp
+   0x000000000000112e <+5>:     mov    rbp,rsp
+   0x0000000000001131 <+8>:     mov    DWORD PTR [rbp-0x4],edi
+   0x0000000000001134 <+11>:    mov    QWORD PTR [rbp-0x10],rsi
+   0x0000000000001138 <+15>:    mov    eax,0x86342
+   0x000000000000113d <+20>:    pop    rbp
+   0x000000000000113e <+21>:    ret
+End of assembler dump.
+(gdb) print/d 0x86342
+$1 = 549698
+(gdb) exit
+                                                                                                                                                    
+┌──(white㉿white)-[~/white/Music/PICO-CTF/files]
+└─$ gdb debugger0_b
+GNU gdb (Debian 17.2-1) 17.2
+Copyright (C) 2025 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<https://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from debugger0_b...
+(No debugging symbols found in debugger0_b)
+(gdb) set disassembly-flavor intel
+(gdb)  disassemble main
+Dump of assembler code for function main:
+   0x0000000000401106 <+0>:     endbr64
+   0x000000000040110a <+4>:     push   rbp
+   0x000000000040110b <+5>:     mov    rbp,rsp
+   0x000000000040110e <+8>:     mov    DWORD PTR [rbp-0x14],edi
+   0x0000000000401111 <+11>:    mov    QWORD PTR [rbp-0x20],rsi
+   0x0000000000401115 <+15>:    mov    DWORD PTR [rbp-0x4],0x1e0da
+   0x000000000040111c <+22>:    mov    DWORD PTR [rbp-0xc],0x25f
+   0x0000000000401123 <+29>:    mov    DWORD PTR [rbp-0x8],0x0
+   0x000000000040112a <+36>:    jmp    0x401136 <main+48>
+   0x000000000040112c <+38>:    mov    eax,DWORD PTR [rbp-0x8]
+   0x000000000040112f <+41>:    add    DWORD PTR [rbp-0x4],eax
+   0x0000000000401132 <+44>:    add    DWORD PTR [rbp-0x8],0x1
+   0x0000000000401136 <+48>:    mov    eax,DWORD PTR [rbp-0x8]
+   0x0000000000401139 <+51>:    cmp    eax,DWORD PTR [rbp-0xc]
+   0x000000000040113c <+54>:    jl     0x40112c <main+38>
+   0x000000000040113e <+56>:    mov    eax,DWORD PTR [rbp-0x4]
+   0x0000000000401141 <+59>:    pop    rbp
+   0x0000000000401142 <+60>:    ret
+End of assembler dump.
+(gdb) break *main+56
+Breakpoint 1 at 0x40113e
+(gdb) break *0x40113e
+Note: breakpoint 1 also set at pc 0x40113e.
+Breakpoint 2 at 0x40113e
+(gdb) run
+Starting program: /home/white/white/Music/PICO-CTF/files/debugger0_b 
+zsh:1: permission denied: /home/white/white/Music/PICO-CTF/files/debugger0_b
+❌️ During startup program exited with code 126.
+(gdb) info registers eax
+❌️ The program has no registers now.
+(gdb) print $eax
+❌️ No registers.
+(gdb) print/d $eax
+❌️ No registers.
+(gdb) $1 = 0x4af4b
+❌️ Undefined command: "$1".  Try "help".
+(gdb) print/d 0x4af4b
+$1 = 307019
+(gdb) 
