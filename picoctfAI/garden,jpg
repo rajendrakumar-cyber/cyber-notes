@@ -1,0 +1,24 @@
+230550: a2bb bdac 9687 98e4 d3b2 e87f ffd9 4865  ..............He
+00230560: 7265 2069 7320 6120 666c 6167 3a20 7069  re is a flag: pi
+00230570: 636f 4354 467b 6d6f 7265 5f74 6861 6e5f  coCTF{more_than_
+00230580: 6d33 3374 735f 7468 655f 3379 3361 3633  m33ts_the_3y3a63
+00230590: 6235 6232 377d 0a                        b5b27}.
+                                                                                                                                                    
+┌──(white㉿white)-[~/white/Music/PICO-CTF]
+└─$  re is a flag: pi
+00230570: 636f 4354 467b 6d6f 7265 5f74 6861 6e5f  coCTF{more_than_
+00230580: 6d33 3374 735f 7468 655f 3379 3361 3633  m33ts_the_3y3a63
+00230590: 6235 6232 377d 0a                        b5b27}.
+Command 're' not found, but can be installed with:
+sudo apt install re
+Do you want to install it? (N/y)^C
+                                                                                                                                                    
+┌──(white㉿white)-[~/white/Music/PICO-CTF]
+└─$ coCTF{more_than_
+00230580: 6d33 3374 735f 7468 655f 3379 3361 3633  m33ts_the_3y3a63b5b27}.  
+Command 're' not found, but can be installed with:
+
+                                                                                                                                                    
+┌──(white㉿white)-[~/white/Music/PICO-CTF]
+└─$ picoCTF{more_than_m33ts_the_3y3a63b5b27}
+picoCTF{more_than_m33ts_the_3y3a63b5b27}: command not found
