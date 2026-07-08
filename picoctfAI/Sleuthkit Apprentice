@@ -1,0 +1,207 @@
+──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ srch_strings dds1-alpine.flag.img | grep picoCTF
+  SAY picoCTF{f0r3ns1c4t0r_n30phyt3_5e56e786}
+(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ fls -o 2048 dds2-alpine.flag.img | grep down-at-the-bottom
+                                                                                                                                                    
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ icat -o 2048 dds2-alpine.flag.img 1234 > flag.txt
+cat flag.txt
+                                                                                                                                                    
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ fls -o 2048 dds2-alpine.flag.img                          
+d/d 26417:      home
+d/d 11: lost+found
+r/r 12: .dockerenv
+d/d 20321:      bin
+d/d 4065:       boot
+d/d 6097:       dev
+d/d 2033:       etc
+d/d 8129:       lib
+d/d 14225:      media
+d/d 16257:      mnt
+d/d 18289:      opt
+d/d 16258:      proc
+d/d 18290:      root
+d/d 16259:      run
+d/d 18292:      sbin
+d/d 12222:      srv
+d/d 16260:      sys
+d/d 18369:      tmp
+d/d 12223:      usr
+d/d 14229:      var
+V/V 32513:      $OrphanFiles
+                                                                                                                                                    
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ # Check home directory
+fls -o 2048 dds2-alpine.flag.img 26417
+
+# Check root directory
+fls -o 2048 dds2-alpine.flag.img 18290
+
+# Check tmp directory
+fls -o 2048 dds2-alpine.flag.img 18369
+
+# Check var directory
+fls -o 2048 dds2-alpine.flag.img 14229
+r/r 18291:      down-at-the-bottom.txt
+d/d 14230:      cache
+d/d 14235:      empty
+d/d 14236:      lib
+d/d 14240:      local
+d/d 14241:      lock
+d/d 14243:      log
+d/d 14244:      opt
+l/l 14245:      run
+d/d 14246:      spool
+d/d 14249:      tmp
+                                                                                                                                                    
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ icat -o 2048 dds2-alpine.flag.img 18291
+   _     _     _     _     _     _     _     _     _     _     _     _     _  
+  / \   / \   / \   / \   / \   / \   / \   / \   / \   / \   / \   / \   / \ 
+ ( p ) ( i ) ( c ) ( o ) ( C ) ( T ) ( F ) ( { ) ( f ) ( 0 ) ( r ) ( 3 ) ( n )
+  \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/ 
+   _     _     _     _     _     _     _     _     _     _     _     _     _  
+  / \   / \   / \   / \   / \   / \   / \   / \   / \   / \   / \   / \   / \ 
+ ( s ) ( 1 ) ( c ) ( 4 ) ( t ) ( 0 ) ( r ) ( _ ) ( n ) ( 0 ) ( v ) ( 1 ) ( c )
+  \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/ 
+   _     _     _     _     _     _     _     _     _     _     _  
+  / \   / \   / \   / \   / \   / \   / \   / \   / \   / \   / \ 
+ ( 3 ) ( _ ) ( 4 ) ( b ) ( d ) ( 7 ) ( 2 ) ( 1 ) ( f ) ( 2 ) ( } )
+  \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/ 
+                                                                                                                                                    
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ icat -o 2048 dds2-alpine.flag.img 18291 > flag.txt
+cat flag.txt
+   _     _     _     _     _     _     _     _     _     _     _     _     _  
+  / \   / \   / \   / \   / \   / \   / \   / \   / \   / \   / \   / \   / \ 
+ ( p ) ( i ) ( c ) ( o ) ( C ) ( T ) ( F ) ( { ) ( f ) ( 0 ) ( r ) ( 3 ) ( n )
+  \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/ 
+   _     _     _     _     _     _     _     _     _     _     _     _     _  
+  / \   / \   / \   / \   / \   / \   / \   / \   / \   / \   / \   / \   / \ 
+ ( s ) ( 1 ) ( c ) ( 4 ) ( t ) ( 0 ) ( r ) ( _ ) ( n ) ( 0 ) ( v ) ( 1 ) ( c )
+  \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/ 
+   _     _     _     _     _     _     _     _     _     _     _  
+  / \   / \   / \   / \   / \   / \   / \   / \   / \   / \   / \ 
+ ( 3 ) ( _ ) ( 4 ) ( b ) ( d ) ( 7 ) ( 2 ) ( 1 ) ( f ) ( 2 ) ( } )
+  \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/   \_/ 
+                                                                                                                                                    
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ icat -o 2048 dds2-alpine.flag.img 18291           
+ ──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ mmls disk.flag.img 
+DOS Partition Table
+Offset Sector: 0
+Units are in 512-byte sectors
+
+      Slot      Start        End          Length       Description
+000:  Meta      0000000000   0000000000   0000000001   Primary Table (#0)
+001:  -------   0000000000   0000002047   0000002048   Unallocated
+002:  000:000   0000002048   0000206847   0000204800   Linux (0x83)
+003:  000:001   0000206848   0000360447   0000153600   Linux Swap / Solaris x86 (0x82)
+004:  000:002   0000360448   0000614399   0000253952   Linux (0x83)
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ fls -o 2048 disk.flag.img -a
+d/d 2:  .
+d/d 2:  ..
+d/d 11: lost+found
+r/r 12: ldlinux.sys
+r/r 13: ldlinux.c32
+r/r 15: config-virt
+r/r 16: vmlinuz-virt
+r/r 17: initramfs-virt
+l/l 18: boot
+r/r 20: libutil.c32
+r/r 19: extlinux.conf
+r/r 21: libcom32.c32
+r/r 22: mboot.c32
+r/r 23: menu.c32
+r/r 14: System.map-virt
+r/r 24: vesamenu.c32
+V/V 25585:      $OrphanFiles
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ fls -o 2048 disk.flag.img 25585
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ tail -c 50000 disk.flag.img | strings | grep -i pico
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ binwalk -e disk.flag.img
+
+DECIMAL       HEXADECIMAL     DESCRIPTION
+--------------------------------------------------------------------------------
+1048576       0x100000        Linux EXT filesystem, blocks count: 102400, image size: 104857600, rev 1.0, ext4 filesystem data, UUID=0fcf6c07-4376-4be0-b7da-e7b455395539
+184549376     0xB000000       Linux EXT filesystem, blocks count: 126976, image size: 130023424, rev 1.0, ext4 filesystem data, UUID=55c2d6cb-32d6-4b22-b398-28f036413641
+
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ binwalk -e disk.flag.img
+
+DECIMAL       HEXADECIMAL     DESCRIPTION
+--------------------------------------------------------------------------------
+1048576       0x100000        Linux EXT filesystem, blocks count: 102400, image size: 104857600, rev 1.0, ext4 filesystem data, UUID=0fcf6c07-4376-4be0-b7da-e7b455395539
+184549376     0xB000000       Linux EXT filesystem, blocks count: 126976, image size: 130023424, rev 1.0, ext4 filesystem data, UUID=55c2d6cb-32d6-4b22-b398-28f036413641
+
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ strings disk.flag.img | grep -i "flag{"
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ fls -o 360448 disk.flag.img                         
+d/d 451:        home
+d/d 11: lost+found
+d/d 12: boot
+d/d 1985:       etc
+d/d 1986:       proc
+d/d 1987:       dev
+d/d 1988:       tmp
+d/d 1989:       lib
+d/d 1990:       var
+d/d 3969:       usr
+d/d 3970:       bin
+d/d 1991:       sbin
+d/d 1992:       media
+d/d 1993:       mnt
+d/d 1994:       opt
+d/d 1995:       root
+d/d 1996:       run
+d/d 1997:       srv
+d/d 1998:       sys
+d/d 2358:       swap
+V/V 31745:      $OrphanFiles
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ fls -o 360448 disk.flag.img 1998
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ fls -o 360448 disk.flag.img 1988
+d/d 3978:       .ICE-unix
+d/d 3979:       .X11-unix
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ fls -o 360448 disk.flag.img 1995
+r/r 2363:       .ash_history
+d/d 3981:       my_folder
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ fls -o 360448 disk.flag.img 451 
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ fls -o 360448 disk.flag.img | grep -i flag
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ fls -o 360448 disk.flag.img 3981
+r/r * 2082(realloc):    flag.txt
+r/r 2371:       flag.uni.txt
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ icat -o 360448 disk.flag.img 2371
+icat -o 360448 disk.flag.img 2082
+picoCTF{by73_5urf3r_adac6cb4}
+            3.449677            13.056403
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ 
+  _     _     _ 
