@@ -1,0 +1,90 @@
+┌──(white㉿white)-[~/white/Music/PICO-CTF/home]
+└─$ file image.jpg flag.enc
+image.jpg: JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, comment: "2d2d2d2d2d424547494e2050524956415445204b45592d2d2d2d2d0a4d494945764149424144414e42676b71686b6947397730424151454641415343424b59", baseline, precision 8, 512x512, components 3
+flag.enc:  data
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/home]
+└─$ echo 2d2d2d2d2d424547494e2050524956415445204b45592d2d2d2d2d0a4d494945766749424144414e42676b71686b6947397730424151454641415343424b67 | xxd -r -p
+-----BEGIN PRIVATE KEY-----
+MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKg                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/home]
+└─$ openssl pkeyutl -decrypt -inkey private_key.pem -in flag.enc -out flag.txt
+
+Could not open file or uri for loading private key from private_key.pem: No such file or directory
+pkeyutl: Error loading key
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/home]
+└─$ cat flag.txt          
+cat: flag.txt: No such file or directory
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/home]
+└─$ echo " 2d2d2d2d2d424547494e2050524956415445204b45592d2d2d2d2d0a4d494945766749424144414e42676b71686b6947397730424151454641415343424b67" | xxd -r -p > private_key.pem
+ strings image.jpg | grep -A 5 -B 5 "BEGIN PRIVATE KEY"
+ExifTool Version Number         : 13.55
+File Name                       : image.jpg
+Directory                       : .
+File Size                       : 21 kB
+File Modification Date/Time     : 2026:07:20 14:51:24+05:30
+File Access Date/Time           : 2026:07:20 14:51:29+05:30
+File Inode Change Date/Time     : 2026:07:20 14:51:24+05:30
+File Permissions                : -rw-rw-r--
+File Type                       : JPEG
+File Type Extension             : jpg
+MIME Type                       : image/jpeg
+JFIF Version                    : 1.01
+Resolution Unit                 : None
+X Resolution                    : 1
+Y Resolution                    : 1
+Comment                         : 2d2d2d2d2d424547494e2050524956415445204b45592d2d2d2d2d0a4d494945764149424144414e42676b71686b6947397730424151454641415343424b59776767536941674541416f4942415144524437397174736a377751714b0a41584b2f634f36456c43664c48303071374544316d56736f6247416e5a6c3036304f596275616a5a76666d45566b6c515466363330326f6c3170586b794e524b0a57594b7531323145447971475a58676f6a704b43747a2b77525a4d797433756e6349424f49464f4e63374745774e33725545386b42745148736c4a4331724d340a74355953375330784d70665a7a552f784c49756d55474d45412f55372f62566a6e705a6b56636c426a4c6d384d676579436b434b4632776745514f50734b4b660a3531516a4739413168784549775866596241437955742f41366559614e76683541416851396868674f676d50476d6a37394f4c64363774373161464e2f6b594c0a335a4f47694b4f6368426347776349364b78306a33614f5a7975394f3331646d784d6a654d76522b345441426f64373068352b5467642b344c63386e613155630a524c76625235764641674d4241414543676745414652556964342b4253796f58647631595a6766736463412f4678504d4132555a302b716f4c375a6d4a2f4d420a75646d784b75435a4c345168386e2b46477930535839565a49674732306743537341444131674c78694f69436f4655425067334b707058325054393237616c6c0a4e656835642b6434705934694f38483758797956486f7631752b5432754c6a5145417372666a4d65324a52436a6674506359484e66334d6832526a52465542380a35737966724370482b446243734f7064527a774b726757544e6d377261653238305470536e4545674856524b6d7234785a36336a7a37686a323738443453784a0a7169423143695531334c52433559395072792f716e77664e41663844317879696f6b4454734b492f786f6f73545536514958794b656c305039724233576a76530a475a565354674161794d70364c4e514b6631303674516f315573462f6331533366417262566e6f5851514b42675144664f647472686e3176586b4856683165660a74546f6b434d5566712f42444b44433337706564465158722f384865576a6f693650374c304f536a62486352376c2f6e497445504138704870434a6a6e4267620a6332387247502f365830707855794c3770473449566c394f73537770656544656e617a4d667566464735484330775652702b4e38356f42692b564e65313579750a664249343237757547706171457837653032477551656c6a45514b4267514476775947494d41454569517a68576b54686f5a5259736d3137534c4e6f6a7836700a736c416c764d7031776a386a64534752725546307031483573306268426954345941356b4a6578414e3744774e68634f4c7149372b566f522f34652f442f4c6a0a3447306243455247684a3639347a6c68757846756f5162364d73417a3275615a4d63422b46416b6d5470345753317a666462675076307246464e4c6e734e76370a6975712f4a63344664514b4267413147436e63645779345a49373848756a306a384a346436324c547659697778687a5a3069676b444f4d597054574d6c664a6e0a656d63794e375a454239794947536e4d567a5157584a766639612b496f364a575065454a4c6f64377a5268714169574768496834596c68796a706130795a74540a4d75684344355158374a58794b466e5071755a4e616f7234476d34455569764a387564776f58746231324f726d5756556d6e56624d2f3652416f4741546548560a4778464538313031777571593335616d597432724e4e59622b5959735673476d7957743364534e6863546f32616d55576b7a64624b4c7230396c6f526e6d464e0a713369714d76346b53784f3344354e5566686a31436b32776f66386a5471547a72456c574c4859655074375749416f746b6e74616b6548306a364f334c754a370a666a6b78383743734a392f5a546e6d6d4465393838574a66564959654836737a734634756535554367594152496e7a514e71475a69306c3253385232506f41340a3057515467474a4539434b316c686a537869374a68523232626878585a4a746c5163556276436c727147586f55353249706c325a563933355a3167676877522f0a5169596b454b7a65534d6e56564a6d377a454a7159424a5435644139655754754135794448615676682f683369366159703243464f4c4169526c6437723653760a4e31706868315a457235792b624d55656652524c4e673d3d0a2d2d2d2d2d454e442050524956415445204b45592d2d2d2d2d0a
+Image Width                     : 512
+Image Height                    : 512
+Encoding Process                : Baseline DCT, Huffman coding
+Bits Per Sample                 : 8
+Color Components                : 3
+Y Cb Cr Sub Sampling            : YCbCr4:2:0 (2 2)
+Image Size                      : 512x512
+Megapixels                      : 0.262
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/home]
+└─$ # Extract the hex from the Comment field and convert to private key
+exiftool -Comment -s3 image.jpg | xxd -r -p > private_key.pem
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/home]
+└─$ cat private_key.pem
+-----BEGIN PRIVATE KEY-----
+MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDRD79qtsj7wQqK
+AXK/cO6ElCfLH00q7ED1mVsobGAnZl060OYbuajZvfmEVklQTf6302ol1pXkyNRK
+WYKu121EDyqGZXgojpKCtz+wRZMyt3uncIBOIFONc7GEwN3rUE8kBtQHslJC1rM4
+t5YS7S0xMpfZzU/xLIumUGMEA/U7/bVjnpZkVclBjLm8MgeyCkCKF2wgEQOPsKKf
+51QjG9A1hxEIwXfYbACyUt/A6eYaNvh5AAhQ9hhgOgmPGmj79OLd67t71aFN/kYL
+3ZOGiKOchBcGwcI6Kx0j3aOZyu9O31dmxMjeMvR+4TABod70h5+Tgd+4Lc8na1Uc
+RLvbR5vFAgMBAAECggEAFRUid4+BSyoXdv1YZgfsdcA/FxPMA2UZ0+qoL7ZmJ/MB
+udmxKuCZL4Qh8n+FGy0SX9VZIgG20gCSsADA1gLxiOiCoFUBPg3KppX2PT927all
+Neh5d+d4pY4iO8H7XyyVHov1u+T2uLjQEAsrfjMe2JRCjftPcYHNf3Mh2RjRFUB8
+5syfrCpH+DbCsOpdRzwKrgWTNm7rae280TpSnEEgHVRKmr4xZ63jz7hj278D4SxJ
+qiB1CiU13LRC5Y9Pry/qnwfNAf8D1xyiokDTsKI/xoosTU6QIXyKel0P9rB3WjvS
+GZVSTgAayMp6LNQKf106tQo1UsF/c1S3fArbVnoXQQKBgQDfOdtrhn1vXkHVh1ef
+tTokCMUfq/BDKDC37pedFQXr/8HeWjoi6P7L0OSjbHcR7l/nItEPA8pHpCJjnBgb
+c28rGP/6X0pxUyL7pG4IVl9OsSwpeeDenazMfufFG5HC0wVRp+N85oBi+VNe15yu
+fBI427uuGpaqEx7e02GuQeljEQKBgQDvwYGIMAEEiQzhWkThoZRYsm17SLNojx6p
+slAlvMp1wj8jdSGRrUF0p1H5s0bhBiT4YA5kJexAN7DwNhcOLqI7+VoR/4e/D/Lj
+4G0bCERGhJ694zlhuxFuoQb6MsAz2uaZMcB+FAkmTp4WS1zfdbgPv0rFFNLnsNv7
+iuq/Jc4FdQKBgA1GCncdWy4ZI78Huj0j8J4d62LTvYiwxhzZ0igkDOMYpTWMlfJn
+emcyN7ZEB9yIGSnMVzQWXJvf9a+Io6JWPeEJLod7zRhqAiWGhIh4Ylhyjpa0yZtT
+MuhCD5QX7JXyKFnPquZNaor4Gm4EUivJ8udwoXtb12OrmWVUmnVbM/6RAoGATeHV
+GxFE8101wuqY35amYt2rNNYb+YYsVsGmyWt3dSNhcTo2amUWkzdbKLr09loRnmFN
+q3iqMv4kSxO3D5NUfhj1Ck2wof8jTqTzrElWLHYePt7WIAotkntakeH0j6O3LuJ7
+fjkx87CsJ9/ZTnmmDe988WJfVIYeH6szsF4ue5UCgYARInzQNqGZi0l2S8R2PoA4
+0WQTgGJE9CK1lhjSxi7JhR22bhxXZJtlQcUbvClrqGXoU52Ipl2ZV935Z1gghwR/
+QiYkEKzeSMnVVJm7zEJqYBJT5dA9eWTuA5yDHaVvh/h3i6aYp2CFOLAiRld7r6Sv
+N1phh1ZEr5y+bMUefRRLNg==
+-----END PRIVATE KEY-----
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/home]
+└─$ openssl pkeyutl -decrypt -inkey private_key.pem -in flag.enc -out flag.txt
+cat flag.txt
+picoCTF{rs4_k3y_1n_1mg_0a64c2f9}
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/home]
+└─$ 
+         
