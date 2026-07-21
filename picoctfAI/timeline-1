@@ -1,0 +1,99 @@
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ gunzip partition4.img.gz                            
+gzip: partition4.img already exists; do you wish to overwrite (y or n)? y
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ file partition4.img                      
+partition4.img: Linux rev 1.0 ext4 filesystem data, UUID=7a00e9da-98f8-4f0f-b257-95edf422d902 (extents) (64bit) (large files) (huge files)
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ fls -r -m "/" partition4.img > body.txt
+
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ mactime -b bodyfile.txt -d > timeline.csv
+Old package separator "'" deprecated at /usr/bin/mactime line 154.
+Old package separator "'" deprecated at /usr/bin/mactime line 167.
+                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ tail timeline.csv tail -n 20           
+==> timeline.csv <==
+Tue Dec 02 2025 02:12:13,3257,.a..,r/rrwxr-xr-x,0,0,32522,"/etc/init.d/fsck"
+Tue Dec 02 2025 02:12:13,3304,.a..,r/rrwxr-xr-x,0,0,32525,"/etc/init.d/hwclock"
+Tue Dec 02 2025 02:12:13,820,.a..,r/rrwxr-xr-x,0,0,32526,"/etc/init.d/hwdrivers"
+Tue Dec 02 2025 02:12:13,842,.a..,r/rrwxr-xr-x,0,0,32527,"/etc/init.d/killprocs"
+Tue Dec 02 2025 02:12:13,1664,.a..,r/rrwxr-xr-x,0,0,32533,"/etc/init.d/modules"
+Tue Dec 02 2025 02:12:13,1564,.a..,r/rrwxr-xr-x,0,0,32534,"/etc/init.d/mount-ro"
+Tue Dec 02 2025 02:12:13,1430,.a..,r/rrwxr-xr-x,0,0,32542,"/etc/init.d/root"
+Tue Dec 02 2025 02:12:13,1895,.a..,r/rrwxr-xr-x,0,0,32547,"/etc/init.d/savecache"
+Tue Dec 02 2025 02:12:13,3297,.a..,r/rrwxr-xr-x,0,0,32553,"/etc/init.d/sysfs"
+Tue Dec 02 2025 02:12:13,745,.a..,r/rrwxr-xr-x,0,0,32563,"/etc/init.d/mdev"
+Tue Dec 02 2025 02:12:13,1024,macb,d/drwxr-xr-x,0,0,4946,"/lib/rc/cache"
+Tue Dec 02 2025 02:12:13,11,..cb,r/rrw-r--r--,0,0,4947,"/lib/rc/cache/depconfig"
+Tue Dec 02 2025 02:12:13,18082,..cb,r/rrw-r--r--,0,0,4948,"/lib/rc/cache/deptree"
+Tue Dec 02 2025 02:12:13,8,macb,r/rrw-r--r--,0,0,4949,"/lib/rc/cache/softlevel"
+Tue Dec 02 2025 02:12:13,12,.a..,l/lrwxrwxrwx,0,0,64874,"/usr/bin/pgrep -> /bin/busybox"
+Tue Dec 02 2025 02:12:13,1024,m.c.,d/drwx------,0,0,65277,"/var/lib/seedrng"
+Tue Dec 02 2025 02:12:13,32,macb,r/rr--------,0,0,65278,"/var/lib/seedrng/seed.credit"
+Tue Dec 02 2025 02:12:13,2039,m.c.,r/rrw-r-----,0,10,65279,"/var/log/messages"
+Tue Dec 02 2025 02:12:13,12,.a..,l/lrwxrwxrwx,0,0,66,"/sbin/halt -> /bin/busybox"
+Tue Dec 02 2025 02:12:13,12,.a..,l/lrwxrwxrwx,0,0,68,"/sbin/hwclock -> /bin/busybox"
+tail: cannot open 'tail' for reading: No such file or directory
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ tail timeline.csv tail -n 20 | grep -i mcab
+tail: cannot open 'tail' for reading: No such file or directory
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ tail timeline.csv tail -n 20 | grep -i macb
+tail: cannot open 'tail' for reading: No such file or directory
+Tue Dec 02 2025 02:12:13,1024,macb,d/drwxr-xr-x,0,0,4946,"/lib/rc/cache"
+Tue Dec 02 2025 02:12:13,8,macb,r/rrw-r--r--,0,0,4949,"/lib/rc/cache/softlevel"
+Tue Dec 02 2025 02:12:13,32,macb,r/rr--------,0,0,65278,"/var/lib/seedrng/seed.credit"
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ tail timeline.csv tail -n 100 | grep -i macb
+tail: cannot open 'tail' for reading: No such file or directory
+Tue Dec 02 2025 02:11:04,0,macb,r/rrw-r-----,0,10,65280,"/var/log/acpid.log"
+Tue Dec 02 2025 02:12:12,9,macb,r/rrw-------,0,0,4944,"/root/.ash_history"
+Tue Dec 02 2025 02:12:13,1024,macb,d/drwxr-xr-x,0,0,4946,"/lib/rc/cache"
+Tue Dec 02 2025 02:12:13,8,macb,r/rrw-r--r--,0,0,4949,"/lib/rc/cache/softlevel"
+Tue Dec 02 2025 02:12:13,32,macb,r/rr--------,0,0,65278,"/var/lib/seedrng/seed.credit"
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ timeline.csv tail -n 100 | grep -i macb 
+timeline.csv: command not found
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ tail timeline.csv  -n 20 | grep -i macb 
+Tue Dec 02 2025 02:12:13,1024,macb,d/drwxr-xr-x,0,0,4946,"/lib/rc/cache"
+Tue Dec 02 2025 02:12:13,8,macb,r/rrw-r--r--,0,0,4949,"/lib/rc/cache/softlevel"
+Tue Dec 02 2025 02:12:13,32,macb,r/rr--------,0,0,65278,"/var/lib/seedrng/seed.credit"
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ tail timeline.csv  -n 100 | grep -i macb
+Tue Dec 02 2025 02:11:04,0,macb,r/rrw-r-----,0,10,65280,"/var/log/acpid.log"
+Tue Dec 02 2025 02:12:12,9,macb,r/rrw-------,0,0,4944,"/root/.ash_history"
+Tue Dec 02 2025 02:12:13,1024,macb,d/drwxr-xr-x,0,0,4946,"/lib/rc/cache"
+Tue Dec 02 2025 02:12:13,8,macb,r/rrw-r--r--,0,0,4949,"/lib/rc/cache/softlevel"
+Tue Dec 02 2025 02:12:13,32,macb,r/rr--------,0,0,65278,"/var/lib/seedrng/seed.credit"
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ fls -r partition4.img | grep chat   
++ r/r 32716:    chat
++ l/l 37:       chattr
++++++ r/r 65881:        chatito.vim
++++++ r/r 66236:        chatito.vim
++++++ r/r 66636:        chatito.vim
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ # Replace <inode_number> with the actual inode found
+icat partition4.img <inode_number> > chat_content.txt
+zsh: parse error near `>'
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ icat partition4.img 32716 | base64 -d   
+573417h13r_7h4n_7h3_1457_58527bb222
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ 
