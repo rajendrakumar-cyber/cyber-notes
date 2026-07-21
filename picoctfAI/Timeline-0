@@ -1,0 +1,48 @@
+─(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ fdisk -lpartition4.img
+fdisk: invalid option -- 'p'
+Try 'fdisk --help' for more information.
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ fdisk -l partition4.img
+Disk partition4.img: 467 MiB, 489684992 bytes, 956416 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ fls -r -m / partition4.img > bodyfile.txt
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ mactime -b bodyfile.txt > timeline.txt
+Old package separator "'" deprecated at /usr/bin/mactime line 154.
+Old package separator "'" deprecated at /usr/bin/mactime line 167.
+──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ grep -E "Jan|Feb|Mar|Apr" timeline.txt
+Tue Jan 01 1985 22:30:00       41 macb r/rrw-r--r-- 0        0        4945     /bin/bcab
+Mon Jan 23 2023 19:09:54     9965 m... r/rrwxr-xr-x 0        0        65059    /usr/bin/lddtree
+Tue Apr 11 2023 21:31:21     2668 ma.. r/rrwxr-xr-x 0        0        65089    /usr/bin/amuFormat.sh
+Mon Feb 19 2024 02:54:31    66416 m... r/rrwxr-xr-x 0        0        180      /sbin/ifupdown
+Wed Mar 27 2024 13:25:50   718552 m... r/rrwxr-xr-x 0        0        65058    /usr/lib/libzstd.so.1.5.6
+Mon Apr 08 2024 11:38:20    54976 m... r/rrwxr-xr-x 0        0        181      /lib/librc.so.1
+Thu Apr 11 2024 00:12:52   464088 m... r/rrwxr-xr-x 0        0        109      /lib/libcryptsetup.so.12.10.0
+Fri Apr 12 2024 13:10:52   100208 m... r/rrwxr-xr-x 0        0        307      /lib/libz.so.1.3.1
+Fri Apr 12 2024 13:12:56    83904 m... r/rrwxr-xr-x 0        0        135      /lib/libkmod.so.2.4.2
+Thu Feb 13 2025 23:29:41   649832 m... r/rrwxr-xr-x 0        0        20       /lib/ld-musl-x86_64.so.1
+Fri Feb 21 2025 13:14:09   620105 ma.. r/rrw-r--r-- 0        0        32709    /etc/ssh/moduli
+Fri Apr 04 2025 13:49:29   227032 m... r/rrwxr-xr-x 0        0        65056    /usr/lib/liblzma.so.5.6.2
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ icat partition4.img 4945 > bcab
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ strings bcab                          
+NzFtMzExbjNfMHU3MTEzcl9oM3JfNDNhMmU3YWYK
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ nproc       
+8
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ echo "NzFtMzExbjNfMHU3MTEzcl9oM3JfNDNhMmU3YWYK" | base64 -d
+71m311n3_0u7113r_h3r_43a2e7af
