@@ -1,0 +1,121 @@
+                                                                                                                                                                     
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ file disk.img  
+disk.img: DOS/MBR boot sector; partition 1 : ID=0x83, active, start-CHS (0x2,0,33), end-CHS (0x263,8,56), startsector 2048, 614400 sectors; partition 2 : ID=0x82, start-CHS (0x263,8,57), end-CHS (0x3ff,15,63), startsector 616448, 524288 sectors; partition 3 : ID=0x83, start-CHS (0x3ff,15,63), end-CHS (0x3ff,15,63), startsector 1140736, 956416 sectors
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ fdisk -l disk.img      
+Disk disk.img: 1 GiB, 1073741824 bytes, 2097152 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x610b63c2
+
+Device     Boot   Start     End Sectors  Size Id Type
+disk.img1  *       2048  616447  614400  300M 83 Linux
+disk.img2        616448 1140735  524288  256M 82 Linux swap / Solaris
+disk.img3       1140736 2097151  956416  467M 83 Linux
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ mkdir /mnt/p1
+mkdir: cannot create directory ‘/mnt/p1’: Permission denied
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ mkdir /mnt/  
+mkdir: cannot create directory ‘/mnt/’: File exists
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ mkdir /mnt/p1/
+mkdir: cannot create directory ‘/mnt/p1/’: Permission denied
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ sudo mkdir /mnt/p1/
+[sudo] password for white: 
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ mount -o loop,offset=1048576 disk.img /mnt/p1
+
+mount: /mnt/p1: mount failed: Permission denied.
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ sudo mount -o loop,offset=1048576 disk.img /mnt/p1
+
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ ls /mnt/p1
+boot                  extlinux.conf  ldlinux.c32  libcom32.c32  lost+found  menu.c32                  vesamenu.c32
+config-6.6.116-0-lts  initramfs-lts  ldlinux.sys  libutil.c32   mboot.c32   System.map-6.6.116-0-lts  vmlinuz-lts
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ umount /mnt/p1
+umount: /mnt/p1: must be superuser to unmount.
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ sudo umount /mnt/p1
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ losetup -Pf --show disk.img
+losetup: cannot find an unused loop device: Permission denied
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ sudo losetup -Pf --show disk.img
+/dev/loop8
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ sudo mkdir /mnt/p3              
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ sudo mount /dev/loop0p3 /mnt/p3
+mount: /mnt/p3: fsconfig() failed: /dev/loop0p3: Can't lookup blockdev.
+       dmesg(1) may have more information after failed mount system call.
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ ls /mnt/p3                 
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ sudo mount /dev/loop8 /mnt/p3  
+mount: /mnt/p3: wrong fs type, bad option, bad superblock on /dev/loop8, missing codepage or helper program, or other error.
+       dmesg(1) may have more information after failed mount system call.
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ sudo mount /dev/loop8p3 /mnt/p3
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ ls /mnt/p3                     
+bin  boot  dev  etc  home  lib  lost+found  media  mnt  opt  proc  root  run  sbin  srv  swap  sys  tmp  usr  var
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ ls /mnt/p3/home
+ctf-player
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ ls /mnt/p3/home/ctf-player 
+Code
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ ls /mnt/p3/home/ctf-player/Code
+secrets
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ ls /mnt/p3/home/ctf-player/Code/secrets 
+note.txt
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ cat notes.txt                      
+cat: notes.txt: No such file or directory
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ ls /mnt/p3/home/ctf-player/Code/secrets/note.txt 
+/mnt/p3/home/ctf-player/Code/secrets/note.txt
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ git -C /mnt/p3/home/ctf-player/Code/secrets log
+commit 327681bb38cf467cec328eec9707b240e3e74ced (HEAD -> master)
+Author: ctf-player <ctf-player@example.com>
+Date:   Wed Nov 19 08:49:27 2025 +0000
+
+    Wrap this phrase in the flag format: g17_1n_7h3_d15k_041217d8
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ 
