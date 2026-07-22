@@ -1,0 +1,167 @@
+──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ file disk.img 
+disk.img: DOS/MBR boot sector; partition 1 : ID=0x83, active, start-CHS (0x2,0,33), end-CHS (0x263,8,56), startsector 2048, 614400 sectors; partition 2 : ID=0x82, start-CHS (0x263,8,57), end-CHS (0x3ff,15,63), startsector 616448, 524288 sectors; partition 3 : ID=0x83, start-CHS (0x3ff,15,63), end-CHS (0x3ff,15,63), startsector 1140736, 956416 sectors
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ fdisk -l disk.img 
+Disk disk.img: 1 GiB, 1073741824 bytes, 2097152 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x610b63c2
+
+Device     Boot   Start     End Sectors  Size Id Type
+disk.img1  *       2048  616447  614400  300M 83 Linux
+disk.img2        616448 1140735  524288  256M 82 Linux swap / Solaris
+disk.img3       1140736 2097151  956416  467M 83 Linux
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ /mnt/p3                   
+zsh: no such file or directory: /mnt/p3
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ ls /mnt/p3                              
+ls: cannot access '/mnt/p3': No such file or directory
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ sudo mkdir /mnt/p1/                          
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ sudo mount -o loop,offset=1048576 disk.img /mnt/p1
+
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ ls /mnt/p1                                        
+boot                  extlinux.conf  ldlinux.c32  libcom32.c32  lost+found  menu.c32                  vesamenu.c32
+config-6.6.116-0-lts  initramfs-lts  ldlinux.sys  libutil.c32   mboot.c32   System.map-6.6.116-0-lts  vmlinuz-lts
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ sudo umount /mnt/p1                               
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ sudo  losetup -Pf --show disk.img 
+
+/dev/loop8
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ sudo mkdir /mnt/p3                                
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ ls /mnt/p3        
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ sudo mount /dev/loop8p3 /mnt/p3 
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ ls /mnt/p3                      
+bin  boot  dev  etc  home  lib  lost+found  media  mnt  opt  proc  root  run  sbin  srv  swap  sys  tmp  usr  var
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ ls /mnt/p3/home/ctf-player/Code/secrets/
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ ls                                      
+1.py            confidential.pdf            disk.img              flag.txt                notes.md                               red.png            ukn_reality.jpg
+bcab            dds1-alpine.flag.img        disko-1.dd            garden.jpg              output                                 restored_flag.jpg  unknown.zip
+bodyfile.txt    dds2-alpine.flag.img        fixed.jpg             home                    output.txt                             restored.jpg       zlib_data.bin
+body.txt        decoded_file                _flag1.png.extracted  http_objects            partition4.img                         shark1.pcapng
+buildings.png   digits.bin                  flag2of2-final.pdf    img.jpg                 picoCTF_Sleuthkit_Disk_Flag_Notes.pdf  tftp_files
+cat.jpg         disk.flag.img               flag.jpg              logs.txt                picoCTF_Steganography_Notes.pdf        tftp.pcapng
+challenge.zip   _disk.flag.img-0.extracted  flag.png              myNetworkTraffic.pcap   picoCTF_TFTP_Steganography_Notes.pdf   timeline.csv
+compressed.bin  _disk.flag.img.extracted    _flag.png.extracted   network-dump.flag.pcap  pico.flag.png                          timeline.txt
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ ls /mnt/p3/home/ctf-player/Code/secrets 
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ ls /mnt/p3/home                        
+ctf-player
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ ls /mnt/p3/home/ctf-player             
+Code
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ ls /mnt/p3/home/ctf-player/Code        
+secrets
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ ls /mnt/p3/home/ctf-player/Code/secrets 
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$  git -C /mnt/p3/home/ctf-player/Code/secrets log
+commit 5fb8194539c770a830b8ba089a50778c07072b03 (HEAD -> master)
+Author: ctf-player <ctf-player@example.com>
+Date:   Wed Nov 19 09:20:05 2025 +0000
+
+    Remove flag
+
+commit 177789af0b300e043ea8f54ea57d6cee352291ae
+Author: ctf-player <ctf-player@example.com>
+Date:   Wed Nov 19 09:20:05 2025 +0000
+
+    Add flag
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ git checkout 177789af0b300e043ea8f54ea57d6cee352291ae
+fatal: unable to read tree (177789af0b300e043ea8f54ea57d6cee352291ae)
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/forencisis]
+└─$ cd //mnt/p3/home/ctf-player/Code/secrets
+                                                                                                                                                                       
+┌──(white㉿white)-[/mnt/…/home/ctf-player/Code/secrets]
+└─$ ls                                     
+                                                                                                                                                                       
+┌──(white㉿white)-[/mnt/…/home/ctf-player/Code/secrets]
+└─$ ls --la                                
+ls: unrecognized option '--la'
+Try 'ls --help' for more information.
+                                                                                                                                                                       
+┌──(white㉿white)-[/mnt/…/home/ctf-player/Code/secrets]
+└─$ ls -la 
+total 3
+drwxr-sr-x 3 white white 1024 Nov 19  2025 .
+drwxr-sr-x 3 white white 1024 Nov 19  2025 ..
+drwxr-sr-x 8 white white 1024 Nov 19  2025 .git
+                                                                                                                                                                       
+┌──(white㉿white)-[/mnt/…/home/ctf-player/Code/secrets]
+└─$ cd .git                                 
+                                                                                                                                                                       
+┌──(white㉿white)-[/mnt/…/ctf-player/Code/secrets/.git]
+└─$ ls    
+branches  COMMIT_EDITMSG  config  description  HEAD  hooks  index  info  logs  objects  refs
+                                                                                                                                                                       
+┌──(white㉿white)-[/mnt/…/ctf-player/Code/secrets/.git]
+└─$ cd ..  
+                                                                                                                                                                       
+┌──(white㉿white)-[/mnt/…/home/ctf-player/Code/secrets]
+└─$ git checkout 177789af0b300e043ea8f54ea57d6cee352291ae
+Note: switching to '177789af0b300e043ea8f54ea57d6cee352291ae'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+HEAD is now at 177789a Add flag
+                                                                                                                                                                       
+┌──(white㉿white)-[/mnt/…/home/ctf-player/Code/secrets]
+└─$ ls                                                   
+flag.txt
+                                                                                                                                                                       
+┌──(white㉿white)-[/mnt/…/home/ctf-player/Code/secrets]
+└─$ cat flag.txt 
+picoCTF{g17_r3m3mb3r5_d4ddf904}                                                                                                                                                                       
+┌──(white㉿white)-[/mnt/…/home/ctf-player/Code/secrets]
+└─$ 
