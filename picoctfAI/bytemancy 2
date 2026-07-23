@@ -1,0 +1,40 @@
+
+
+                                                                                                                                                                   
+┌──(white㉿white)-[~/white/Music/PICO-CTF/home]
+└─$ nano ap.py
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/home]
+└─$ python3 ap.py 
+[+] Opening connection to lonely-island.picoctf.net on port 52314: Done
+[+] Receiving all data: Done (30B)
+[*] Closed connection to lonely-island.picoctf.net port 52314
+picoCTF{3ff5_4_d4yz_f56ee8d7}
+
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/home]
+└─$ nano ap.py
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/home]
+└─$ cat ap.py                                          
+from pwn import *
+
+# Set the target host and port provided in the challenge
+host = 'lonely-island.picoctf.net'
+port = 52314
+
+# Connect to the remote server
+r = remote(host, port)
+
+# Wait until the prompt appears
+r.recvuntil(b'==> ')
+
+# Send the raw bytes: three instances of 0xFF
+# b'\xff\xff\xff' represents the binary data, not the text string "\xff"
+r.sendline(b'\xff\xff\xff')
+
+# Receive and print the response (the flag)
+print(r.recvall().decode())   
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/Music/PICO-CTF/home]
+└─$ 
