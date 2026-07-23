@@ -1,0 +1,10 @@
+First, let us run the command ls to see what files are there. We see flag.txt, meaning the flag is probably in there. When we run cat flag.txt, it says permission denied, due to our user not having access to the file. Let us now take a look at what files we have access to. This can be done by using the command sudo, which allows us to execute actions on other accounts’ privileges, most often the root’s.
+
+Press enter or click to view image in full size
+
+Priveleges
+It seems as though we have an opening here, which leads us to reading this file. We will run the command ‘sudo /bin/nano /etc/sudoers’ to read that file. Once there, we see this.
+
+Press enter or click to view image in full size
+
+Let’s focus on the bottom part. There, it shows us what files we have access too. This can be exploited as now we can just add any files we want access too. To read the file ‘flag.txt’, we must use this line. ctf-player ALL=(ALL) NOPASSWD: /bin/nano flag.txt
