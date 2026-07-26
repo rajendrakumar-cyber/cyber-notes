@@ -1,0 +1,58 @@
+─(white㉿white)-[~/white/n8n]
+└─$ curl -v http://verbal-sleep.picoctf.net:58334/         
+* Host verbal-sleep.picoctf.net:58334 was resolved.
+* IPv6: (none)
+* IPv4: 3.138.217.147
+*   Trying 3.138.217.147:58334...
+* Established connection to verbal-sleep.picoctf.net (3.138.217.147 port 58334) from 192.168.1.4 port 33992 
+* using HTTP/1.x
+> GET / HTTP/1.1
+> Host: verbal-sleep.picoctf.net:58334
+> User-Agent: curl/8.20.0
+> Accept: */*
+> 
+* Request completely sent off
+< HTTP/1.1 200 OK
+< Date: Sun, 26 Jul 2026 11:31:34 GMT
+< Server: Apache/2.4.54 (Debian)
+< Last-Modified: Thu, 01 May 2025 15:59:52 GMT
+< ETag: "300-634151fc18e00"
+< Accept-Ranges: bytes
+< Content-Length: 768
+< Vary: Accept-Encoding
+< Content-Type: text/html
+< 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie Monster's Secret Recipe</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        form { display: inline-block; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Cookie Monster's Secret Recipe</h1>
+    <form action="login.php" method="post">
+        <input type="text" name="username" placeholder="Username" required><br><br>
+        <input type="password" name="password" placeholder="Password" required><br><br>
+        <input type="submit" value="Login">
+    </form>
+</body>
+* Connection #0 to host verbal-sleep.picoctf.net:58334 left intact
+</html>                                                                                                                                                                      
+┌──(white㉿white)-[~/white/n8n]
+└─$ curl -v http://verbal-sleep.picoctf.net:58334/ 2>&1 | grep -i "set-cookie"
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/n8n]
+└─$ curl -v -X POST -d "username=admin&password=admin" http://verbal-sleep.picoctf.net:58334/login.php 2>&1 | grep -i "set-cookie"
+< Set-Cookie: secret_recipe=cGljb0NURntjMDBrMWVfbTBuc3Rlcl9sMHZlc19jMDBraWVzXzJDODA0MEVGfQ%3D%3D; expires=Sun, 26-Jul-2026 12:33:31 GMT; Max-Age=3600; path=/
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/n8n]
+└─$ echo "cGljb0NURntjMDBrMWVfbTBuc3Rlcl9sMHZlc19jMDBraWVzXzJDODA0MEVGfQ%3D%3D" | base64 -d
+picoCTF{c00k1e_m0nster_l0ves_c00kies_2C8040EF}base64: invalid input
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white/n8n]
+└─$ 
