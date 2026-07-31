@@ -1,0 +1,25 @@
+# PicoCTF Scavenger Hunt Solution Notes
+
+This document logs the step-by-step solution for the Scavenger Hunt challenge at `http://wily-courier.picoctf.net:52619/`.
+
+## Flag Breakdown
+
+| Part | Source | Content |
+| :--- | :--- | :--- |
+| **Part 1** | Main HTML source (`/`) | `picoCTF{t` |
+| **Part 2** | CSS file (`/mycss.css`) | `h4ts_4_l0` |
+| **Part 3** | Robots configuration (`/robots.txt`) | `t_0f_pl4c` |
+| **Part 4** | Apache configuration (`/.htaccess`) | `3s_2_lO0k` |
+| **Part 5** | macOS metadata (`/.DS_Store`) | `_9588550}` |
+
+## Full Flag
+
+**`picoCTF{th4ts_4_l0t_0f_pl4c3s_2_lO0k_9588550}`**
+
+## Detailed Steps
+
+1. **HTML Source inspection**: View the source of the root URL (`/`). Found the first part in a comment at the bottom.
+2. **CSS inspection**: Inspected `/mycss.css` referenced in the header. Found the second part in a comment.
+3. **Robots configuration**: Tried `/robots.txt` since the JS file (`/myjs.js`) asked about Google indexing. Found the third part and a hint about the server configuration.
+4. **Apache Configuration**: Tried `/.htaccess` based on the Apache server hint. Found the fourth part and a hint about macOS files.
+5. **macOS Directory Storage**: Checked `/.DS_Store` based on the Mac filesystem hint. Retrieved the final part of the flag.
