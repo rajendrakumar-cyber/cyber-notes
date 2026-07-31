@@ -1,0 +1,42 @@
+
+  ### 1. Analyze the Clues
+
+  • Challenge Name: "GET aHEAD" — The capitalization of "GET" and "HEAD" is a direct hint at HTTP request methods.
+  • First Hint: "Maybe you have more than 2 choices" — In standard web forms, you typically choose between GET and POST methods. This hint points to alternative
+  HTTP methods.
+  • Second Hint: "Check out tools like Burpsuite to modify your requests" — This implies you need to modify the HTTP method of the request sent to the server.
+
+  ### 2. Understanding the HTTP HEAD Method
+
+  The HEAD method is identical to a GET request, except that the server must not return a response body. It only returns the status line and HTTP headers.
+
+  ### 3. How to Send a HEAD Request
+
+  You can solve this using different tools:
+
+  #### Option A: Command Line (curl)
+
+  Run curl with the -I flag (which tells curl to fetch headers only, automatically using the HEAD method):
+
+    curl -I http://wily-courier.picoctf.net:52416/
+
+  #### Option B: Python
+
+  Write a quick script using the requests library:
+
+    import requests
+    r = requests.head('http://wily-courier.picoctf.net:52416/')
+    print(r.headers)
+
+  #### Option C: Burp Suite / Postman / Developer Tools
+
+  1. Intercept or construct a request to http://wily-courier.picoctf.net:52416/.
+  2. Change the request method from GET (or POST) to HEAD.
+  3. Send the request and inspect the response headers.
+
+  ### 4. Locate the Flag
+
+  In the server's response headers, you will see the flag hidden as a custom HTTP header:
+
+    flag: picoCTF{r3j3ct_th3_du4l1ty_8b13f07}
+
