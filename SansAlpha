@@ -1,0 +1,170 @@
+──(white㉿white)-[~/white/Documents/thm]
+└─$ ssh -p 64513 ctf-player@mimas.picoctf.net
+The authenticity of host '[mimas.picoctf.net]:64513 ([52.15.88.75]:64513)' can't be established.
+ED25519 key fingerprint is: SHA256:n/hDgUtuTTF85Id7k2fxmHvb6rrLrACHNM6xLZ46AqQ
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added '[mimas.picoctf.net]:64513' (ED25519) to the list of known hosts.
+** WARNING: connection is not using a post-quantum key exchange algorithm.
+** This session may be vulnerable to "store now, decrypt later" attacks.
+** The server may need to be upgraded. See https://openssh.com/pq.html
+ctf-player@mimas.picoctf.net's password: 
+Welcome to Ubuntu 20.04.3 LTS (GNU/Linux 6.8.0-1057-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+This system has been minimized by removing packages and content that are
+not required on a system that users do not log into.
+
+To restore this content, you can run the 'unminimize' command.
+
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+
+SansAlpha$ ls
+SansAlpha: Unknown character detected
+SansAlpha$ ${_1:9:1}  - c
+SansAlpha: Unknown character detected
+SansAlpha$ ${_1:1:1}  - a
+SansAlpha: Unknown character detected
+SansAlpha$ ${_1:19:1} - t
+SansAlpha: Unknown character detected
+SansAlpha$ ${_1:2:1}  - s
+SansAlpha: Unknown character detected
+SansAlpha$ cat
+SansAlpha: Unknown character detected
+SansAlpha$ /usr/share/doc
+SansAlpha: Unknown character detected
+SansAlpha$ $o
+SansAlpha: Unknown character detected
+SansAlpha$ $0
+SansAlpha$ $-
+bash: himBHs: command not found
+
+SansAlpha$ $_
+bash: himBHs: command not found
+
+SansAlpha$ ls
+SansAlpha: Unknown character detected
+SansAlpha$ $0
+SansAlpha$ ls
+SansAlpha: Unknown character detected
+SansAlpha$ $0
+SansAlpha$ $_
+SansAlpha$ ls
+SansAlpha: Unknown character detected
+SansAlpha$ ls *
+SansAlpha: Unknown character detected
+SansAlpha$ ./
+bash: ./: Is a directory
+
+SansAlpha$ ./ls
+SansAlpha: Unknown character detected
+SansAlpha$ cd ./
+SansAlpha: Unknown character detected
+SansAlpha$ ./*
+bash: ./blargh: Is a directory
+
+SansAlpha$ ./*/*
+bash: ./blargh/flag.txt: Permission denied
+
+SansAlpha$ /???/???[!_]64 /????/???????????/?????/???????
+/bin/base64: '/????/???????????/?????/???????': No such file or directory
+
+SansAlpha$ echo "cmV0dXJuIDAgQGl2b0NURns3aDE1X21MTcxdjNyNTNfMTVfbTRkbjM1NV8xNDUyNTZLY30=" | base64 -d
+SansAlpha: Unknown character detected
+SansAlpha$ /???/???[!_]64 */*
+/bin/base64: extra operand 'blargh/flag.txt'
+Try '/bin/base64 --help' for more information.
+
+SansAlpha$ $0 < */????.???
+SansAlpha$ /???/???[!_]64 */????.???
+cmV0dXJuIDAgcGljb0NURns3aDE1X211MTcxdjNyNTNfMTVfbTRkbjM1NV8zNmE2NzRjMH0=
+
+SansAlpha$ 
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/pwnlib/term/readline.py", line 397, in readline
+    keymap.handle_input()
+  File "/usr/local/lib/python3.8/dist-packages/pwnlib/term/keymap.py", line 24, in handle_input
+    self.send(key.get())
+  File "/usr/local/lib/python3.8/dist-packages/pwnlib/term/key.py", line 175, in get
+    _read(timeout)
+  File "/usr/local/lib/python3.8/dist-packages/pwnlib/term/key.py", line 163, in _read
+    _cbuf.extend(getraw(timeout))
+  File "/usr/local/lib/python3.8/dist-packages/pwnlib/term/key.py", line 40, in getraw
+    c = getch(timeout)
+  File "/usr/local/lib/python3.8/dist-packages/pwnlib/term/key.py", line 26, in getch
+    rfds, _wfds, _xfds = select.select([_fd], [], [], timeout)
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/sansalpha.py", line 11, in <module>
+    user_in = input("SansAlpha$ ")
+  File "/usr/local/lib/python3.8/dist-packages/pwnlib/term/readline.py", line 448, in str_input
+    return readline(-1, prompt, float).decode()
+  File "/usr/local/lib/python3.8/dist-packages/pwnlib/term/readline.py", line 409, in readline
+    control_c()
+  File "/usr/local/lib/python3.8/dist-packages/pwnlib/term/readline.py", line 261, in control_c
+    raise KeyboardInterrupt
+KeyboardInterrupt
+Connection to mimas.picoctf.net closed.
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Documents/thm]
+└─$ echo "cmV0dXJuIDAgcGljb0NURns3aDE1X211MTcxdjNyNTNfMTVfbTRkbjM1NV8zNmE2NzRjMH0=" | base64 -d
+return 0 picoCTF{7h15_mu171v3r53_15_m4dn355_36a674c0}                       n environments where alphabetic characters are restricted (either due to input filtering, custom shell restrictions, or specialized keyboard inputs), users often
+  leverage the built-in behaviors of the Bash shell to construct and execute commands using only numbers and symbols.
+
+  #### 1. Wildcard Expansion (Globbing)
+
+  Bash supports globbing characters like ? (matches any single character) and * (matches zero or more characters). If an administrator restricts alphabetic input,
+  these symbols can be used to reference paths and executables:
+
+  • Basic Pattern: The pattern /???/??? matches any file path containing a 3-letter directory followed by a 3-letter filename (e.g., /bin/cat, /bin/pwd, /usr/bin if
+  it fits).
+  • Execution Behavior: When a glob pattern is entered as a command, Bash expands it alphabetically. The first matching file path in alphabetical order is treated
+  as the executable, while any subsequent matches are passed to it as arguments.
+      • For example, if /bin/cat is the first alphabetical match for a pattern, running that pattern with a wildcard argument might execute /bin/cat against all
+      files in the current directory.
+
+
+  #### 2. Parameter Slicing from Environment Variables
+
+  Bash allows substring extraction from existing environment variables using the syntax ${VARIABLE:offset:length}. Since offsets and lengths are numeric, they do
+  not require alphabetic characters.
+
+  If certain standard variables are defined in the environment (e.g., PATH, PWD, or SHELL), they can serve as sources of letters:
+
+  • Finding Variable Indexes: In a standard shell, variables contain predictable paths:
+      • If $PATH contains /usr/bin:/bin, the character at index 0 is /.
+      • If $SHELL contains /bin/bash, individual letters like b, a, s, h can be isolated by target indices:
+          • ${SHELL:5:1} yields b
+          • ${SHELL:6:1} yields a
+          • ${SHELL:7:1} yields s
+          • ${SHELL:8:1} yields h
+
+  • Special Variables: Even in highly restricted environments, special shell parameters are automatically defined:
+      • $0: Expands to the name of the shell or the shell script (often bash, -bash, or sh).
+      • $_: Expands to the last argument of the previous command.
+
+
+  #### 3. Reconstructing Commands
+
+  Once individual characters or substrings are isolated via slicing, they can be concatenated directly inside the shell to form a command.
+
+  • Example Structure: If ${0} evaluates to bash:
+      • ${0:0:1} is b
+      • ${0:1:1} is a
+      • ${0:2:1} is s
+      • ${0:3:1} is h
+      • Concatenating these as ${0:0:1}${0:1:1}${0:2:1}${0:3:1} reconstructs the string bash and executes it.                                                                                                                                                
+┌──(white㉿white)-[~/white/Documents/thm]
+└─$ 
+
