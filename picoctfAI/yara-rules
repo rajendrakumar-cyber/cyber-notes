@@ -1,0 +1,129 @@
+# YaraRules0x100 Challenge Solution Notes
+
+This document provides a detailed, step-by-step walkthrough of how to analyze the suspicious binary and fix the YARA rules template to successfully pass all check cases.
+
+---
+
+## Step 1: Extract and Verify the Target Binary
+
+The challenge provides a password-protected zip file (`suspicious.zip`).
+
+1. **Extract the binary** using the password `picoctf`:
+   ```bash
+   unzip -p -P picoctf suspicious.zip > suspicious_fresh.exe
+   ```
+2. **Perform basic file identification**:
+   ```bash
+   file suspicious_fresh.exe
+   ```
+   **Output:**
+   ```text
+   suspicious_fresh.exe: PE32 executable for MS Windows 6.00 (GUI), Intel i386, UPX compressed, 3 sections
+   ```
+   *Observation:* The binary is packed with UPX compression.
+
+---
+
+## Step 2: Unpacking the Binary
+
+To perform static analysis and locate specific strings or API calls (which are compressed in the packed version), we decompress the file using UPX:
+
+```bash
+upx -d -o suspicious_decompressed.exe suspicious_fresh.exe
+```
+
+---
+
+## Step 3: Extracting Strings and APIs
+
+1. **ASCII Strings:** Examine single-byte ASCII strings in the decompressed binary:
+   ```bash
+   strings suspicious_decompressed.exe
+   ```
+   This reveals normal Win32 APIs, layout sections, and execution parameters (e.g., `GetCommandLineW`, `IsDebuggerPresent`, `AdjustTokenPrivileges`).
+   
+2. **Wide Strings (UTF-16):** Since it is a Windows application, many strings are stored as wide characters. We print them using the `-e l` option:
+   ```bash
+   strings -e l suspicious_decompressed.exe
+   ```
+   **Output highlights:**
+   * `Welcome to the YaraRules0x100 challenge!`
+   * `This is a fake malware. It means no harm.`
+   * `picoCTF`
+   * `debugger process`
+   * Hints pointing out that a rule should use Win32 API functions and not rely solely on simple strings to avoid false positives.
+
+---
+
+## Step 4: Troubleshooting the Provided YARA Rule (`sample.txt`)
+
+When we submit the provided `sample.txt` directly to the verification server:
+```bash
+socat -t60 - TCP:standard-pizzas.picoctf.net:<PORT> < sample.txt
+```
+
+The server returns:
+```text
+Status: Failed
+False Negatives Check: Syntax error in your YARA rule: "line 52: unreferenced string "$pico""
+```
+
+### The Root Cause
+In YARA, if a string identifier is declared in the `strings:` block, it **must** be referenced in the `condition:` block. In `sample.txt`, the string `$pico` was defined under `Unpacked_Variant`:
+```yara
+$pico = "picoCTF" wide ascii
+```
+However, the condition block was defined as:
+```yara
+condition:
+    ($welcome or $fake or $suspicious or $debug_wide) and
+    ($dll_kernel or $dll_shell or $dll_advapi) and
+    all of ($api_*) and
+    $manifest
+```
+Since `$pico` is missing from the condition, it causes a YARA compiler syntax error.
+
+---
+
+## Step 5: Fixing the YARA Rule
+
+By adding `$pico` to the string alternation in the condition, we fix the compile-time syntax error:
+
+```diff
+ rule Unpacked_Variant {
+     ...
+     strings:
+         $welcome = "Welcome to the YaraRules0x100 challenge!" ascii
+         $fake = "This is a fake malware. It means no harm" wide ascii
+         $suspicious = "Suspicious" wide ascii
+         $pico = "picoCTF" wide ascii
+         $debug_wide = "debugger process" wide ascii
+         ...
+     condition:
+-        ($welcome or $fake or $suspicious or $debug_wide) and
++        ($welcome or $fake or $suspicious or $debug_wide or $pico) and
+         ($dll_kernel or $dll_shell or $dll_advapi) and
+         all of ($api_*) and
+         $manifest
+ }
+```
+
+---
+
+## Step 6: Submission & Flag Retrieval
+
+Submit the corrected YARA rule file (`test_rule.yar`) using `socat`:
+
+```bash
+socat -t60 - TCP:standard-pizzas.picoctf.net:58582 < test_rule.yar
+```
+
+**Success Response:**
+```text
+:::::
+
+Status: Passed
+Congrats! Here is your flag: picoCTF{yara_rul35_r0ckzzz_2ba332bd}
+
+:::::
+```
