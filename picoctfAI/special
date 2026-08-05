@@ -1,0 +1,73 @@
+The Special challenge in picoCTF 2023 is a General Skills task that places you in a restricted, spell-checking shell environment.  The shell automatically corrects misspelled commands and capitalizes the first letter of your input, preventing standard command execution. 
+
+Challenge Overview
+Author: LT 'syreal' Jones
+Difficulty: Medium (300 points)
+Goal: Retrieve the flag hidden in the filesystem despite the shell restrictions. 
+Connection:
+ssh -p 49430 ctf-player@saturn.picoctf.net
+# Password: d137d16e
+
+Exploitation Techniques
+Upon connecting, standard commands like ls, cat, or whoami are spell-checked into valid English words (e.g., ls becomes Is) or rejected. However, the underlying system still allows command execution if the input bypasses the spell-checker's parsing logic. 
+
+Method 1: Double Parentheses (( ))
+The spell-checker fails to process commands enclosed in double parentheses, allowing the shell to execute them literally.
+
+List Directory Contents:
+Special$ ((ls))
+blargh
+
+Inspect the Directory:
+Special$ ((ls blargh))
+flag.txt
+
+Read the Flag:
+Special$ ((cat blargh/flag.txt))
+picoCTF{5p311ch3ck_15_7h3_w0r57_...}
+
+Method 2: Single Quotes ' '
+Enclosing commands in single quotes prevents the spell-checker from altering the string, allowing direct execution of absolute paths or standard commands.
+
+Special$ '/bin/ls'
+blargh
+Special$ '/bin/cat' 'blargh/flag.txt'
+picoCTF{5p311ch3ck_15_7h3_w0r57_...}
+
+Method 3: Environment Variable Prefix
+Prepending an environment variable to a command can also bypass the restriction, as the parser treats the input differently.
+
+Special$ Placeholder=abc cat blargh/flag.txt
+picoCTF{5p311ch3ck_15_7h3_w0r57_...}
+──(white㉿white)-[~/white]
+└─$  ssh -p 49430 ctf-player@saturn.picoctf.net
+** WARNING: connection is not using a post-quantum key exchange algorithm.
+** This session may be vulnerable to "store now, decrypt later" attacks.
+** The server may need to be upgraded. See https://openssh.com/pq.html
+ctf-player@saturn.picoctf.net's password: 
+Welcome to Ubuntu 20.04.3 LTS (GNU/Linux 6.17.0-1019-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+This system has been minimized by removing packages and content that are
+not required on a system that users do not log into.
+
+To restore this content, you can run the 'unminimize' command.
+Last login: Wed Aug  5 11:40:45 2026 from 127.0.0.1
+Special$ ((ls))
+((ls)) 
+blargh
+Special$ ((ls blargh))
+Pals blargh)) 
+sh: 1: Syntax error: ")" unexpected
+Special$ ((cat blargh/flag.txt))
+Cat blargh/flag.txt)) 
+sh: 1: Syntax error: ")" unexpected
+Special$ '/bin/ls'
+'/bin/ls' 
+blargh
+Special$ '/bin/cat' 'blargh/flag.txt'
+'/bin/cat' 'blargh/flag.txt' 
+picoCTF{5p311ch3ck_15_7h3_w0r57_3befb794}Special$ 
