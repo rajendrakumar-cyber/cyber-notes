@@ -1,0 +1,76 @@
+# PicoCTF 2019 - mus1c Writeup
+
+## Challenge Details
+*   **Name:** mus1c
+*   **Category:** General Skills
+*   **Difficulty:** Medium
+*   **Creator:** Danny
+
+## Challenge Description
+> I wrote you a song. Put it in the picoCTF{} flag format.
+
+### Hints
+1. Do you think you can master rockstar?
+
+---
+
+## Solution Walkthrough
+
+### Step 1: Identify the Programming Language
+The challenge provides a file called `lyrics.txt` containing text that resembles song lyrics. The hint asks *"Do you think you can master rockstar?"*, which points to **Rockstar**, an esoteric programming language designed to look like 1980s rock lyrics.
+
+### Step 2: Transpiling or Interpreting the Code
+Rockstar code can be run in two main ways:
+1.  **Online Rockstar Interpreter:** Paste the contents of [lyrics.txt](file:///home/white/white/Music/PICO-CTF/picoctfAI/lyrics.txt) into the [Rockstar Online Interpreter](https://codewithrockstar.com/online) and click **"Run"** / **"Rock it"**.
+2.  **Using `rockstar-py` (Python Transpiler):**
+    We can install `rockstar-py` and transpile the code to Python:
+    ```bash
+    pip install rockstar-py
+    rockstar-py -i lyrics.txt -o output.py
+    ```
+
+### Step 3: Rockstar Execution Output
+Executing the code generates a series of decimal numbers (outputted line-by-line):
+```text
+114
+114
+114
+111
+99
+107
+110
+114
+110
+48
+49
+49
+51
+114
+```
+
+### Step 4: Decoding ASCII to Text
+These decimal numbers represent **ASCII** character codes. We can convert them to characters:
+
+| Decimal Value | ASCII Character |
+| :--- | :--- |
+| `114` | `r` |
+| `114` | `r` |
+| `114` | `r` |
+| `111` | `o` |
+| `99` | `c` |
+| `107` | `k` |
+| `110` | `n` |
+| `114` | `r` |
+| `110` | `n` |
+| `48` | `0` |
+| `49` | `1` |
+| `49` | `1` |
+| `51` | `3` |
+| `114` | `r` |
+
+Combining these characters yields: **`rrrocknrn0113r`**
+
+### Step 5: Constructing the Flag
+Finally, we wrap the decoded string in the standard `picoCTF{...}` format:
+
+**Flag:** `picoCTF{rrrocknrn0113r}`
