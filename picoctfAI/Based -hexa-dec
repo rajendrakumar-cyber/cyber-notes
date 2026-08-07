@@ -1,0 +1,33 @@
+┌──(white㉿white)-[~/white]
+└─$ nc fickle-tempest.picoctf.net 56287
+Let us see how data is stored
+socket
+Please give the 01110011 01101111 01100011 01101011 01100101 01110100 as a word.
+...
+you have 45 seconds.....
+
+Input:
+lizard
+WRONG!
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white]
+└─$ nc fickle-tempest.picoctf.net 56287
+Let us see how data is stored
+animation
+Please give the 01100001 01101110 01101001 01101101 01100001 01110100 01101001 01101111 01101110 as a word.
+...
+you have 45 seconds.....
+
+Input:
+animation
+Please give me the  o155 o141 o160 as a word.
+Input:
+map
+Please give me the 70656172 as a word.
+Input:
+pear
+You've beaten the challenge
+Flag: picoCTF{learning_about_converting_values_bf1F59A2}
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white]
+└─$ 
