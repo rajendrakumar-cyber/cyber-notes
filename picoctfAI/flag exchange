@@ -1,0 +1,95 @@
+─(white㉿white)-[~/white/Music/PICO-CTF/picoctfAI]
+└─$ nc fickle-tempest.picoctf.net 63021
+Welcome to the flag exchange
+We sell flags
+
+1. Check Account Balance
+
+2. Buy Flags
+
+3. Exit
+
+ Enter a menu selection
+2
+Currently for sale
+1. Defintely not the flag Flag
+2. 1337 Flag
+1
+These knockoff Flags cost 900 each, enter desired quantity
+3000000
+
+The final cost is: -1594967296
+
+Your current balance after transaction: 1594968396
+
+Welcome to the flag exchange
+We sell flags
+
+1. Check Account Balance
+
+2. Buy Flags
+
+3. Exit
+
+ Enter a menu selection
+1
+
+
+
+ Balance: 1594968396 
+
+
+Welcome to the flag exchange
+We sell flags
+
+1. Check Account Balance
+
+2. Buy Flags
+
+3. Exit
+
+ Enter a menu selection
+2
+Currently for sale
+1. Defintely not the flag Flag
+2. 1337 Flag
+2
+1337 flags cost 100000 dollars, and we only have 1 in stock
+Enter 1 to buy one1
+YOUR FLAG IS: picoCTF{m0n3y_bag5_F6968F69}
+
+Welcome to the flag exchange
+We sell flags
+
+1. Check Account Balance
+
+2. Buy Flags
+
+3. Exit
+
+ Enter a menu selection
+                                                                                                                                                                       
+┌──(white㉿white)-[~/white/Music/PICO-CTF/picoctfAI]
+└─$ 
+You need to find a quantity n such that 900 * n overflows to a negative number. The maximum value for a signed 32-bit int is $2^{31} - 1 = 2,147,483,647$. You want 900 * n to wrap around past this limit.
+
+A common approach is to solve for n where the result wraps to a negative number large enough to give you over 100,000 balance. Mathematically, you want 900 * n to be slightly larger than 2,147,483,647 so it wraps to a negative value. $n \approx \frac{2^{31} + 100,000}{900}$ (the 100,000 accounts for the cost of the flag you eventually want to buy).
+
+Calculation: $2^{31} = 2,147,483,648$ Target negative value roughly $-100,000$ (so subtracting it adds 100k). $900 \times n \approx 2,147,483,648 + 100,000 = 2,147,583,648$ $n \approx 2,386,204$
+
+Let's try a safe value like 2,386,204 or simply 3,000,000 (which also works as it overflows enough) 
+3 
+5.
+
+Step-by-Step Execution
+Connect to the server: nc fickle-tempest.picoctf.net 63021
+Select 2 (Buy Flags).
+Select 1 (Buy "Definitely not the flag").
+Enter the quantity: 2386204 (or try 3000000 if the first fails) 
+1 
+3.
+Select 1 (Check Balance) to confirm your balance is now huge (e.g., > 100,000).
+Select 2 (Buy Flags) again.
+Select 2 (Buy "1337 Flag").
+Enter 1 to confirm purchase.
+You should receive the flag!
