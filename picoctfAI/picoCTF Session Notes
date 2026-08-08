@@ -1,0 +1,83 @@
+ picoCTF Session Notes
+
+This document contains a structured review and technical summary of the three solved picoCTF challenges: **Serpentine**, **1_wanna_b3_a_r0ck5tar**, and **Printer Shares 2**.
+
+---
+
+## Challenge Summary Table
+
+| Challenge Name | Category | Difficulty | Primary Focus / Tools | Flag |
+| :--- | :--- | :--- | :--- | :--- |
+| **Serpentine** | General Skills | Medium | Python Scripting, XOR Decryption | `picoCTF{7h3_r04d_l355_7r4v3l3d_8e47d128}` |
+| **1_wanna_b3_a_r0ck5tar** | General Skills | Medium | Rockstar Language Parsing, ASCII Mapping | `picoCTF{BONJOVI}` |
+| **Printer Shares 2** | General Skills | Hard | SMB Enumeration, Dictionary Attack, Impacket | `picoCTF{5mb_pr1nter_5h4re5_5ecure_f854c38d}` |
+
+---
+
+## 1. Serpentine (picoMini 2022)
+
+> [!NOTE]
+> **Objective:** Retrieve the flag from a Python script (`serpentine.py`) that contains a decryption function but does not invoke it during normal execution.
+
+### Analysis & Solution Path
+* **Source Inspection:** Examining [serpentine.py](file:///home/white/white/Music/PICO-CTF/picoctfAI/web/serpentine.py) showed that option `b` ("Print flag") in the main interactive menu prints a dummy error message:
+  ```python
+  elif choice == 'b':
+    print('\nOops! I must have misplaced the print_flag function! Check my source code!\n\n')
+  ```
+* **Decryption Logic:** A defined but unused function `print_flag()` decodes a hardcoded byte array (`flag_enc`) using XOR decryption (`str_xor`) with the key `'enkidu'`.
+* **Execution:** We directly invoked the function from the terminal using Python:
+  ```bash
+  python3 -c "import serpentine; serpentine.print_flag()"
+  ```
+* **Flag:** `picoCTF{7h3_r04d_l355_7r4v3l3d_8e47d128}`
+
+---
+
+## 2. 1_wanna_b3_a_r0ck5tar (picoCTF 2019)
+
+> [!IMPORTANT]
+> **Objective:** Understand the execution path of a custom song script written in the **Rockstar** esoteric programming language to extract ASCII codes that form the flag.
+
+### Analysis & Solution Path
+* **Syntax Breakdown**:
+  * **Variables & Booleans**: `Rocknroll is right` translates to `Rocknroll = True`.
+  * **Poetic Numbers**: Word lengths determine variable values (e.g., `A guitar is a six-string` assigns the number `136` to `guitar` based on word lengths: `a` (1) and `six-string` -> `six` (3) `string` (6) -> `136`).
+  * **Conditionals**: The script takes two inputs (`music` and `rhythm`). It executes the printing logic only if `music == 136` and `rhythm == 136`.
+* **ASCII Code Construction**:
+  Once conditions are met, variables are reassigned using word lengths and printed:
+  1. `Tommy is rockin guitar` (6, 6) $\rightarrow$ `Tommy = 66` ('B')
+  2. `Music is amazing sensation` (7, 9) $\rightarrow$ `Music = 79` ('O')
+  3. `Jamming is awesome presence` (7, 8) $\rightarrow$ `Jamming = 78` ('N')
+  4. `Tommy is playing rock` (7, 4) $\rightarrow$ `Tommy = 74` ('J')
+  5. `They are dazzled audiences` (7, 9) $\rightarrow$ `Tommy = 79` ('O')
+  6. `Rock is electric heaven` (8, 6) $\rightarrow$ `Rock = 86` ('V')
+  7. `Tommy is jukebox god` (7, 3) $\rightarrow$ `Tommy = 73` ('I')
+* **Flag:** `picoCTF{BONJOVI}`
+
+---
+
+## 3. Printer Shares 2 (picoCTF 2026)
+
+> [!TIP]
+> **Objective:** Access a secure SMB printer share on a non-standard port and retrieve a flag hidden inside a text file.
+
+### Analysis & Solution Path
+* **Samba Enumeration**:
+  Using `smbclient`, we listed the available shares on port `54347`:
+  ```bash
+  smbclient -L green-hill.picoctf.net -p 54347 -N
+  ```
+  Two disk shares were identified: `shares` (Public) and `secure-shares` (Private).
+* **Clue Retrieval**:
+  We logged in anonymously to the public `shares` directory and downloaded `notification.txt`.
+  The text file named a user, `Joe`, and noted that a weak default password was currently in use.
+* **Dictionary Attack**:
+  Using Python's `impacket` library, we performed a multi-threaded dictionary attack using the `rockyou.txt` wordlist to verify password candidates.
+  The attack successfully recovered the password: **`popcorn`**.
+* **Accessing the Share**:
+  Using the cracked credentials `joe:popcorn`, we connected to `secure-shares` and extracted `flag.txt`:
+  ```bash
+  smbclient //green-hill.picoctf.net/secure-shares -p 54347 -U joe%popcorn -c "get flag.txt"
+  ```
+* **Flag:** `picoCTF{5mb_pr1nter_5h4re5_5ecure_f854c38d}`
