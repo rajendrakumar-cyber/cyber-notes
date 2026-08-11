@@ -1,0 +1,18 @@
+──(venv)─(white㉿white)-[~]
+└─$ curl -s "http://archive.org/wayback/available?url=hacklido.com&timestamp=19700101"
+{"url": "hacklido.com", "archived_snapshots": {"closest": {"status": "200", "available": true, "url": "http://web.archive.org/web/20210221054940/https://hacklido.com/", "timestamp": "20210221054940"}}, "timestamp": "19700101"}                                                                                                                                                                       
+┌──(venv)─(white㉿white)-[~]
+└─$ 
+
+That timestamp 20210221054940 breaks down as:
+
+Year: 2021
+Month: 02
+Day: 21
+So the first archive date is 21-02-2021.
+
+Flag: HackCTF{21-02-2021}
+
+One caveat worth knowing: this "available" API endpoint sometimes returns the closest 200-status snapshot rather than the absolute earliest one on record (it can skip over early snapshots that returned redirects or errors). If this flag doesn't get accepted, double check directly on the Wayback Machine's calendar view at https://web.archive.org/web/*/hacklido.com to confirm there isn't an earlier snapshot with a non-200 status that this API call skipped past.
+
+
