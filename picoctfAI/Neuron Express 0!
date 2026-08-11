@@ -1,0 +1,49 @@
+─(white㉿white)-[~/white]
+└─$ nc aureolin-pixie.cylabacademy.net 49469
+Welcome to Neuron Express 0!
+Probe the 1D perceptron, then submit its weight and bias.
+Send an integer within the bounds to see if the perceptron fires (1) or stays quiet (0).
+- Bounds: [-10, 10]
+- Output rule: w*x + b >= 0 -> 1, else 0.
+- Command: TEST w b to submit a weight and bias guess.
+- The guess must match outputs for every integer x in range.
+Type HELP for a reminder or EXIT to quit.
+
+[1/128] x> 10
+Perceptron fires!
+[2/128] x> 17
+Stay within the bounds [-10, 10].
+[3/128] x> 5
+Perceptron fires!
+[4/128] x> -5
+Perceptron stays quiet.
+[5/128] x> 0
+Perceptron stays quiet.
+[6/128] x> 1
+Perceptron stays quiet.
+[7/128] x> 2
+Perceptron fires!
+[8/128] x> 3
+Perceptron fires!
+[9/128] x> 4
+Perceptron fires!
+[10/128] x> 5
+Perceptron fires!
+[11/128] x> 6
+Perceptron fires!
+[12/128] x> 7
+Perceptron fires!
+[13/128] x> 8
+Perceptron fires!
+[14/128] x> 9
+Perceptron fires!
+[15/128] x> 1 -2
+Not an integer. Try again.
+[16/128] x> 2 -1
+Not an integer. Try again.
+[17/128] x> TEST 1 -2
+Perfect match! Here is your flag:
+academy{n3ur0n_expr_a7737bfb}
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white]
+└─$ 
