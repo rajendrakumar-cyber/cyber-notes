@@ -1,0 +1,64 @@
+Challenge Description
+In this write-up, we are going to tackle the Sql Map1 challenge from picoCTF. The premise is a “Vulnerable Flag Search” page. But as the description hints, we aren’t just looking for an injection flaw — we have to exploit “legacy hashing practices” to act as a legitimate user.
+
+Approach
+The challenge presents a web application with one or more user-input fields that are vulnerable to ‘SQL injection’. The name “Sql Map1” strongly hints that the intended solution path is to use sqlmap,Here is how we went from a basic search box to dumping a database and cracking MD5 hashes to get the final flag.
+
+Step 1 — Launch the Challenge Instance
+Open the provided link in Challenge page. Resgister there with dummy credential then login. After login you will get a search page.
+
+Press enter or click to view image in full size
+Press enter or click to view image in full size
+Step 2 — Find the Injectable Parameter
+The challenge presents us with a standard search interface. Whenever you see a search box in a CTF, your first instinct should be to test for SQL Injection (SQLi).
+
+I started by throwing standard boolean-based payloads into the search term field to see how the backend database would react.
+
+The classic payload worked perfectly:
+
+' OR 1=1 --
+This successfully bypassed the search filter and dumped the contents of the default table. However, instead of the real flag, the database spit out a massive list of flags:
+
+flag1: picoCTF{n0T_F0uNd_s3cr3T_K3y_34rd76s1}
+malicious: picoCTF{tH15_lS_n0T_f!@G_5rwdf731q}
+…and several others.
+We were in the right database, but we were looking at the wrong table.
+
+Step 3 — Run SQLMap (Union Injection) To Dump Database
+Since the default table (flags) was full of decoys, I needed to look around the rest of the SQLite database. After enumerating the schema, I discovered another table named users.
+
+Get Utsav Thakur’s stories in your inbox
+Join Medium for free to get updates from this writer.
+
+Enter your email
+Subscribe
+
+Remember me for faster sign in
+
+To extract the data without crashing the server (which can happen if you use heavy automated tools like sqlmap), I crafted a manual UNION-based SQL Injection.
+
+Since I wanted to see all the usernames and passwords on the screen at once, I used GROUP_CONCAT to glue them together into a single string.
+
+Here is the exact payload used in the search box:
+
+' UNION SELECT 1, GROUP_CONCAT(username || ': ' || password) FROM users --
+The database returned a beautiful list of internal users and their passwords: admin: 5a9a79d9fa477ed163b89088681672c9, ctf-player: 7a67ab5872843b22b5e14511867c4e43, and many more ...
+
+Step 4— Crack The MD5 Hash
+Looking at the output, the passwords were clearly 32-character hexadecimal strings. This is exactly what the challenge description meant by “legacy hashing practices” — these are MD5 hashes.
+
+Our target was the ctf-player account:
+
+Username: ctf-player
+Hash: 7a67ab5872843b22b5e14511867c4e43
+Press enter or click to view image in full size
+
+Final Flag
+Navigated back to the main page.
+Logged out of the current default session.
+Logged back in using the credentials ctf-player / dyesebel.
+Success! The system authenticated the user and dropped us into the “Protected area,” revealing the actual challenge flag:
+
+Flag:
+
+picoCTF{F0uNd_s3cr3T_K3y_f0R_w3_<>}
