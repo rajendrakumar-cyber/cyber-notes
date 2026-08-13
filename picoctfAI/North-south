@@ -1,0 +1,88 @@
+North-South
+Web Exploitation
+Medium
+by Darkraicg492
+·
+picoCTF 2026
+I've set up geo-based routing - can you outsmart it?
+
+
+You're trying to retrieve the flag, but there's a catch: access to the real service is restricted based on your geographic location. Only requests from a specific region are routed to the server that holds the flag. Everyone else is sent somewhere... less interesting.
+Still, not get flag because:
+
+Tor uses random exit nodes
+My traffic may not originate from Iceland
+Step 5 — Geo-Restriction Configure Tor For Iceland
+To control the exit node, I modified Tor config file:
+
+sudo nano /etc/tor/torrc
+Add at last:
+
+ExitNodes {is}
+StrictNodes 1
+Press enter or click to view image in full size
+
+Restart Tor:
+
+sudo systemctl restart tor
+Restart tor and run command:
+
+sudo systemctlrestart tor
+curl --socks5 127.0.0.1:9050 http://lonely-island.picoctf.net:50316/
+Final Flag
+picoCTF{g30_b453d_r0u71n9_59be682}
+──(white㉿white)-[~/white]
+└─$ sudo nano /etc/tor/torrc
+
+[sudo] password for white: 
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white]
+└─$ sudo systemctl restart tor
+
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white]
+└─$ curl --socks5 127.0.0.1:9000 http://lonely-island.picoctf.net:62624/
+
+curl: (7) Failed to connect to lonely-island.picoctf.net port 62624 via 127.0.0.1 after 0 ms: Could not connect to server
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white]
+└─$ curl --socks5 127.0.0.1:9050 http://lonely-island.picoctf.net:62624/
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>
+North-South
+</title>
+        <link rel="stylesheet" type="text/css" href="/static/css/materialize.min.css" />
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    </head>
+
+    <body>
+        <nav>
+            <div class="nav-wrapper">
+                <a href="/" class="brand-logo">Home</a>
+            </div>
+        </nav>
+
+        <div class="container">
+            
+                
+            
+            
+<h1>Welcome!!</h1>
+<p>picoCTF{g30_b453d_r0u71n9_59be682b}</p>
+
+            <hr/>
+        </div>
+
+        <script src="/static/js/materialize.min.js"></script>
+    </body>
+</html>                                                                                                                                                                      
+┌──(white㉿white)-[~/white]
+└─$ 
+                                                                                                                                                                      
+┌──(white㉿white)-[~/white]
+└─$ 
