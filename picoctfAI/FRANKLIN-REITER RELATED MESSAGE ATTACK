@@ -1,0 +1,104 @@
+================================================================================
+CHALLENGE WRITEUP: FRANKLIN-REITER RELATED MESSAGE ATTACK
+================================================================================
+
+1. CHALLENGE OVERVIEW
+--------------------------------------------------------------------------------
+* Category: Cryptography
+* Difficulty: Medium
+
+* Vulnerability: Low Public Exponent with Related Plaintexts (Linear Difference)
+* Concept: RSA becomes structurally vulnerable when a small public exponent e is 
+  used to encrypt multiple messages that share a known algebraic relationship. 
+  By constructing polynomial equations over the ring Z_N, the identical roots 
+  can be solved deterministically using polynomial GCD reduction.
+
+
+2. VULNERABILITY ANALYSIS
+--------------------------------------------------------------------------------
+Reviewing the provided execution source script (`chall1.py`) targets the leak:
+
+    e = 0x11  # e = 17
+    ...
+    ciphertext = pow(Message, e, N)
+    ciphertext2 = pow(Message_fixed, e, N)
+    ...
+    print(Message - Message_fixed) # Yields a delta diff constant of -3
+
+* The public exponent e is tiny (17).
+* Message_fixed can be rewritten in terms of Message: M_2 = M_1 + 3.
+* Because the linear polynomial difference is explicitly known, Franklin-Reiter's 
+  theorem applies cleanly. The message root can be intercepted without factoring N.
+
+
+3. CRYPTOGRAPHIC DATA
+--------------------------------------------------------------------------------
+* Public Exponent e      : 17
+* Message Offset Delta   : 3
+* Modulus N              : 173348455467725...045253881
+* Ciphertext 1 (C_1)     : 348636484977258...28026500248591322675321980719576323749
+* Ciphertext 2 (C_2)     : 201982790559548...08124
+
+
+4. RECOVERY METHODOLOGY (THE MATH)
+--------------------------------------------------------------------------------
+1. Formulate two polynomial expressions over Z_N where the flag (M_1) is a root:
+   - f_1(x) = x^17 - C_1 = 0 mod N
+   - f_2(x) = (x + 3)^17 - C_2 = 0 mod N
+
+2. Expand f_2(x) using the binomial expansion theorem to structure its coefficients.
+3. Compute the Greatest Common Divisor (GCD) of the two polynomials using the 
+   Euclidean polynomial division algorithm.
+4. Because M_1 is the unique shared root, the GCD reduces perfectly down to a 
+   monic linear polynomial equation: g(x) = ax + b = 0 mod N.
+5. Isolate the target variable variable: M_1 = (-b * a^-1) mod N.
+
+
+5. SOLUTION SCRIPT (PYTHON)
+--------------------------------------------------------------------------------
+```python
+import math
+from Crypto.Util.number import long_to_bytes
+
+n = 17334845...
+c1 = 3486364...
+c2 = 2019827...
+
+def poly_divmod(num, den, mod_val):
+    num, den = list(num), list(den)
+    quot = * (len(num) - len(den) + 1)
+    den_leading_inv = pow(den[-1], -1, mod_val)
+    while len(num) >= len(den):
+        deg_diff = len(num) - len(den)
+        coeff = (num[-1] * den_leading_inv) % mod_val
+        quot[deg_diff] = coeff
+        for i in range(len(den)):
+            num[deg_diff + i] = (num[deg_diff + i] - coeff * den[i]) % mod_val
+        while num and num[-1] == 0: num.pop()
+    return quot, num
+
+def poly_gcd(p1, p2, mod_val):
+    while p2:
+        while p2 and p2[-1] == 0: p2.pop()
+        if not p2: return p1
+        _, rem = poly_divmod(p1, p2, mod_val)
+        p1, p2 = p2, rem
+
+# Build f1(x) = x^17 - c1
+f1 = [(-c1) % n] + * 16 + 
+
+# Build f2(x) = (x + 3)^17 - c2
+f2 = * 18
+for i in range(18):
+    f2[i] = (math.comb(17, i) * pow(3, 17 - i, n)) % n
+f2 = (-c2) % n
+
+g = poly_gcd(f1, f2, n)
+msg = (-g * pow(g, -1, n)) % n
+print(f"Flag: {long_to_bytes(msg).decode()}")
+```
+
+6. FLAG
+--------------------------------------------------------------------------------
+picoCTF{m3ssage_w1th_typ0}
+================================================================================
