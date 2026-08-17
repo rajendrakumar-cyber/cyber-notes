@@ -1,0 +1,76 @@
+================================================================================
+CHALLENGE WRITEUP: 8-BIT LFSR BREAK (picoCTF 2026)
+================================================================================
+
+1. CHALLENGE OVERVIEW
+--------------------------------------------------------------------------------
+* Category: Cryptography
+* Difficulty: Easy
+* Vulnerability: Insufficient State Space / Key Truncation
+* Concept: Linear Feedback Shift Registers (LFSRs) can be highly secure stream 
+  ciphers when configured with large states and non-linear filter functions. 
+  Truncating the operational state to a tiny byte constraint leaves the cipher 
+  vulnerable to trivial, exhaustive search enumeration.
+
+
+2. VULNERABILITY ANALYSIS
+--------------------------------------------------------------------------------
+Reviewing the provided source code (`chall.py`) exposes a severe design flaw:
+
+    key = bytes_to_long(get_random_bytes(126))
+    ...
+    def encrypt_lfsr(pt_bytes):
+        ...
+        lfsr = key & 0xFF
+
+* While the system generates a strong 126-byte random master key, the application 
+  immediately discards 125 bytes of entropy.
+* By bitwise-ANDing the key with `0xFF`, the initialization variable `lfsr` only 
+  inherits the bottom 8 bits.
+* The total possible keyspace is reduced to 2^8 = 256 configurations (0 to 255), 
+  rendering any cryptographic security obsolete.
+
+
+3. CRYPTOGRAPHIC DATA
+--------------------------------------------------------------------------------
+* Target Ciphertext (Hex): 21c1b705764e4bfdafd01e0bfdbc38d5eadf92991cdd347064e37444e517d661cea9
+* Operational Mode       : Synchronous Stream Cipher (Byte-wise XOR)
+
+
+4. RECOVERY METHODOLOGY (THE MATH)
+--------------------------------------------------------------------------------
+1. Re-implement the identical `steplfsr` feedback calculation logic function.
+2. Initialize a search loop tracking through numbers 0 through 255.
+3. For each candidate iteration index:
+   a. Assume the index value is the original 8-bit LFSR starting state.
+   b. Step the register state forward for each encrypted element block byte.
+   c. XOR the resulting pseudo-random keystream state against the ciphertext byte.
+4. Filter the decrypted strings; terminate and output the result when a match 
+   contains the standard `picoCTF{` signature.
+
+
+5. SOLUTION SCRIPT (PYTHON)
+--------------------------------------------------------------------------------
+```python
+ct_bytes = bytes.fromhex("21c1b705764e4bfdafd01e0bfdbc38d5eadf92991cdd347064e37444e517d661cea9")
+
+def steplfsr(lfsr):
+    b7, b5, b4, b3 = (lfsr >> 7) & 1, (lfsr >> 5) & 1, (lfsr >> 4) & 1, (lfsr >> 3) & 1
+    feedback = b7 ^ b5 ^ b4 ^ b3
+    return (feedback << 7) | (lfsr >> 1)
+
+for seed in range(256):
+    lfsr = seed
+    decrypted = bytearray()
+    for c in ct_bytes:
+        lfsr = steplfsr(lfsr)
+        decrypted.append(c ^ lfsr)
+    if b"picoCTF{" in decrypted:
+        print(f"Flag: {decrypted.decode()}")
+        break
+```
+
+6. FLAG
+--------------------------------------------------------------------------------
+picoCTF{l1n3ar_f33dback_sh1ft_r3g}
+================================================================================
