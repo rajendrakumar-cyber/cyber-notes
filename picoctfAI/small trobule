@@ -1,0 +1,108 @@
+================================================================================
+CHALLENGE WRITEUP: SMALL PRIVATE EXPONENT / WIENER'S ATTACK
+================================================================================
+
+1. CHALLENGE OVERVIEW
+--------------------------------------------------------------------------------
+* Category: Cryptography
+* Difficulty: Medium
+* Vulnerability: Low Private Exponent (Small d)
+* Concept: RSA security relies on the private exponent d being large enough to 
+  prevent structural root-finding attacks. If the private exponent is small, 
+  specifically satisfying Wiener's theorem condition (d < 1/3 * N^(1/4)), the 
+  system can be completely broken in polynomial time.
+
+
+2. VULNERABILITY ANALYSIS
+--------------------------------------------------------------------------------
+Reviewing the setup implementation (`small.py`) exposes the math vulnerability:
+
+    # Generate two large primes (1048 bits each)
+    p = getPrime(1048)
+    q = getPrime(1048)
+    n = p * q
+    ...
+    # compute d
+    d = getPrime(256)
+    # Compute the public exponent
+    e = inverse(d, phi)
+
+* Modulus N is 2096 bits long (1048 bits * 2).
+* The private key exponent d is hardcoded to a tiny bit length of only 256 bits.
+* Since 256 is significantly less than 1/4 of the total modulus bit length (524), 
+  Wiener's Attack is guaranteed to recover the secret exponent key.
+
+
+3. CRYPTOGRAPHIC DATA
+--------------------------------------------------------------------------------
+* Modulus N       : 5594693087516809540399...92954291313437552982609848032044158878...
+* Public Key e    : 1253741277266526276273...22972432567962335644063896694295429131...
+* Ciphertext c    : 1575773147844095818115...47875314158626
+
+
+4. RECOVERY METHODOLOGY (THE MATH)
+--------------------------------------------------------------------------------
+1. Construct the continued fraction expansion sequence of the fraction (e / N).
+2. Compute successive rational approximations (convergents) k / d for the sequence.
+3. For each convergent fraction, test if the denominator is the true private key d:
+   a. Compute the suspected totient: phi = (e * d - 1) // k
+   b. Construct the quadratic prime equation: x^2 - (n - phi + 1)x + n = 0
+   c. Calculate the discriminant of the quadratic formula.
+4. If the roots are whole integers, the correct value for d is confirmed.
+5. Perform standard decryption: m = c^d mod N, then convert long integer to text.
+
+
+5. SOLUTION SCRIPT (PYTHON)
+--------------------------------------------------------------------------------
+```python
+import math
+
+n = 5594693...
+e = 1253741...
+c = 1575773...
+
+# 1. Generate fraction components
+cf_expansion = []
+numerator, denominator = e, n
+while denominator:
+    quotient = numerator // denominator
+    cf_expansion.append(quotient)
+    numerator, denominator = denominator, numerator - quotient * denominator
+
+# 2. Iterate through fraction convergents to find private key d
+n0, d0 = 0, 1
+n1, d1 = 1, 0
+for q in cf_expansion:
+    n2 = q * n1 + n0
+    d2 = q * d1 + d0
+    k, d = n2, d2
+    n0, n1 = n1, n2
+    d0, d1 = d1, d2
+    
+    if k == 0:
+        continue
+    
+    # 3. Test mathematical validity conditions
+    if (e * d - 1) % k == 0:
+        phi = (e * d - 1) // k
+        b = n - phi + 1
+        discriminant = b * b - 4 * n
+        if discriminant >= 0:
+            root = math.isqrt(discriminant)
+            if root * root == discriminant and (b + root) % 2 == 0:
+                # 4. Success decryption
+                m = pow(c, d, n)
+                print(f"Flag: {bytes.fromhex(hex(m)[2:]).decode()}")
+                break
+```
+
+6. FLAG
+--------------------------------------------------------------------------------
+picoCTF{sm4ll_d_6ea2db76}
+================================================================================
+┌──(venv)─(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/crypto]
+└─$ cat  'message (1).txt'
+n = 5594693087516809540399630533662256130165069234399367321216316625813041939300993769469967603569290419832603300499594108772793414518139869665356083286669649260446980521836343923879233640062756943840931863547930310945579712973265137792295790351161076685048473027951375342321268790017586922565818383182756032674465485490251320715340411385624938864566260868602337614069898840915970814299359393740587761535848189108678205178238800280288111230994607337322709256318074861115932027677894091130507029723017060154360297187479229724325679623356440638966942954291313437552982609848032044158878674696384027496524889634696452323607191723997392473
+e = 1253741277266526276273737492341769420156287745742446683234137950307473941700753795420946118527838187324934980950852435452652395931456125106860289473635243147451566503774469323896054400225880927948949271325382686728252025525992064502049812510769890170584852893320391805480557992376841338269221082823514780592527932026224041016469532408356349643964521128610552886213674116475363116732306717431311560112424065793590597523162878957727018336437764277170504454532774662559560076329628335685182665402553483091574429654268002692354092642868885921538110973203434318377491643644652734769173448091279268078729903023902968710350828758115786949
+c = 1575773147844095818115335246981689507608786190212845187250432450517265485011147541328871869339509244543151221056093233377208864758371954434810015700305579991328875661494910208600661149362933701275626110364421427594488043068010070893043333162678431541790213846097012150446212452859725911076627073141637069389589032187813548754572797526213109169925710036206244271861122294567316906395657015977496683800227620943713798410804779020204823690850145678294088525234958290370183071276300423260384932033932245873934561990566777751374865071948145184698603999279619026875789640532470724368003682471823004876010640755680214225037847875314158626
+                                                
