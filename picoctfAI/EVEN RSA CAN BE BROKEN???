@@ -1,0 +1,20 @@
+EVEN RSA CAN BE BROKEN???
+Step 1: Analyze the GivensWhen connecting to the challenge via Netcat (nc), the server outputs three values:N: The public modulus.e: The public exponent (usually 65537).cyphertext: The encrypted flag message.Step 2: Identify the Critical FlawLook closely at the last digit of the modulus N provided by the server:N: 203461174066...11643238The number ends in 8, making it an even number.In standard RSA, N = p × q, where p and q are supposed to be massive, distinct prime numbers. Since the only even prime number in mathematics is 2, an even N guarantees that one of the factors is exactly 2.Step 3: Deriving the Secret Components (The Math)Because you know one prime factor, you can trivially calculate the rest of the private key components:Find the second prime (q): Divide the modulus by 2.\(q=\frac{N}{2}\)Calculate Euler's Totient (φ):\(\phi (N)=(p-1)\times (q-1)=(2-1)\times (q-1)=q-1\)Compute the Private Key Exponent (d): Use the modular multiplicative inverse of the public exponent e modulo φ(N).\(d=e^{-1}\mathinner{\;\left(\mod \,\phi (N)\right)}\)Step 4: Decrypting the FlagWith the private exponent d in hand, perform standard RSA decryption on the ciphertext (c) to recover the numerical representation of the message (m):\(m=c^{d}\mathinner{\;\left(\mod \,N\right)}\)Step 5: Convert Int to BytesFinally, take the massive integer value of m and convert it back into a string of readable text bytes to reveal the flag in the format picoCTF{...}.
+
+n = 20346117406651612698927979316833154623722999740251077578141549957579765831464117674847710608469661852285744824083016945137048761250039705650217122811643238
+e = 65537
+c = 17632300586322455469475611293372027206751582976385433251282926076116787503503706114166052741629337558589755337221370837335031800372283908092038026174052937
+
+# Trivial factorization because N is even
+p = 2
+q = n // 2
+
+# Calculate Totient, Private Key, and Decrypt
+phi = (p - 1) * (q - 1)
+d = pow(e, -1, phi)
+m = pow(c, d, n)
+
+# Decode to text
+flag = m.to_bytes((m.bit_length() + 7) // 8, byteorder='big').decode()
+print(flag)
+picoCTF{tw0_1$_pr!m31c9046c4}
