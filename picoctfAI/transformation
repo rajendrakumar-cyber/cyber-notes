@@ -1,0 +1,39 @@
+──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/rev]
+└─$ cat enc        
+灩捯䍔䙻ㄶ形楴獟楮獴㌴摟潦弸形㝦㘲捡㕽                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/rev]
+└─$ python3 -c "enc = open('enc').read().strip(); print(''.join([chr(ord(c) >> 8) + chr(ord(c) & 0xFF) for c in enc]))"
+
+picoCTF{16_bits_inst34d_of_8_b7f62ca5}
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/rev]
+└─$ nano enc                         
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/rev]
+└─$ cat enc
+灩捯䍔䙻ㄶ形楴獟楮獴㌴摟潦弸形㝦㘲捡㕽
+
+Summary of "Transformation" (picoCTF 2021)Core ConceptThe challenge compresses an 8-bit ASCII string into 16-bit Unicode characters by packing pairs of characters together.The Encoding Formulapython''.join([chr((ord(flag[i]) << 8) + ord(flag[i + 1])) for i in range(0, len(flag), 2)])
+Use code with caution.Multiplies the first character by 2⁸ (shifting left by 8 bits).Adds the second character to fill the lower 8 bits.How to SolveMethod 1: The Quick Python One-LinerRun this command in the terminal directory containing your enc file:bashpython3 -c "enc = open('enc').read().strip(); print(''.join([chr(ord(c) >> 8) + chr(ord(c) & 0xFF) for c in enc]))"
+Use code with caution.Method 2: Readable Python ScriptSave this code snippet to a file (e.g., solve.py) to reuse for similar bit-packing challenges:python# Read the encoded string from the file
+with open("enc", "r", encoding="utf-8") as f:
+    encoded_str = f.read().strip()
+
+flag = ""
+
+# Loop through each 16-bit character
+for char in encoded_str:
+    val = ord(char)
+    
+    # Extract the first character (high byte)
+    first_char = chr(val >> 8)
+    
+    # Extract the second character (low byte)
+    second_char = chr(val & 0xFF)
+    
+    flag += first_char + second_char
+
+print(f"Flag: {flag}")
+Use code with caution.
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/re
