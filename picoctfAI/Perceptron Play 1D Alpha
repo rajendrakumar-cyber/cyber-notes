@@ -1,0 +1,122 @@
+──(white㉿white)-[~/CTF/rev]
+└─$ nc aureolin-pixie.cylabacademy.net 63419
+Welcome to Perceptron Play 1D!
+
+Tweak the weight and bias of a single-layer perceptron on a 1-dimensional
+number line. Your goal is to correctly classify every labeled point.
+
+Commands:
+  SHOW                redraw the number line and point table
+  SET w b             set the weight/bias directly (floats are fine)
+  ADJUST dw db        add offsets to the current weight and bias
+  POINTS              list the training points with their target labels
+  CHECK               verify every point; prints the flag when perfect
+  RESET               go back to the starting params (w=1.0, b=0.0)
+  HELP                show this message again
+  EXIT / QUIT         leave the playground
+
+Legend on the number line:
+  0  point labeled class 0 and currently classified correctly
+  1  point labeled class 1 and currently classified correctly
+  x  point that is misclassified right now
+  ^  decision boundary marker below the line (where w·x + b ≈ 0)
+  |  origin marker when no point or boundary is present
+
+Start experimenting by typing SET or ADJUST, or just press CHECK once
+everything looks good! The starting parameters are w = 1, b = 0 so a
+boundary is visible immediately.
+
+Number line (predictions):
+    -4-3-2-1+0+1+2+3+4
+     0 . 0 . x . 1 1 1
+             ^        
+
+Current parameters -> w: 1, b: 0
+
+  x    label  perceptron  activation
+  --   -----  ----------  ----------
+  -4      0        0        -4
+  -2      0        0        -2
+  +0      0        1        0
+  +2      1        1        2
+  +3      1        1        3
+  +4      1        1        4
+
+> 2
+Unknown command. Type HELP for a list of commands.
+> SET 1 -1
+Number line (predictions):
+    -4-3-2-1+0+1+2+3+4
+     0 . 0 . 0 . 1 1 1
+               ^      
+
+Current parameters -> w: 1, b: -1
+
+  x    label  perceptron  activation
+  --   -----  ----------  ----------
+  -4      0        0        -5
+  -2      0        0        -3
+  +0      0        0        -1
+  +2      1        1        1
+  +3      1        1        2
+  +4      1        1        3
+
+> CHECK
+Perfect! All points are classified correctly.
+academy{0n3_d_thr35h0ld_4d654a9a}
+### 1. What is a 1D Perceptron?
+
+  A perceptron is a simple mathematical model of a biological neuron. In one dimension (1D), it takes a single input value x and uses two parameters to make a
+  decision:
+
+  • Weight (w): Determines the slope or direction of the decision.
+  • Bias (b): Shifts the decision point left or right.
+  ──────
+  ### 2. The Decision Rule (Activation)
+
+  The perceptron calculates a value called the activation:
+
+    activation = w·x + b
+
+  It then classifies the point based on the sign of the activation:
+
+  • If activation ≥ 0, it fires (Class 1).
+  • If activation < 0, it stays quiet (Class 0).
+  ──────
+  ### 3. The Decision Boundary
+
+  The decision boundary is the threshold point where the classification flips from 0 to 1. This occurs exactly when the activation is zero:
+
+                               b
+    w·x + b = 0 implies x = - ───
+                               w
+  ──────
+  ### 4. Analyzing the Initial State (w = 1,b = 0)
+
+  With the starting parameters:
+
+  • Boundary location:
+
+           0
+    x = - ─── = 0
+           1
+
+  .
+
+  • Since the weight w is positive (+1), any point to the right of 0 (x ≥ 0) gets classified as 1.
+  • This caused a mismatch at x = 0:
+
+    activation = 1·(0) + 0 = 0 ≥ 0 implies Class 1  (but target label was  0)
+  ──────
+  ### 5. Shifting the Boundary (w = 1,b = -1)
+
+  We needed to move the boundary to the right, placing it between x = 0 and x = 2. By choosing x = 1 as our boundary:
+
+    1·(1) + b = 0 implies b = -1
+
+  Under these new parameters:
+
+  • For x = 0: activation = 1(0) - 1 = -1 < 0 implies Class 0 (Correct)
+  • For x = 2: activation = 1(2) - 1 = 1 ≥ 0 implies Class 1 (Correct)
+
+                                             
