@@ -1,0 +1,57 @@
+Introduction to Cybersecurity — Study Notes
+What This Topic Is
+
+Cybersecurity is the practice of protecting computers, networks, applications, devices, and data from unauthorized access, misuse, disruption, modification, or destruction.
+
+Cisco’s Introduction to Cybersecurity course builds the foundation for understanding why security matters, what threats organizations face, and how security professionals protect information systems.
+
+The three fundamental goals are the CIA Triad:
+
+Confidentiality — only authorized people can access information.
+Integrity — information remains accurate and is not improperly modified.
+Availability — systems and information remain accessible when needed.
+Core Concepts & Terminology
+Asset — something valuable that needs protection, such as data, servers, accounts, or applications.
+Threat — something capable of causing harm.
+Vulnerability — a weakness that can be exploited.
+Exploit — a technique or code that takes advantage of a vulnerability.
+Risk — the potential impact resulting from a threat exploiting a vulnerability.
+Attack surface — all possible points an attacker could target.
+Malware — malicious software, including viruses, worms, trojans, ransomware, and spyware.
+Phishing — social engineering designed to trick users into revealing information or performing an unsafe action.
+Authentication — verifying who a user is.
+Authorization — determining what an authenticated user is allowed to do.
+Encryption — transforming readable data into protected ciphertext.
+Firewall — controls network traffic according to security rules.
+Social engineering — manipulating people rather than directly attacking technology.
+How a Security Incident Works
+
+A simplified attack chain looks like this:
+
+Reconnaissance — attacker gathers information about the target.
+Identify weakness — attacker finds a vulnerability or susceptible user.
+Exploitation — weakness is used to gain unauthorized access.
+Initial access — attacker enters an account, application, or network.
+Persistence/expansion — attacker attempts to maintain or increase access.
+Impact — data may be stolen, modified, encrypted, or systems disrupted.
+Detection & response — defenders investigate indicators and contain the incident.
+Recovery — systems are restored and security controls improved.
+Mini Walk-Through: Basic Network Observation
+
+On a Linux system, you can inspect your network configuration with:
+
+ip addr
+
+To examine your routing table:
+
+ip route
+
+For example, ip addr can show your network interface and assigned IP address, while ip route can reveal your default gateway. Understanding these basics is essential before learning network defense or penetration testing.
+
+Common Pitfalls
+Confusing authentication with authorization.
+Assuming cybersecurity is only about hacking; people, processes, policies, and technology all matter.
+Ignoring human factors such as phishing and weak passwords.
+Treating every vulnerability as equally dangerous without considering risk and impact.
+Running security tools against systems without permission.
+Focusing exclusively on prevention and ignoring logging, detection, incident response, and recovery.
