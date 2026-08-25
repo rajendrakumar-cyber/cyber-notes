@@ -1,0 +1,33 @@
+🗺️ Step 1: Track the State RegisterYour register holds 64 bits.The leftmost bit is index 0, and the rightmost bit is index 63.The initial sequence is: [0, 0, 1, 0, ..., 1, 1]⚙️ Step 2: Manually Shift and Output BitsAt each clock cycle, two operations occur:Output: The bit at index 0 leaves the register and becomes part of your key stream.Feedback: Compute a new bit by XORing the values currently sitting at indices 63, 61, 60, and 58.Shift: Shift the remaining 63 bits to the left, and insert the new feedback bit into index 63.🔄 Cycle 1 SimulationOutput Bit 1: 0 (the bit at index 0)Feedback Calculation: Look at your initial array at positions 63, 61, 60, and 58:Index 58 = 1Index 60 = 1Index 61 = 0Index 63 = 1Math: 1 ⊕ 1 ⊕ 0 ⊕ 1 = 1New State: Drop the first 0, shift left, append 1 to the end.🔄 Cycles 2–64 Short-cutBecause your register is 64 bits long, the first 64 bits shifted out are simply the exact first 64 bits of your initial state. You do not need to calculate feedback for these.textFirst 64 bits of your key stream:
+0010010111101100100101101001010101001101100010111100010001011011
+Use code with caution.
+─(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/crypto]
+└─$ cat output1.txt 
+LFSR Initial State:
+[0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1]
+LFSR Taps:
+[63, 61, 60, 58]
+Encrypted Flag:
+8f0e6d0f5b0dc1db201948b9e0cebd8f184b92a3e4793abf8dac3d9e135f39a638338e7e04fbddef0c6260a4eb758417
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/crypto]
+└─$ nano exp2.py              
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/crypto]
+└─$ python exp2.py 
+Keystream (hex): da23d1b2a96937a44f905970d545413dfeb1b25f05a4d7344f9944771517a99dfc3df1e29602e174d5370a5d7c8483371d6474d9f445e1605eb1349e1f8287d0
+Keystream (bytes): b'\xda#\xd1\xb2\xa9i7\xa4O\x90Yp\xd5EA=\xfe\xb1\xb2_\x05\xa4\xd74O\x99Dw\x15\x17\xa9\x9d\xfc=\xf1\xe2\x96\x02\xe1t\xd57\n]|\x84\x837\x1ddt\xd9\xf4E\xe1`^\xb14\x9e\x1f\x82\x87\xd0'
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/crypto]
+└─$ rm exp2.py 
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/crypto]
+└─$ nano exp2.py
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/crypto]
+└─$ python exp2.py
+[+] Reconstructed AES Key (Hex): 25ec96954d8bc45b2d7798a9fa0e1236
+[+] Decrypted Flag: picoCTF{scr8mbledt_flvg_8e37c054}
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/crypto]
+└─$ 
