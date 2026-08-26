@@ -1,0 +1,76 @@
+Cybersecurity Essentials — SOC Analyst Study Notes
+What This Topic Is
+
+Cybersecurity Essentials introduces the fundamental principles used to protect systems, networks, applications, users, and data from cyber threats.
+
+For a SOC (Security Operations Center) Analyst, the key mindset is not simply “How do I stop hackers?” but:
+
+What happened? How did it happen? What is affected? Is it malicious? What should we do next?
+
+A SOC analyst continuously monitors security events, investigates suspicious activity, identifies incidents, and helps contain and remediate threats.
+
+Core Concepts & Key Terminology
+Asset — Anything valuable that requires protection, such as servers, endpoints, databases, credentials, or cloud resources.
+Threat — A potential cause of harm.
+Vulnerability — A weakness that could be exploited.
+Risk — The likelihood and potential impact of a threat exploiting a vulnerability.
+Attack vector — The method used to gain access or cause harm.
+IOC (Indicator of Compromise) — Evidence potentially indicating malicious activity, such as a malicious IP, domain, file hash, or unusual process.
+TTPs — Tactics, Techniques, and Procedures used by attackers.
+SIEM — Security Information and Event Management platform that collects and analyzes security logs.
+IDS/IPS — Systems that detect and, in the case of IPS, potentially block suspicious network activity.
+EDR — Endpoint Detection and Response technology for monitoring and investigating endpoint activity.
+Authentication — Verifying identity.
+Authorization — Determining permitted actions.
+Least privilege — Giving users and systems only the permissions they actually need.
+CIA Triad — Confidentiality, Integrity, Availability.
+How Security Monitoring Works
+
+A simplified SOC workflow is:
+
+Collect — Logs and telemetry are collected from endpoints, servers, firewalls, applications, and network devices.
+Normalize — Different log formats are converted into a usable structure.
+Correlate — SIEM rules connect related events.
+Alert — Suspicious activity generates an alert.
+Triage — The analyst determines whether the alert is likely benign or malicious.
+Investigate — Examine users, IPs, timestamps, processes, commands, and related events.
+Contain — Appropriate actions can limit the attack, such as isolating an endpoint or disabling a compromised account.
+Eradicate & Recover — Remove the threat and restore normal operations.
+Document — Record findings, evidence, actions, and lessons learned.
+Mini Walk-Through: Investigating a Linux Login
+
+Suppose a SOC alert reports repeated SSH login attempts.
+
+Start by checking authentication logs:
+
+sudo grep "Failed password" /var/log/auth.log
+
+You might see repeated failures from the same source IP.
+
+Next, investigate the IP, check whether a legitimate user was targeted, correlate the timestamps with other logs, and determine whether a successful login occurred afterward.
+
+Important: A failed login alone does not prove compromise. The analyst must correlate evidence before declaring an incident.
+
+Common Pitfalls
+Treating every alert as a confirmed attack.
+Ignoring false positives.
+Looking at one log source instead of correlating multiple sources.
+Failing to verify timestamps and time zones.
+Blocking an IP immediately without understanding business impact.
+Not documenting investigative evidence.
+Using offensive tools against systems without authorization.
+Focusing only on malware while overlooking stolen credentials and social engineering.
+Why This Matters for a SOC Analyst
+
+These fundamentals directly support daily SOC responsibilities:
+
+Alert triage
+Log analysis
+Incident investigation
+Threat detection
+IOC identification
+Network and endpoint monitoring
+Incident documentation
+Escalation to senior analysts
+
+Your core skill is developing an evidence-driven security mindset: don't assume, don't panic, and don't immediately label something malicious. Collect evidence → correlate → investigate → determine impact → respond → document.
