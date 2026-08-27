@@ -1,0 +1,183 @@
+# Interview Preparation — DevOps Intern (CloudSEK)
+
+Built directly from the job posting: Kubernetes (EKS/GKE/AKS), ingress/traffic routing, Karpenter, CI/CD, GitOps (ArgoCD), observability, secrets management, and multi-cloud.
+
+**Honest framing up front:** this posting expects real conceptual depth on Kubernetes and cloud-native tooling that goes beyond what's on your current resume. As an intern candidate, you're not expected to have production experience with all of this — but you ARE expected to demonstrate strong fundamentals and genuine curiosity. Where you have real hands-on ground (Linux, Docker, AWS/GCP, Bash), lean on it hard. Where you don't, the honest "I understand the concept, haven't used the tool hands-on yet, here's how I'd learn it" answer is your best move — see the priorities section at the end.
+
+---
+
+## 1. Kubernetes Fundamentals
+
+**Q: What is Kubernetes, and what problem does it solve?**
+A: Kubernetes is a container orchestration platform — it manages running containers across a cluster of machines: scheduling them, restarting failed ones, scaling them up/down based on demand, and rolling out updates without downtime. It solves the problem of running containers reliably at scale, which plain Docker isn't built for.
+
+**Q: Explain the Kubernetes control plane at a high level.**
+A: The control plane is the "brain" of the cluster. Key components: **API server** (the front door — everything talks to Kubernetes through it), **etcd** (stores all cluster state/config), **scheduler** (decides which node a new pod runs on), and **controller manager** (continuously works to make the actual cluster state match the desired state, e.g., restarting a crashed pod).
+
+**Q: What's a Pod, and why not just run containers directly?**
+A: A Pod is the smallest deployable unit in Kubernetes — one or more containers that share networking and storage, always scheduled together on the same node. Kubernetes manages pods (not raw containers) so it can handle things like shared volumes and sidecar containers as a single unit.
+
+**Q: What's the difference between a Deployment, a ReplicaSet, and a Pod?**
+A: A Pod is a running instance of your app. A ReplicaSet ensures a specified number of identical pod replicas are running at all times. A Deployment manages ReplicaSets on top of that, adding rolling updates and rollback capability — in practice, you almost always create Deployments, not ReplicaSets or Pods directly.
+
+**Q: What is a CNI (Container Network Interface)?**
+A: A plugin standard that provides networking for pods — assigning IP addresses and enabling pod-to-pod communication across nodes. Examples: Calico, Cilium, Flannel. Without a CNI plugin installed, pods on different nodes can't talk to each other.
+
+**Q: What is a CSI (Container Storage Interface)?**
+A: A plugin standard that lets Kubernetes provision and manage persistent storage (e.g., an AWS EBS volume or GCP Persistent Disk) for pods that need data to survive beyond the pod's own lifecycle.
+
+**Q: How do Kubernetes cluster upgrades generally work?**
+A: The control plane is upgraded first (one version at a time, not skipping versions), then worker nodes are upgraded — often by draining a node (safely moving its pods elsewhere), upgrading it, and repeating across the cluster to avoid downtime.
+
+**Q: What's the difference between a Service and an Ingress?**
+A: A Service provides stable internal networking/load balancing to a set of pods (since pod IPs change constantly). An Ingress manages external HTTP/HTTPS access into the cluster, routing based on hostname/path to the right Service — Ingress sits in front of Services, not instead of them.
+
+---
+
+## 2. Managed Kubernetes (EKS / GKE / AKS)
+
+**Q: What's the difference between running Kubernetes yourself and using EKS/GKE/AKS?**
+A: A managed service handles the control plane for you (upgrades, availability, etcd management) — you focus on your worker nodes and workloads instead of operating the hardest, most critical part of the cluster yourself.
+
+**Q: Have you worked with EKS, GKE, or AKS specifically?**
+A: Answer honestly. *"I haven't run a managed Kubernetes cluster hands-on yet, but I've provisioned and configured VMs and networking directly on both AWS and GCP, so I understand the underlying cloud primitives (VPCs, IAM, networking) these managed Kubernetes services build on top of. I'm actively looking to get hands-on with EKS or GKE next."*
+
+**Q: What are node groups/node pools in managed Kubernetes?**
+A: Groups of worker nodes with the same configuration (instance type, OS, scaling settings) — EKS calls them "node groups," GKE calls them "node pools." They let you run different workload types on differently-sized nodes within the same cluster.
+
+---
+
+## 3. Traffic Routing & Ingress
+
+**Q: What does an Ingress controller do, and what's an example?**
+A: It's the actual software that implements Ingress rules — watching for Ingress resources and configuring a reverse proxy/load balancer accordingly. NGINX Ingress Controller is a common example.
+
+**Q: What is the Kubernetes Gateway API, and how is it different from Ingress?**
+A: Gateway API is a newer, more expressive standard for traffic routing than the original Ingress resource — it splits concerns into separate resources (`Gateway` for the listener/entry point, `HTTPRoute` for routing rules), supports more protocols beyond HTTP, and is designed to be more extensible and role-oriented (infra team manages Gateways, app teams manage Routes).
+
+**Q: What's TLS termination, and where does it typically happen in a Kubernetes setup?**
+A: Decrypting HTTPS traffic back to plain HTTP. It typically happens at the ingress/gateway layer — the ingress controller holds the TLS certificate, decrypts incoming traffic, and forwards plain HTTP internally to the backend service (though end-to-end encryption to the pod is also possible for stricter security needs).
+
+**Q: What's the difference between blue/green and canary deployment strategies?**
+A: Blue/green runs two full identical environments — traffic is switched all at once from the old (blue) to the new (green) version, allowing instant rollback by switching back. Canary gradually shifts a small percentage of traffic to the new version first, monitoring for issues before rolling it out further — lower risk exposure per step, but takes longer and requires more sophisticated traffic-splitting.
+
+**Q: Why would routing/traffic strategy matter for a security-focused company like CloudSEK?**
+A: Controlled rollout strategies (canary especially) limit blast radius if a new deployment has a bug or vulnerability, and proper TLS/ingress configuration is itself a security control — misconfigured ingress is a common real-world attack surface.
+
+---
+
+## 4. Karpenter & Node Autoscaling
+
+**Q: What is Karpenter, and what problem does it solve?**
+A: An open-source Kubernetes node autoscaler (originally built by AWS) that provisions new nodes just-in-time based on actual pending pod requirements, rather than relying on pre-defined, fixed node groups like the traditional Cluster Autoscaler. It aims to be faster and more cost-efficient by right-sizing nodes to the specific workloads that need scheduling.
+
+**Q: What's a NodePool in Karpenter?**
+A: A Karpenter resource that defines the rules for what kind of nodes Karpenter is allowed to provision — instance types, zones, capacity type (on-demand vs spot), and limits — Karpenter uses this as its template when deciding what node to launch for pending pods.
+
+**Q: What's an EC2NodeClass?**
+A: An AWS-specific Karpenter resource that defines the actual EC2-level configuration for nodes Karpenter provisions — AMI, subnet, security groups, instance profile — separate from the scheduling rules in NodePool.
+
+**Q: How is Karpenter different from the traditional Kubernetes Cluster Autoscaler?**
+A: Cluster Autoscaler works within pre-defined node groups/instance types and scales them up/down. Karpenter skips the node-group abstraction entirely — it directly provisions the best-fit instance type for pending pods in real time, which is generally faster and can be more cost-efficient (e.g., automatically using spot instances where appropriate).
+
+*If you haven't used Karpenter:* "I haven't configured Karpenter hands-on, but I understand its core value — just-in-time, right-sized node provisioning instead of static node groups — and I'm comfortable with the underlying AWS EC2 concepts (instance types, spot vs on-demand) it operates on."
+
+---
+
+## 5. CI/CD & GitOps
+
+**Q: What's the difference between Jenkins and GitLab CI, conceptually?**
+A: Both automate build/test/deploy pipelines. Jenkins is a standalone, highly plugin-extensible automation server that can integrate with any Git provider. GitLab CI is built directly into GitLab, defined via a `.gitlab-ci.yml` file in the repo — tighter integration with the repo itself, less setup than Jenkins, but tied to using GitLab.
+
+**Q: What is GitOps, and how is it different from a traditional CI/CD pipeline?**
+A: GitOps treats Git as the single source of truth for desired infrastructure/application state — a controller (like ArgoCD) continuously watches the Git repo and automatically syncs the cluster to match it. Traditional CI/CD *pushes* changes to the environment as a pipeline step; GitOps instead has the cluster *pull* the desired state from Git, which gives a clear audit trail (every change is a Git commit) and makes drift detection/rollback straightforward (revert the commit).
+
+**Q: What is ArgoCD, specifically?**
+A: A GitOps continuous delivery tool for Kubernetes — it monitors a Git repo containing your Kubernetes manifests (or Helm charts) and automatically applies any changes to the cluster, while also flagging or auto-correcting drift if the live cluster state diverges from what's in Git.
+
+**Q: Why does GitOps matter for security/reliability?**
+A: Every infrastructure change is a reviewable, auditable Git commit rather than an untracked manual `kubectl apply` — this matters a lot in a security-conscious environment where you need to know exactly what changed, when, and by whom.
+
+---
+
+## 6. Observability (Prometheus, Grafana, Loki)
+
+**Q: What does Prometheus do, and how does it collect data?**
+A: A metrics collection and alerting system — it "scrapes" (pulls) metrics from configured endpoints at regular intervals and stores them as time-series data, which can then be queried (using PromQL) and used to trigger alerts.
+
+**Q: What does Grafana do, and how does it relate to Prometheus?**
+A: Grafana is a visualization/dashboarding tool — it doesn't collect data itself, but connects to data sources like Prometheus (and Loki, and many others) to build dashboards and graphs from that data.
+
+**Q: What does Loki do, and how is it different from Prometheus?**
+A: Loki is a log aggregation system (similar in spirit to the Elastic Stack, but designed to be lightweight and integrate tightly with Grafana/Prometheus-style labeling). Prometheus handles *metrics* (numbers over time); Loki handles *logs* (text events) — used together for a fuller observability picture.
+
+**Q: Why do you need both metrics and logs, not just one?**
+A: Metrics tell you *that* something is wrong (e.g., error rate spiked) and are great for alerting and trends. Logs tell you *why* — the actual detailed events around the time of the spike. You typically start with a metric alert, then dig into logs to find the root cause.
+
+**Q: You've used Wazuh and Splunk before — how does that experience relate to Prometheus/Grafana/Loki?**
+A: *"The underlying concept is the same — centralizing observability data so you can detect and investigate issues rather than checking each system manually. Wazuh and Splunk were more security/log-focused; Prometheus/Grafana add the metrics and dashboarding side specifically for infrastructure and application performance, which I haven't set up hands-on yet but understand conceptually."*
+
+---
+
+## 7. Secrets & Configuration Management
+
+**Q: Why shouldn't Kubernetes Secrets alone be considered fully secure?**
+A: Native Kubernetes Secrets are only base64-encoded by default, not encrypted, and anyone with API access to read them can decode them trivially unless encryption-at-rest and strict RBAC are properly configured — which is why dedicated tools are often layered on top.
+
+**Q: What is HashiCorp Vault used for?**
+A: Centralized secrets management — storing, tightly controlling access to, and dynamically generating credentials (API keys, database passwords, certificates), with detailed audit logging of every access.
+
+**Q: What's the difference between Sealed Secrets and External Secrets?**
+A: Sealed Secrets lets you safely commit encrypted secrets into Git — they can only be decrypted by the controller running in the target cluster. External Secrets instead syncs secrets *from* an external secrets manager (like Vault or AWS Secrets Manager) *into* Kubernetes Secrets at runtime, so the actual secret values never live in Git at all. Both solve the "don't put plaintext secrets in Git" problem, but via different approaches (encrypt-then-commit vs. never-commit-at-all).
+
+---
+
+## 8. Multi-Cloud (AWS, GCP, Azure)
+
+**Q: You've worked with AWS and GCP — how would you approach learning Azure quickly?**
+A: "Azure's core concepts map closely to what I already know — Azure VMs to EC2/Compute Engine, VNets to VPCs, Azure AD/IAM to IAM. I'd focus on learning the Azure-specific terminology and console/CLI first, since the underlying cloud concepts transfer directly."
+
+**Q: Why does cost awareness matter for a DevOps/infra role?**
+A: Cloud costs scale directly with how infrastructure is provisioned and configured — oversized instances, orphaned resources, and inefficient autoscaling all directly cost the company real money, so it's part of the job to consider cost alongside performance and reliability, not as an afterthought.
+
+---
+
+## 9. Scripting
+
+**Q: Bash, Python, or Go — when would you choose each for an automation task?**
+A: Bash for quick, simple system-level tasks — chaining commands, file operations. Python for anything with more complex logic, error handling, or API interactions (e.g., calling a cloud provider's SDK). Go is common specifically in the Kubernetes/cloud-native ecosystem itself (kubectl, many operators are written in Go) — useful if you're building tools that need to integrate closely with Kubernetes' own APIs.
+
+**Q: Describe your Bash automation project.**
+A: Use your real Auto Recon/automation framework project — what it does, how it's structured, what problem it solves.
+
+---
+
+## 10. Behavioral & Fit Questions
+
+**Q: This role expects a lot of exposure to tools you may not have used yet — how do you approach learning something completely new?**
+A: Describe your actual process — reading core concepts first, setting up a small hands-on lab/sandbox, breaking things intentionally to understand failure modes, and building up from a simple working example rather than trying to understand the whole system at once.
+
+**Q: Why are you interested in DevOps/cloud-native infrastructure specifically?**
+A: Give a genuine reason tied to your own experience — e.g., enjoying the end-to-end nature of deploying and operating real systems (which you've tasted through your AWS/GCP projects) versus writing isolated code.
+
+**Q: This is a demanding intern role with production-adjacent responsibility — how do you handle being given something you're not fully confident about yet?**
+A: Emphasize communication — asking clarifying questions early, testing in a safe environment first, and being upfront about uncertainty rather than guessing silently on something that could affect production systems.
+
+---
+
+## Honest Gap Assessment (read this before the interview)
+
+This posting is written for a fairly senior "intern" — it expects real exposure to Kubernetes, Karpenter, ArgoCD, and multi-cloud networking that isn't currently on your resume. That's worth knowing going in, not to discourage you, but so you're not blindsided.
+
+**What genuinely transfers from your background:**
+- AWS + GCP hands-on experience (VM provisioning, networking, storage) — directly relevant to the "multi-cloud" and cost-awareness requirements.
+- Docker/containerization from your SecureLLM Lab project — a real stepping stone into Kubernetes concepts.
+- Bash scripting and automation — directly relevant to the scripting requirement.
+- Linux administration — listed as a "nice-to-have" and you're genuinely strong here.
+
+**What you'll need to speak to honestly as gaps:**
+- No hands-on Kubernetes, EKS/GKE/AKS, Karpenter, or ArgoCD experience yet.
+- No Prometheus/Grafana/Loki experience (though your Wazuh/Splunk background is a reasonable conceptual bridge to mention).
+- No Terraform/Ansible (IaC) experience yet.
+
+**My suggestion:** if you have even a few days before this interview, the highest-leverage thing you could do is spin up a free-tier Kubernetes cluster (minikube locally, or a free-tier EKS/GKE cluster) and deploy something simple end-to-end — even a basic "hello world" Deployment + Service + Ingress. That would let you speak about Kubernetes from real, recent hands-on experience rather than pure definitions, which would meaningfully strengthen almost every answer in Sections 1-3 above.
