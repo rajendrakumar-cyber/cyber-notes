@@ -1,0 +1,133 @@
+# Writeup: Guess My Cheese (Part 2)
+
+## 1. Challenge Overview
+"Guess My Cheese (Part 2)" is a cryptography challenge where a server provides a SHA-256 hash of a cheese name concatenated with a secret salt. To get the flag, you must connect, identify the secret cheese name and the salt used for that session, and input them.
+
+## 2. Analysis
+* **Dynamic Target Hash**: On each connection to the server at `verbal-sleep.picoctf.net:61699`, a new target SHA-256 hash is generated.
+* **Small Search Space**: 
+  * The cheese is selected from a provided wordlist containing ~600 names ([cheese_list.txt](file:///home/white/white/Music/PICO-CTF/picoctfAI/crypto/cheese_list.txt)).
+  * The salt is described as "2 nibbles" which equals 1 byte (value range `0` to `255`).
+  * The total search space size is $600 \text{ cheeses} \times 256 \text{ salts} = 153,600$ combinations. This can be brute-forced in a fraction of a second.
+* **Concatenation Options**: The salt can be either prepended or appended, and it can be formatted either as a 2-character hex string (e.g. `"7c"`) or as a raw byte (e.g. `b'\x7c'`).
+
+## 3. Step-by-Step Solution
+1. **Connect & Extract**: Connect to the netcat port and read the initial banner to extract the target SHA-256 hash.
+2. **Brute Force**: In memory, iterate through each cheese name from the wordlist (testing casing variations) and try prepending or appending all possible 1-byte salts.
+3. **Submit Answers**: 
+   * When a hash match is found, send `g` to indicate you want to guess.
+   * Send the plaintext cheese name (e.g. `evora de l'alentejo`).
+   * Send the salt formatted as a 2-character hex string (e.g. `82`).
+4. **Collect Flag**: The server will verify the answers and print the flag.
+
+## 4. Python Exploit Script
+Here is the automated script we used to solve it:
+
+```python
+import socket
+import hashlib
+import re
+
+def brute_force(target_hash, cheese_list_path):
+    with open(cheese_list_path, "r", encoding="utf-8") as f:
+        cheeses = [line.strip() for line in f if line.strip()]
+        
+    for cheese in cheeses:
+        for case_cheese in [cheese, cheese.lower(), cheese.upper()]:
+            # Try 2-char hex string salt
+            for i in range(256):
+                salt_str = f"{i:02x}"
+                # Appended
+                if hashlib.sha256((case_cheese + salt_str).encode("utf-8")).hexdigest() == target_hash:
+                    return case_cheese, salt_str, "hex_append"
+                # Prepended
+                if hashlib.sha256((salt_str + case_cheese).encode("utf-8")).hexdigest() == target_hash:
+                    return case_cheese, salt_str, "hex_prepend"
+                    
+            # Try 1-byte raw salt
+            cheese_bytes = case_cheese.encode("utf-8")
+            for i in range(256):
+                salt_byte = bytes([i])
+                # Appended
+                if hashlib.sha256(cheese_bytes + salt_byte).hexdigest() == target_hash:
+                    return case_cheese, i, "byte_append"
+                # Prepended
+                if hashlib.sha256(salt_byte + cheese_bytes).hexdigest() == target_hash:
+                    return case_cheese, i, "byte_prepend"
+    return None, None, None
+
+def main():
+    host = "verbal-sleep.picoctf.net"
+    port = 61699
+    cheese_list_path = "cheese_list.txt"
+    
+    print(f"Connecting to {host}:{port}...")
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((host, port))
+    
+    # Read banner
+    buf = b""
+    while b"What would you like to do?" not in buf:
+        chunk = s.recv(1024)
+        if not chunk:
+            break
+        buf += chunk
+        
+    banner = buf.decode(errors='ignore')
+    match = re.search(r"guess it:\s+([a-f0-9]{64})", banner)
+    if not match:
+        print("[-] Could not find target hash.")
+        s.close()
+        return
+        
+    target_hash = match.group(1)
+    cheese, salt, mode = brute_force(target_hash, cheese_list_path)
+    if not cheese:
+        print("[-] Brute-force failed.")
+        s.close()
+        return
+        
+    salt_hex = f"{salt:02x}" if isinstance(salt, int) else salt
+    
+    # Interact with the server
+    s.sendall(b"g\n")
+    
+    # Read until cheese prompt
+    buf = b""
+    while b"So...what's my cheese?" not in buf:
+        buf += s.recv(1024)
+        
+    s.sendall(f"{cheese}\n".encode("utf-8"))
+    
+    # Read until salt prompt
+    buf = b""
+    while b"Annnnd...what's my salt?" not in buf:
+        buf += s.recv(1024)
+        
+    s.sendall(f"{salt_hex}\n".encode("utf-8"))
+    
+    # Read flag
+    buf = b""
+    while True:
+        chunk = s.recv(1024)
+        if not chunk:
+            break
+        buf += chunk
+        print(chunk.decode(errors='ignore'), end="")
+        
+    s.close()
+
+if __name__ == "__main__":
+    main()
+``` 1. Dynamic Target Hash: The server generates a new SHA-256 target hash on every connection.
+  2. Brute Force Strategy:
+      • Extracts the current target hash.
+      • Brute-forces the hash against all cheese names and possible 1-byte salt values.
+      • Discovers the correct match (in this run: evora de l'alentejo with salt byte 130, which is 82 in hex).
+      • Submits the cheese name followed by the hexadecimal salt to obtain the flag.
+
+
+  ### Flag
+
+    picoCTF{cHeEsYfd97a77d}
+
