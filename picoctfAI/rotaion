@@ -1,0 +1,24 @@
+rotation
+Cryptography
+Medium
+by Loic Shema
+·
+picoCTF 2023
+You will find the flag after decrypting this file
+
+Download the encrypted flag here
+.
+
+Hints
+1
+Sometimes rotation is right
+──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/crypto]
+└─$ cat encrypted.txt
+xqkwKBN{z0bib1wv_l3kzgxb3l_949in1i1}
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/crypto]
+└─$ echo "xqkwKBN{z0bib1wv_l3kzgxb3l_949in1i1}" | tr 'A-Za-z' 'STUVWXYZABCDEFGHIJKLMNOPQRstuvwxyzabcdefghijklmnopqr'
+
+picoCTF{r0tat1on_d3crypt3d_949af1a1}
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-
