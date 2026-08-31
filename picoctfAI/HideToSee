@@ -1,0 +1,103 @@
+HideToSee
+Cryptography
+Medium
+by Sunday Jacob Nwanyim
+·
+picoCTF 2023
+How about some hide and seek heh?
+
+Look at this image here
+.
+
+Hints
+1
+Download the image and try to extract it.
+──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/crypto]
+└─$ file atbash.jpg 
+atbash.jpg: JPEG image data, JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 465x455, components 3
+                                                                                                                                                                       
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/crypto]
+└─$ exiftool atbash.jpg                                                                                             
+ExifTool Version Number         : 13.55
+File Name                       : atbash.jpg
+Directory                       : .
+File Size                       : 52 kB
+File Modification Date/Time     : 2026:08:31 19:30:52+05:30
+File Access Date/Time           : 2026:08:31 19:30:55+05:30
+File Inode Change Date/Time     : 2026:08:31 19:30:53+05:30
+File Permissions                : -rw-rw-r--
+File Type                       : JPEG
+File Type Extension             : jpg
+MIME Type                       : image/jpeg
+JFIF Version                    : 1.01
+Resolution Unit                 : None
+X Resolution                    : 1
+Y Resolution                    : 1
+Image Width                     : 465
+Image Height                    : 455
+Encoding Process                : Baseline DCT, Huffman coding
+Bits Per Sample                 : 8
+Color Components                : 3
+Y Cb Cr Sub Sampling            : YCbCr4:2:0 (2 2)
+Image Size                      : 465x455
+Megapixels                      : 0.212
+                                                                                                                                                                       
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/crypto]
+└─$  steghide extract -sf atbash.jpg
+Enter passphrase: 
+the file "encrypted.txt" does already exist. overwrite ? (y/n) y
+wrote extracted data to "encrypted.txt".
+                                                                                                                                                                       
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/crypto]
+└─$ 
+                                                                                                                                                                       
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/crypto]
+└─$ cat encrypted.txt  
+krxlXGU{zgyzhs_xizxp_05y2z65z}
+   To solve this challenge completely by hand, follow these two steps:
+
+  ### Step 1: Extract the Hidden File
+
+  Run the following command in your terminal to extract the hidden file from atbash.jpg:
+
+    steghide extract -sf atbash.jpg
+
+  When it asks you for a passphrase, press Enter to leave it blank. This extracts a text file named encrypted.txt containing the ciphertext:
+
+    krxlXGU{zgyzhs_xizxp_05y2z65z}
+  ──────
+  ### Step 2: Decrypt the Ciphertext (Atbash Cipher)
+
+  The filename atbash.jpg tells you that the ciphertext is encoded using the Atbash Cipher, which simply mirrors the alphabet:
+
+    Normal:   a b c d e f g h i j k l m n o p q r s t u v w x y z
+    Reversed: z y x w v u t s r q p o n m l k j i h g f e d c b a
+
+  Using this table, map each letter of krxlXGU{zgyzhs_xizxp_05y2z65z} to its reversed partner (preserving uppercase/lowercase letters, while keeping numbers and
+  punctuation unchanged):
+
+  • k → p
+  • r → i
+  • x → c
+  • l → o
+  • X → C
+  • G → T
+  • U → F
+  • z → a
+  • g → t
+  • y → b
+  • h → s
+  • s → h
+  • x → c
+  • i → r
+  • z → a
+  • x → c
+  • p → k
+  • y → b
+  • z → a
+
+  This reveals the decrypted flag:
+
+    picoCTF{atbash_crack_05b2a65a}
+
+                                                                                                                                                                    
