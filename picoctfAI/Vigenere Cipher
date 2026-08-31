@@ -1,0 +1,61 @@
+# Vigenere Cipher: cipher.txt Writeup
+
+## Challenge Details
+* **Ciphertext:** `rgnoDVD{O0NU_WQ3_G1G3O3T3_A1AH3S_cc82272b}`
+
+---
+
+## Solution Steps
+
+### 1. Identify the Cipher
+Looking at the prefix `rgnoDVD` and comparing it to the standard `picoCTF` prefix:
+* Both are 7 letters long.
+* The differences (modulo 26) between the ciphertext and plaintext letters are not constant (ruling out Caesar/ROT ciphers), but they show a repeating pattern:
+
+| Plaintext | Ciphertext | Shift (C - P mod 26) | Key Letter |
+| :---: | :---: | :---: | :---: |
+| **p** (15) | **r** (17) | 2 | **C** |
+| **i** (8)  | **g** (6)  | 24 (-2) | **Y** |
+| **c** (2)  | **n** (13) | 11 | **L** |
+| **o** (14) | **o** (14) | 0 | **A** |
+| **C** (2)  | **D** (3)  | 1 | **B** |
+| **T** (19) | **V** (21) | 2 | **C** |
+| **F** (5)  | **D** (3)  | 24 (-2) | **Y** |
+
+The repeating key is **`CYLAB`** (length 5).
+
+---
+
+## 2. Decryption Rules
+In a standard Vigenere Cipher implementation:
+* Letters are decrypted using: $P_i = (C_i - K_i) \pmod{26}$.
+* Non-alphabetic characters (numbers, underscores, curly braces) are ignored and do **not** advance the key index.
+
+---
+
+## 3. Decryption Script
+Using the Python script [solve_vigenere.py](file:///home/white/white/Music/PICO-CTF/picoctfAI/crypto/solve_vigenere.py):
+```python
+def decrypt_vigenere(ciphertext, key):
+    plaintext = []
+    key_idx = 0
+    for char in ciphertext:
+        if char.isalpha():
+            is_upper = char.isupper()
+            ct_val = ord(char.upper()) - 65
+            k_val = ord(key[key_idx % len(key)].upper()) - 65
+            pt_val = (ct_val - k_val) % 26
+            pt_char = chr(pt_val + (65 if is_upper else 97))
+            plaintext.append(pt_char)
+            key_idx += 1
+        else:
+            plaintext.append(char)
+    return ''.join(plaintext)
+
+print(decrypt_vigenere("rgnoDVD{O0NU_WQ3_G1G3O3T3_A1AH3S_cc82272b}", "CYLAB"))
+```
+
+### 4. Solved Flag
+```text
+picoCTF{D0NT_US3_V1G3N3R3_C1PH3R_ae82272q}
+```
