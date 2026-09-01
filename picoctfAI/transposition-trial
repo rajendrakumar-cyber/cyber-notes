@@ -1,0 +1,53 @@
+transposition-trial
+
+### Step 1: Look for Known Words (Known-Plaintext Clues)
+  Look at the very beginning and parts of the ciphertext:
+    heTfl g as iicpCTo{7F...
+  1. heT looks like The.
+  2. icpCTo{7F looks like the flag prefix picoCTF{.
+  ──────
+  ### Step 2: Figure Out the Block Size & Rule
+
+  Compare the scrambled piece with the intended word:
+
+  • Ciphertext block: h e T (1st, 2nd, 3rd)
+  • Intended word: T h e (3rd, 1st, 2nd)
+
+  This reveals the rule: Every 3 characters are grouped together, and the 3rd character is moved to the front.
+
+  │ Manual Rule: For every 3 characters [A, B, C], rewrite them as [C, A, B].
+  ──────
+  ### Step 3: Split the Ciphertext into 3-Character Blocks
+
+  Write down the message and add a slash or space every 3 characters:
+
+    heT | fl  | g a | s i | icp | CTo | {7F | 4NR | P05 | 1N5 | _16 | _35 | P3X | 51N | 3_V | 091 | B0A | E}2
+  ──────
+  ### Step 4: Rearrange Each Block One by One
+
+  Take the 3rd character, put it first, followed by the 1st and 2nd:
+
+  1. heT → T + h + e = The
+  2. fl  →   + f + l =  fl
+  3. g a → a + g +   = ag 
+  4. s i → i + s +   = is 
+  5. icp → p + i + c = pic
+  6. CTo → o + C + T = oCT
+  7. {7F → F + { + 7 = F{7
+  8. 4NR → R + 4 + N = R4N
+  9. P05 → 5 + P + 0 = 5P0
+  10. 1N5 → 5 + 1 + N = 51N
+  11. _16 → 6 + _ + 1 = 6_1
+  12. _35 → 5 + _ + 3 = 5_3
+  13. P3X → X + P + 3 = XP3
+  14. 51N → N + 5 + 1 = N51
+  15. 3_V → V + 3 + _ = V3_
+  16. 091 → 1 + 0 + 9 = 109
+  17. B0A → A + B + 0 = AB0
+  18. E}2 → 2 + E + } = 2E}
+  ──────
+  ### Step 5: Join Them Together
+
+  Putting all the blocks together:
+
+    The flag is picoCTF{7R4N5P051N6_15_3XP3N51V3_109AB02E}
