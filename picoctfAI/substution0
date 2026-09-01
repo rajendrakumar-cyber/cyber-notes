@@ -1,0 +1,66 @@
+ Here is the step-by-step guide to solving this manually by hand or in a text editor:
+  ──────
+  ### Step 1: Write Down the Alphabet and the Given Key
+  Write the normal alphabet (A to Z) on the top row, and write the 26-character key directly underneath it:
+
+    Plaintext : A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+    Key/Cipher: O H N F U M W S V Z L X E G C P T A J D Y I R K Q B
+  ──────
+  ### Step 2: Build Your Decryption Lookup Table
+  Whenever you see a letter in the ciphertext, locate it in the Key/Cipher row and write down the corresponding letter from the Plaintext row:
+   Cipher letter: | A   | B   | C   | D   | E   | F   | G   | H   | I   | J   | K   | L   | M   | N   | O   | P   | Q  | R  | S  | T  | U  | V  | W  | X  | Y  | Z
+  ----------------|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|----|----|----|----|----|----|----|----|----|----
+   Plaintext:     | R   | Z   | O   | T   | M   | D   | N   | B   | V   | S   | X   | K   | F   | C   | A   | P   | Y  | W  | H  | Q  | E  | I  | G  | L  | U  | J
+  (Numbers 0-9, underscores _, and curly brackets {} are not encrypted and stay exactly as they are).
+  ──────
+  ### Step 3: Decode the Flag Letter-by-Letter
+  Look at the flag ciphertext line:
+    pvncNDM{5YH5717Y710G_3I0XY710G_03055505}
+
+  Now decode each character using your table:
+
+  1. Prefix:
+      • p → p
+      • v → i
+      • n → c
+      • c → o
+      • N → C
+      • D → T
+      • M → F
+      • → picoCTF{
+  2. First section (5YH5717Y710G_):
+      • 5 → 5
+      • Y → U
+      • H → B
+      • 5 → 5
+      • 7 → 7
+      • 1 → 1
+      • 7 → 7
+      • Y → U
+      • 7 → 7
+      • 1 → 1
+      • 0 → 0
+      • G → N
+      • _ → _
+      • → 5UB5717U710N_
+  3. Second section (3I0XY710G_):
+      • 3 → 3
+      • I → V
+      • 0 → 0
+      • X → L
+      • Y → U
+      • 7 → 7
+      • 1 → 1
+      • 0 → 0
+      • G → N
+      • _ → _
+      • → 3V0LU710N_
+  4. Third section (03055505}):
+      • All numbers and closing brace remain unchanged → 03055505}
+
+  ──────
+  ### Step 4: Final Result
+
+  Combining all parts gives:
+
+    picoCTF{5UB5717U710N_3V0LU710N_03055505}
