@@ -1,0 +1,93 @@
+substitution2
+Cryptography
+Medium
+by Will Hong
+·
+picoCTF 2022
+It seems that another encrypted message has been intercepted. The encryptor seems to have learned their lesson though and now there isn't any punctuation! Can you still crack the cipher?
+
+Download the message here
+.
+
+Hints
+1
+Try refining your frequency attack, maybe analyzing groups of letters would improve your results?
+─$ cat substution2.txt
+nafyffoxenefufytpqnafymfppfentkpxeafbaxraezaqqpzqgswnfyefzwyxnhzqgsfnxnxqlexlzpwbxlrzhkfystnyxqntlbwezhkfyzatppflrfnafefzqgsfnxnxqlevqzwesyxgtyxphqlehenfgetbgxlxenytnxqlvwlbtgflntpemaxzatyfufyhwefvwptlbgtycfntkpfecxppeaqmfufymfkfpxfufnafsyqsfyswysqefqvtaxraezaqqpzqgswnfyefzwyxnhzqgsfnxnxqlxelqnqlphnqnftzautpwtkpfecxppekwntpeqnqrfnenwbflnexlnfyfenfbxltlbfozxnfbtkqwnzqgswnfyezxflzfbfvflexufzqgsfnxnxqletyfqvnflptkqyxqwetvvtxyetlbzqgfbqmlnqywllxlrzafzcpxenetlbfofzwnxlrzqlvxrezyxsneqvvflefqlnafqnafyatlbxeaftuxphvqzwefbqlfospqytnxqltlbxgsyquxetnxqltlbqvnflatefpfgflneqvspthmfkfpxfuftzqgsfnxnxqlnqwzaxlrqlnafqvvflexuffpfgflneqvzqgswnfyefzwyxnhxenafyfvqyftkfnnfyufaxzpfvqynfzafutlrfpxegnqenwbflnexltgfyxztlaxraezaqqpevwynafymfkfpxfufnatntlwlbfyentlbxlrqvqvvflexufnfzalxiwfexefeeflnxtpvqygqwlnxlrtlfvvfznxufbfvfleftlbnatnnafnqqpetlbzqlvxrwytnxqlvqzweflzqwlnfyfbxlbfvflexufzqgsfnxnxqlebqfelqnpftbenwbflnenqclqmnafxyflfghtefvvfznxufphtenftzaxlrnafgnqtznxufphnaxlcpxcftltnntzcfysxzqznvxetlqvvflexufphqyxflnfbaxraezaqqpzqgswnfyefzwyxnhzqgsfnxnxqlnatneffcenqrflfytnfxlnfyfenxlzqgswnfyezxflzftgqlraxraezaqqpfyenftzaxlrnafgflqwratkqwnzqgswnfyefzwyxnhnqsxiwfnafxyzwyxqexnhgqnxutnxlrnafgnqfospqyfqlnafxyqmltlbfltkpxlrnafgnqkfnnfybfvflbnafxygtzaxlfenafvptrxesxzqZNV{L6Y4G_4L41H515_15_73B10W5_8F1KV808}                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/crypto]
+└─$ 
+### Step 1: Identify the "Crib" (Guaranteed Pattern)
+
+  In PicoCTF challenges, the text almost always ends with the sentence "the flag is picoCTF{...}".
+
+  Look at the very end of your ciphertext:
+
+    naf  vptr  xe  sxzqZNV{...}
+     ↓    ↓    ↓      ↓
+    the  flag  is  picoCTF{...}
+
+  Breaking this down gives you 13 initial letters:
+
+                                     Ciphertext                                    |                                   Plaintext
+  ---------------------------------------------------------------------------------|--------------------------------------------------------------------------------
+                                          n                                        |                                       t
+                                          a                                        |                                       h
+                                          f                                        |                                       e
+                                          v                                        |                                       f
+                                          p                                        |                                       l
+                                          t                                        |                                       a
+                                          r                                        |                                       g
+                                          x                                        |                                       i
+                                          e                                        |                                       s
+                                          s                                        |                                       p
+                                          z                                        |                                       c
+                                          q                                        |                                       o
+                                       Z, N, V                                     |                                    C, T, F
+  ──────
+  ### Step 2: Test Your Clues in Terminal with tr
+  Pipe the file through tr in your terminal using the initial mappings:
+    cat substution2.txt | tr 'nafvptrxeszqZNV' 'theflagispcoCTF'
+
+  Looking at the partially decrypted output:
+
+  1. axraezaqqp → h i g h s c o o l
+      • Clearly highschool!
+  2. zqgswnfy → c o [g] p [w] t e [y]
+      • Clearly computer → gives g → m, w → u, y → r.
+  3. efzwyxnh → s e c u r i t [h]
+      • Clearly security → gives h → y.
+  4. xlzpwbxlr → i [l] c l u [b] i [l] g
+      • Clearly including → gives l → n, b → d.
+  5. kpxeafb → [k] l i s h e d
+      • Clearly published / established → gives k → b.
+
+  ──────
+  ### Step 3: Why the Challenge mentions "N-gram Analysis"
+
+  If you didn't have the crib at the end, you would use N-gram analysis (counting 1-letter, 2-letter, and 3-letter frequencies):
+
+  • Single Letters: f appears most frequently in this text → English most frequent letter is e.
+  • Trigrams (3-letter groups): naf is the most repeated 3-letter word → English most common 3-letter word is the.
+  • Digraphs (2-letter groups): nt → th, f y → er, x l → in.
+  ──────
+  ### Step 4: Substitute the Flag Characters
+
+  Now map the ciphertext flag characters:
+
+    Ciphertext:  L 6 Y 4 G _ 4 L 4 1 H 5 1 5 _ 1 5 _ 7 3 B 1 0 W 5 _ 8 F 1 K V 8 0 8
+    Key:         n   r   m     n   l y s i s   i s   t e d i o u s     e i b f
+    Decrypted:   N 6 R 4 M _ 4 N 4 1 Y 5 1 5 _ 1 5 _ 7 3 D 1 0 U 5 _ 8 E 1 B F 8 0 8
+
+    picoCTF{N6R4M_4N41Y515_15_73D10U5_8E1BF808}
+  ──────
+  ### Quick 1-Line Python Decryptor for CTFs
+
+  Whenever you encounter substitution ciphers, you can run a one-line Python script to test your key:
+
+    python3 -c '
+    text = open("substution2.txt").read()
+    src = "nafvptrxeszqgwyhlbkZNVLYGHBWFK"
+    dst = "theflagispcomuryndbCTFNRMYDUBF"
+    print(text.translate(str.maketrans(src, dst)))
+    '
+
