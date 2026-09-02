@@ -1,0 +1,86 @@
+substitution1
+Cryptography
+Medium
+by Will Hong
+·
+picoCTF 2022
+A second message has come in the mail, and it seems almost identical to the first one. Maybe the same thing will work again.
+
+Download the message here
+.
+
+Hints
+
+1
+### Step 1: Find the Known Crib (The Guaranteed Plaintext)
+
+  In picoCTF, every flag starts with the format picoCTF{...}.
+  Look at the end of the text:
+
+    qtlvLKO{...}  -->  picoCTF{...}
+  This gives you 7 confirmed letter mappings right away:
+
+  • q → p
+  • t → i
+  • l → c
+  • v → o
+  • L → C
+  • K → T
+  • O → F
+  ──────
+  ### Step 2: Use Terminal tr to Apply Partial Decryption
+  You can use the Linux tr command interactively. As you discover letters, add them to your tr command string.
+
+  Start with what you know:
+
+    cat substution1.txt | tr 'qtlv' 'pico'
+  ──────
+  ### Step 3: Identify High-Frequency & Short Words
+  Look at common English patterns in the partially decrypted text:
+
+  1. Single-letter words:
+      • In English, single-letter words are almost always a or I.
+      • Text snippet: gej g kyqj → g is a.
+  2. The most common 3-letter word (the):
+      • The word kwj appears multiple times: ...kwj osgx...
+      • kwj → the (giving k → t, w → h, j → e).
+  3. Two-letter words:
+      • vo (since v = o) → must be of (giving o → f).
+      • tb (since t = i) → must be is (giving b → s).
+      • gu (since g = a) → an / as → guz is and (u → n, z → d).
+
+  ──────
+  ### Step 4: Fill in Words Like a Crossword Puzzle
+
+  Now update your tr command with all discovered letters:
+
+    cat substution1.txt | tr 'qtlvLKObwgkjoeuz' 'picoCTFshatefrnd'
+
+  Looking at the output now:
+
+  • qevmsjr → p r o [m] l e m → clearly problem (m → b)
+  • bitssb → s [i] i l l s → clearly skills (i → k)
+  • dwtlw → [d] h i c h → clearly which (d → w)
+  • OE3AH3ULY in the flag → FR3[A]U3NCY → clearly FR3QU3NCY (A → Q)
+  ──────
+  ### Step 5: Full Terminal Command
+
+  Once you have your mapping, you can run:
+
+    cat substution1.txt | tr \
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ' \
+      'qswrvauketcb.f.pmliohgy.dQSWRVAUKETCBPMLIOHGY.D'
+
+  Or quickly in Python:
+
+    cipher = "qtlvLKO{OE3AH3ULY_4774LI5_4E3_L001_6J0659OM}"
+    mapping = str.maketrans("qtlvLKOfbwejsoxydtuzrmiha", "picoCTFvshateflgywindmbkQ")
+    print(cipher.translate(mapping))
+
+  ### Useful Tools for Future Challenges:
+
+  1. CyberChef https://gchq.github.io/CyberChef/: Use the "Subkey" or "Substitution Cipher" recipe for a fast interactive GUI.
+  2. quipqiup.com https://quipqiup.com/: An automated statistical substitution cipher solver that can break these in one click.
+
+picoCTF{FR3QU3NCY_4774CK5_4R3_C001_6E0659FB}
+
