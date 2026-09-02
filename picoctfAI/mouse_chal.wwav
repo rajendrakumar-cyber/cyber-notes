@@ -1,0 +1,71 @@
+picoCTF{wh47_h47h_90d_w20u9h7}
+ ──────
+  ### Step 1: Understand the Standard Morse Timing Rules
+  Morse code relies on relative time units (T):
+
+  • Dot (.): 1 unit of sound.
+  • Dash (-): 3 units of sound (3 × longer than a dot).
+  • Gap between parts of the same letter: 1 unit of silence.
+  • Gap between letters: 3 units of silence.
+  • Gap between words: 7 units of silence.
+  ──────
+  ### Step 2: Visualize the Audio in Audacity
+  The most accurate manual way is by viewing the beeps visually:
+  1. Open the file in Audacity:
+    audacity morse_chal.wav &
+  2. Switch to Spectrogram View:
+      • Click the drop-down menu next to the track name (on the left panel).
+      • Choose Spectrogram.
+  3. Zoom in (Ctrl + 1):
+      • You will see bright blocks at a specific audio frequency:
+          • Short box → .
+          • Long box (3 × length) → -
+          • Medium silence gap → space between letters (add a space in your notes)
+          • Long silence gap → word boundary (add / in your notes)
+  ──────
+  ### Alternative: Generate a Spectrogram Image via Terminal
+
+  If you prefer viewing an image directly without opening Audacity, use sox:
+
+    # Install sox if needed: sudo apt install sox
+    sox morse_chal.wav -n spectrogram -o spec.png
+    xdg-open spec.png
+  ──────
+  ### Step 3: Translate the Dots and Dashes to Letters
+
+  Once you transcribe the sequences into dots and dashes, look up each letter:
+
+  #### Letters (A–Z)
+
+          Char        | Morse              |        Char        | Morse             |       Char        | Morse             |       Char        | Morse
+  --------------------|--------------------|--------------------|-------------------|-------------------|-------------------|-------------------|-------------------
+           A          | .-                 |         H          | ....              |         O         | ---               |         V         | ...-
+           B          | -...               |         I          | ..                |         P         | .--.              |         W         | .--
+           C          | -.-.               |         J          | .---              |         Q         | --.-              |         X         | -..-
+           D          | -..                |         K          | -.-               |         R         | .-.               |         Y         | -.--
+           E          | .                  |         L          | .-..              |         S         | ...               |         Z         | --..
+           F          | ..-.               |         M          | --                |         T         | -                 |                   |
+           G          | --.                |         N          | -.                |         U         | ..-               |                   |
+
+  #### Numbers (0–9)
+
+                    Num                   | Morse                                  |                  Num                   | Morse
+  ----------------------------------------|----------------------------------------|----------------------------------------|---------------------------------------
+                     1                    | .----                                  |                   6                    | -....
+                     2                    | ..---                                  |                   7                    | --...
+                     3                    | ...--                                  |                   8                    | ---..
+                     4                    | ....-                                  |                   9                    | ----.
+                     5                    | .....                                  |                   0                    | -----
+  ──────
+  ### Step 4: Format into the Flag
+
+  In picoCTF, audio Morse challenges (such as morse-code) typically follow one of these formats:
+
+  1. Convert the decoded message to all lowercase, replacing spaces with underscores:
+    picoCTF{wh47_h47h_90d_wr0u9h7}
+
+  2. Or keep standard uppercase letters as decoded:
+    picoCTF{WH47_H47H_90D_WR0U9H7}
+
+  (Check the challenge prompt for whether lowercase/uppercase is specified).
+
