@@ -1,0 +1,167 @@
+# PicoCTF Challenge: Credential Leak & Cryptography Analysis
+
+## Challenge Overview
+- **Scenario:** A leaked database dump of a black market website containing two files:
+  - `usernames.txt`: List of usernames (1 per line).
+  - `passwords.txt`: List of corresponding encrypted passwords (1 per line).
+- **Target User:** `cultiris`
+- **Objective:** Find `cultiris`'s password and decrypt it to obtain the flag.
+
+---
+
+## Part 1: Concepts Explained
+
+### 1. 1-to-1 Mapped Data (Correlated Indexing)
+When two files have a line-by-line 1-to-1 correspondence:
+$$\text{Line } n \text{ in usernames.txt} \iff \text{Line } n \text{ in passwords.txt}$$
+Finding the line number (index) of an item in the first file directly gives you the location of the corresponding item in the second file.
+
+### 2. Caesar Cipher & ROT13
+- **Caesar Cipher:** A monoalphabetic substitution cipher where each letter in the plaintext is shifted by a fixed number of positions down the alphabet.
+  - Formula for encryption: $E(x) = (x + k) \pmod{26}$
+  - Formula for decryption: $D(x) = (x - k) \pmod{26}$
+- **ROT13 ("Rotate by 13"):** A special case of Caesar cipher with shift $k = 13$.
+  - Because the Latin alphabet has 26 letters and $13 + 13 = 26$, encryption and decryption are identical operations:
+    $$D(x) = (x - 13) \pmod{26} \equiv (x + 13) \pmod{26} = E(x)$$
+  - This means ROT13 is **involutory** (its own inverse). Running ROT13 twice restores the original text.
+  - Non-alphabetic characters (numbers, underscores, symbols like `{}`) are left unchanged.
+
+### 3. Known-Plaintext Attack / Crib Analysis
+CTF flags almost always follow a standard format: `picoCTF{...}`.
+By comparing the expected flag format against the ciphertext:
+- Expected: `p i c o C T F`
+- Leaked:   `c v p b P G S`
+- Distance:
+  - `p` (16) $\to$ `c` (3): shift of 13
+  - `i` (9)  $\to$ `v` (22): shift of 13
+  - `c` (3)  $\to$ `p` (16): shift of 13
+  - `o` (15) $\to$ `b` (2): shift of 13
+This immediate correlation proves beyond doubt that the cipher is ROT13.
+
+### 4. Leet Speak (1337)
+CTF flags often replace letters with visually similar numbers or symbols:
+- `7` $\to$ `t` or `T`
+- `1` $\to$ `l` or `L`
+- `5` $\to$ `s` or `S`
+- `4` $\to$ `a` or `A`
+- `3` $\to$ `e` or `E`
+
+In this flag: `C7r1F_54V35_71M3` translates to `CtrlF_SAVES_TIME`.
+
+---
+
+## Part 2: Manual Step-by-Step Walkthrough
+
+### Step 1: Locate the Username (`cultiris`)
+#### Method A: Using Text Editor / GUI (The "Ctrl + F" method)
+1. Open `usernames.txt` in any text editor (VS Code, Nano, Gedit, Mousepad, Sublime, etc.).
+2. Press `Ctrl + F` to open the search bar.
+3. Type `cultiris` and press Enter.
+4. Note the line number in the editor's margin: **Line 378**.
+
+#### Method B: Using Linux Terminal
+Use `grep` with the `-n` (show line numbers) flag:
+```bash
+grep -n "cultiris" usernames.txt
+```
+**Output:**
+```
+378:cultiris
+```
+
+---
+
+### Step 2: Extract the Password
+#### Method A: Using Text Editor / GUI
+1. Open `passwords.txt`.
+2. Jump to line 378 (Shortcut: `Ctrl + G` in Nano, Vim, or VS Code, enter `378`).
+3. Read the line:
+   ```
+   cvpbPGS{P7e1S_54I35_71Z3}
+   ```
+
+#### Method B: Using Linux Terminal
+Use `sed` or `head`/`tail`:
+```bash
+sed -n '378p' passwords.txt
+```
+Or:
+```bash
+head -n 378 passwords.txt | tail -n 1
+```
+
+---
+
+### Step 3: Decrypt the Ciphertext by Hand
+
+To decrypt `cvpbPGS{P7e1S_54I35_71Z3}` completely manually without any tools or internet:
+
+1. Write out the 13-letter dual alphabet lookup table:
+```
+Top:    A B C D E F G H I J K L M
+Bottom: N O P Q R S T U V W X Y Z
+```
+
+2. For every letter in the ciphertext, substitute it with the letter directly above or below it:
+| Ciphertext Character | Rule / Operation | Plaintext Character |
+|----------------------|------------------|---------------------|
+| `c`                  | lowercase `c` $\leftrightarrow$ `p` | `p` |
+| `v`                  | lowercase `v` $\leftrightarrow$ `i` | `i` |
+| `p`                  | lowercase `p` $\leftrightarrow$ `c` | `c` |
+| `b`                  | lowercase `b` $\leftrightarrow$ `o` | `o` |
+| `P`                  | UPPERCASE `P` $\leftrightarrow$ `C` | `C` |
+| `G`                  | UPPERCASE `G` $\leftrightarrow$ `T` | `T` |
+| `S`                  | UPPERCASE `S` $\leftrightarrow$ `F` | `F` |
+| `{`                  | Non-alphabetic   | `{`                 |
+| `P`                  | UPPERCASE `P` $\leftrightarrow$ `C` | `C` |
+| `7`                  | Digit (keep)     | `7`                 |
+| `e`                  | lowercase `e` $\leftrightarrow$ `r` | `r` |
+| `1`                  | Digit (keep)     | `1`                 |
+| `S`                  | UPPERCASE `S` $\leftrightarrow$ `F` | `F` |
+| `_`                  | Punctuation      | `_`                 |
+| `5`                  | Digit (keep)     | `5`                 |
+| `4`                  | Digit (keep)     | `4`                 |
+| `I`                  | UPPERCASE `I` $\leftrightarrow$ `V` | `V` |
+| `3`                  | Digit (keep)     | `3`                 |
+| `5`                  | Digit (keep)     | `5`                 |
+| `_`                  | Punctuation      | `_`                 |
+| `7`                  | Digit (keep)     | `7`                 |
+| `1`                  | Digit (keep)     | `1`                 |
+| `Z`                  | UPPERCASE `Z` $\leftrightarrow$ `M` | `M` |
+| `3`                  | Digit (keep)     | `3`                 |
+| `}`                  | Non-alphabetic   | `}`                 |
+
+---
+
+### Step 4: Verification via Shell Commands
+
+You can verify your manual decryption using standard Linux utilities:
+
+#### With `tr` (Translate command):
+```bash
+echo 'cvpbPGS{P7e1S_54I35_71Z3}' | tr 'A-Za-z' 'N-ZA-Mn-za-m'
+```
+
+#### With Python:
+```bash
+python3 -c "import codecs; print(codecs.decode('cvpbPGS{P7e1S_54I35_71Z3}', 'rot_13'))"
+```
+
+---
+
+## Final Solution
+- **Encrypted String:** `cvpbPGS{P7e1S_54I35_71Z3}`
+- **Flag / Password:** `picoCTF{C7r1F_54V35_71M3}`
+- **Joke / Meaning:** "Ctrl+F saves time" (referencing how quick it is to find the user using search shortcuts).
+─(white㉿white)-[~/…/PICO-CTF/picoctfAI/crypto/leak]
+└─$ grep -n "cultiris" usernames.txt
+378:cultiris
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/PICO-CTF/picoctfAI/crypto/leak]
+└─$  sed -n '378p' passwords.txt
+cvpbPGS{P7e1S_54I35_71Z3}
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/PICO-CTF/picoctfAI/crypto/leak]
+└─$  python3 -c "import codecs; print(codecs.decode('cvpbPGS{P7e1S_54I35_71Z3}', 'rot_13'))"
+
+picoCTF{C7r1F_54V35_71M3}
