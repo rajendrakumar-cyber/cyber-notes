@@ -1,0 +1,52 @@
+For each number n:
+
+  1. Calculate the remainder: rem = n % 37
+  2. Map rem according to the rule:
+      • 0 - 25 → Uppercase letters 'A' - 'Z' (0 = A, 1 = B, ..., 25 = Z)
+      • 26 - 35 → Digits '0' - '9' (26 = 0, 27 = 1, ..., 35 = 9)
+      • 36 → Underscore _
+
+  ──────
+  ### 2. Step-by-Step Mapping
+
+                         Number                        |                       mod 37                        |                      Character
+  -----------------------------------------------------|-----------------------------------------------------|-----------------------------------------------------
+                           350                         |                         17                          |                          R
+                           63                          |                         26                          |                          0
+                           353                         |                         20                          |                          U
+                           198                         |                         13                          |                          N
+                           114                         |                          3                          |                          D
+                           369                         |                         36                          |                          _
+                           346                         |                         13                          |                          N
+                           184                         |                         36                          |                          _
+                           202                         |                         17                          |                          R
+                           322                         |                         26                          |                          0
+                           94                          |                         20                          |                          U
+                           235                         |                         13                          |                          N
+                           114                         |                          3                          |                          D
+                           110                         |                         36                          |                          _
+                           185                         |                          0                          |                          A
+                           188                         |                          3                          |                          D
+                           225                         |                          3                          |                          D
+                           212                         |                         27                          |                          1
+                           366                         |                         33                          |                          7
+                           374                         |                          4                          |                          E
+                           261                         |                          2                          |                          C
+                           213                         |                         28                          |                          2
+  ──────
+  ### 3. Python Solve One-Liner
+
+  You can run this directly in your terminal inside ~/Music/PICO-CTF/picoctfAI/crypto:
+
+    python3 -c "
+    import string
+    charset = string.ascii_uppercase + string.digits + '_'
+    with open('basic-mod.txt') as f:
+        nums = map(int, f.read().split())
+    msg = ''.join(charset[n % 37] for n in nums)
+    print(f'picoCTF{{{msg}}}')
+    "
+  ──────
+  ### Flag
+
+    picoCTF{R0UND_N_R0UND_ADD17EC2}
