@@ -1,0 +1,117 @@
+# Cryptography Session Notes: Today's Workflow
+
+Date: September 8, 2026
+
+---
+
+## 1. Challenge: "It's Not My Fault 2" (picoCTF 2021)
+* **Author:** rkm0959
+* **Category:** Cryptography (RSA-CRT with Small Secret Exponent $d_p$)
+
+### A. Proof of Work (PoW) Pitfall
+* **Mechanism:** The server prompts:
+  `Enter a string that starts with "<prefix>" (no quotes) which creates an md5 hash that ends in these six hex digits: <target_suffix>`
+* **Common Mistake:** Sending the computed 32-character hexadecimal MD5 hash instead of the preimage string.
+* **Resolution:** The server checks `user_input[:5] == prefix and user_hash[-6:] == target_suffix`. Send the input string that starts with the prefix.
+* **Fast Solver:**
+  ```python
+  import hashlib
+  prefix = b"71961"
+  target = "541bbf"
+  i = 0
+  while True:
+      cand = prefix + str(i).encode()
+      if hashlib.md5(cand).hexdigest().endswith(target):
+          print(cand.decode())
+          break
+      i += 1
+  ```
+
+### B. Algebraic Vulnerability: Small CRT Exponent $d_p$
+* In RSA with the Chinese Remainder Theorem (CRT-RSA):
+  $$d_p \equiv d \pmod{p - 1}$$
+  $$e \cdot d_p \equiv 1 \pmod{p - 1}$$
+* By Fermat's Little Theorem, for any base $m$ coprime to $p$:
+  $$m^{e \cdot d_p} \equiv m \pmod p \implies m^{e \cdot d_p - 1} - 1 \equiv 0 \pmod p$$
+* Therefore:
+  $$\gcd(m^{e \cdot d_p - 1} - 1 \pmod N, N) = p$$
+
+### C. Complexity & Pinch / Galbraith Polynomial Attack
+* In **Part 1** ("It's Not My Fault 1"), $d_p \le 2^{20} \approx 10^6$, which was solvable via linear search in $\sim 0.2$ seconds.
+* In **Part 2**, $d_p \le 2^{36} \approx 6.87 \times 10^{10}$, making linear search infeasible.
+* **The $\tilde{O}(\sqrt{d_p})$ Attack:**
+  1. Let $L = 2^{18} = \sqrt{2^{36}} = 262,144$. Represent $d_p = i \cdot L + j$ where $0 \le i, j < L$.
+  2. Rewrite:
+     $$m^{e(i \cdot L + j) - 1} - 1 \equiv 0 \pmod p \implies m^{e \cdot j}(m^{e \cdot L \cdot i - 1}) - 1 \equiv 0 \pmod p$$
+  3. Define evaluation points $x_i = m^{e \cdot L \cdot i - 1} \pmod N$ and polynomial:
+     $$G(x) = \prod_{j=0}^{L-1} (m^{e \cdot j} x - 1) \pmod N$$
+  4. At $x = x_i$ for the true quotient $i$, $G(x_i) \equiv 0 \pmod p$, yielding $\gcd(G(x_i), N) = p$.
+  5. Fast multipoint evaluation via **subproduct trees** reduces evaluation time across all $2^{18}$ points from $O(L^2)$ to $\tilde{O}(L)$.
+* **Flag:** `picoCTF{p0lyn0m14l_4r17hm371c_73chn1qu35_4r3_u53ful_1n_m4ny_f13ld5!!!}`
+
+---
+
+## 2. Challenge: "Pixelated" (picoCTF 2021)
+* **Author:** Sara
+* **Category:** Cryptography / Steganography (Visual Cryptography)
+
+### A. Core Concept
+* **Visual Cryptography:** The secret image is divided into two shares (`scrambled1.png` and `scrambled2.png`). Individual shares appear as pseudo-random noise.
+* **Stacking Property:** Overlaying/combining the pixel values cancels the random mask and reveals the hidden text.
+
+### B. Implementation
+* For each pixel at coordinate $(x, y)$, calculate component-wise addition modulo 256:
+  $$(R_{\text{new}}, G_{\text{new}}, B_{\text{new}}) = ((R_1 + R_2) \pmod{256}, (G_1 + G_2) \pmod{256}, (B_1 + B_2) \pmod{256})$$
+* **Python Script:**
+  ```python
+  from PIL import Image
+
+  img1 = Image.open("scrambled1.png")
+  img2 = Image.open("scrambled2.png")
+  width, height = img1.size
+
+  flag_img = Image.new("RGB", (width, height))
+  p1, p2, pf = img1.load(), img2.load(), flag_img.load()
+
+  for x in range(width):
+      for y in range(height):
+          pf[x, y] = tuple((a + b) % 256 for a, b in zip(p1[x, y], p2[x, y]))
+
+  flag_img.save("flag.png")
+  ```
+
+### C. Visual Inspection of Pixel Font
+* Stacking produced `flag.png` containing low-resolution anti-aliased bitmap text.
+* Nearest-neighbor magnification revealed the exact character contours:
+  - `picoCTF{`
+  - Hex block: `8`, `c`, `d`, `f`, `9`, `3`, `c`, `3`
+  - `}`
+* **Flag:** `picoCTF{8cdf93c3}`
+
+---
+
+## 3. Challenge: "Mr. Worldwide"
+* **Category:** Cryptography / OSINT (Geographic Coordinate Acrostic)
+
+### A. Core Concept
+* The challenge file `mr-world-wide.txt` contained a series of GPS latitude and longitude coordinate pairs grouped in parentheses.
+* Reverse-geocoding each pair yields a prominent international city. The first letter of each city name forms an acrostic spelling the flag.
+
+### B. Coordinate Mapping
+| Coordinates | Resolved Location | Initial |
+| :--- | :--- | :---: |
+| `(35.028309, 135.753082)` | **K**yoto, Japan | **K** |
+| `(46.469391, 30.740883)` | **O**desa, Ukraine | **O** |
+| `(39.758949, -84.191605)` | **D**ayton, Ohio, USA | **D** |
+| `(41.015137, 28.979530)` | **I**stanbul, Turkey | **I** |
+| `(24.466667, 54.366669)` | **A**bu Dhabi, UAE | **A** |
+| `(3.140853, 101.693207)` | **K**uala Lumpur, Malaysia | **K** |
+| **`_`** | Separator | **`_`** |
+| `(9.005401, 38.763611)` | **A**ddis Ababa, Ethiopia | **A** |
+| `(-3.989038, -79.203560)` | **L**oja, Ecuador | **L** |
+| `(52.377956, 4.897070)` | **A**msterdam, Netherlands | **A** |
+| `(41.085651, -73.858467)` | **S**leepy Hollow, NY, USA | **S** |
+| `(57.790001, -152.407227)` | **K**odiak, Alaska, USA | **K** |
+| `(31.205753, 29.924526)` | **A**lexandria, Egypt | **A** |
+
+* **Flag:** `picoCTF{KODIAK_ALASKA}`
