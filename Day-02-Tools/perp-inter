@@ -1,0 +1,207 @@
+1. What is cybersecurity?
+
+Sample answer:
+
+Cybersecurity is the practice of protecting systems, networks, applications, devices, and data from unauthorized access, attacks, damage, or disruption. It involves preventive, detective, and responsive controls such as access control, encryption, firewalls, monitoring, vulnerability management, and incident response.
+
+Interview tip: Don't just say "protecting data." Mention systems + networks + applications + data.
+
+2. What is the CIA Triad?
+
+Sample answer:
+
+The CIA Triad is the foundation of information security:
+
+Confidentiality means ensuring that only authorized users can access information.
+
+Integrity means ensuring that information is not improperly modified or tampered with.
+
+Availability means ensuring systems and information are accessible when authorized users need them.
+
+For example, encryption supports confidentiality, hashing can help verify integrity, and redundancy or backups can support availability.
+
+Remember:
+
+C → Confidentiality → Who can see it?
+I → Integrity → Has it been changed?
+A → Availability → Can I access it?
+
+3. What is the difference between a threat, vulnerability, and risk?
+
+Sample answer:
+
+A threat is something that has the potential to cause harm.
+
+A vulnerability is a weakness that can be exploited.
+
+Risk is the potential impact or loss resulting from a threat exploiting a vulnerability.
+
+For example, an unpatched web server has a vulnerability. An attacker attempting to exploit it is a threat, and the possibility of data loss or service disruption represents the associated risk.
+
+4. What is an exploit?
+
+Sample answer:
+
+An exploit is a technique, code, or procedure that takes advantage of a vulnerability to perform an unauthorized action, such as gaining access, executing code, or escalating privileges.
+
+5. What is malware?
+
+Sample answer:
+
+Malware is malicious software designed to compromise systems, steal information, disrupt operations, or gain unauthorized access.
+
+Common types include:
+
+Virus
+Worm
+Trojan
+Ransomware
+Spyware
+Rootkit
+Keylogger
+6. Virus vs Worm
+
+Sample answer:
+
+A virus usually requires a host file or user interaction to spread, while a worm is self-propagating and can spread automatically across systems or networks.
+
+Interview keyword:
+Virus → usually needs a host/user action
+Worm → self-propagates
+
+7. What is a Trojan?
+
+Sample answer:
+
+A Trojan is malicious software that disguises itself as legitimate software or a legitimate file to trick a user into executing it. Unlike a worm, it generally doesn't independently replicate itself.
+
+8. What is ransomware?
+
+Sample answer:
+
+Ransomware is malware that typically encrypts files or systems and demands payment from the victim in exchange for restoring access. Modern ransomware attacks may also involve data theft and extortion.
+
+🌐 Networking Fundamentals
+9. What is an IP address?
+
+Sample answer:
+
+An IP address is a logical address assigned to a device or network interface so that it can communicate over an IP network. IPv4 uses 32-bit addresses, while IPv6 uses 128-bit addresses.
+
+10. TCP vs UDP?
+TCP	UDP
+Connection-oriented	Connectionless
+Reliable	No delivery guarantee
+Uses acknowledgements	No acknowledgements by default
+Ordered delivery	No guaranteed ordering
+More overhead	Lower overhead
+HTTP/HTTPS, SSH	DNS, streaming, VoIP
+
+Sample interview answer:
+
+TCP provides reliable, ordered communication using mechanisms such as acknowledgements and retransmission. UDP is connectionless and has lower overhead, making it useful where speed or low latency is more important than guaranteed delivery.
+
+11. What is DNS?
+
+Sample answer:
+
+DNS, or Domain Name System, translates human-readable domain names such as example.com into IP addresses that computers use to communicate.
+
+Security angle:
+
+DNS can be abused for:
+
+DNS tunneling
+Phishing
+Command and control
+Domain generation algorithms
+12. HTTP vs HTTPS?
+
+Sample answer:
+
+HTTP transfers web traffic without providing encryption by itself. HTTPS uses TLS to provide encryption and authentication for the connection, helping protect data from interception and tampering.
+
+13. What is a firewall?
+
+Sample answer:
+
+A firewall is a security control that monitors and filters network traffic based on predefined rules. It can allow or block traffic based on factors such as source IP, destination IP, port, protocol, and application.
+
+🔐 Authentication & Access Control
+14. Authentication vs Authorization?
+
+Sample answer:
+
+Authentication verifies who a user or system is.
+
+Authorization determines what that authenticated user or system is allowed to access or perform.
+
+Easy way:
+
+Authentication → Who are you?
+Authorization → What are you allowed to do?
+
+15. What is MFA?
+
+Sample answer:
+
+Multi-factor authentication requires two or more different authentication factors. These typically include something you know, something you have, or something you are.
+
+Example:
+
+Password + authenticator-app code.
+
+16. What is the principle of least privilege?
+
+Sample answer:
+
+Least privilege means giving a user, application, or system only the minimum permissions required to perform its intended function.
+
+Why?
+
+If an account is compromised, the attacker's potential access and impact are limited.
+
+🛡️ SOC Fundamentals
+17. What is a SIEM?
+
+Sample answer:
+
+SIEM stands for Security Information and Event Management. It collects and centralizes security logs from different sources, normalizes and correlates events, and helps security teams detect, investigate, and respond to suspicious activity.
+
+Examples:
+
+Splunk
+Microsoft Sentinel
+IBM QRadar
+Elastic Security
+Wazuh
+
+Since you have worked with Splunk and Wazuh, expect this question.
+
+18. What is a security alert?
+
+Sample answer:
+
+A security alert is a notification generated by a security tool when observed activity matches a rule, threshold, detection pattern, or other suspicious behavior.
+
+Example:
+
+A SIEM detects multiple failed login attempts from an unusual IP address and generates an alert.
+
+19. What is a false positive?
+
+Sample answer:
+
+A false positive occurs when a security tool generates an alert for activity that appears malicious but is actually legitimate.
+
+Example:
+
+An employee repeatedly entering the wrong password could trigger a brute-force alert even though there is no attack.
+
+20. What is a false negative?
+
+Sample answer:
+
+A false negative occurs when malicious activity is present but the security system fails to detect it.
+
+Important: In security operations, false negatives can be particularly dangerous because an attack may remain undetected.
