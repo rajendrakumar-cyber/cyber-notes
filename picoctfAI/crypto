@@ -1,0 +1,44 @@
+From the certificate's Public Key field:
+
+    30 0E 02 07 11 A4 D4 52 12 B1 7F 02 03 01 00 01
+
+  Breaking down the ASN.1 DER structure:
+
+  • Modulus (n): 0x11A4D45212B17F = 4966306421059967 (53 bits)
+  • Public Exponent (e): 0x010001 = 65537
+
+  Because the key size is extremely small (53 bits), n can be trivially factored into two primes:
+
+  • p = 𝟕𝟑𝟏𝟕𝟔𝟎𝟎𝟏
+  • q = 𝟔𝟕𝟖𝟔𝟕𝟗𝟔𝟕
+
+    (73176001 × 67867967 = 4966306421059967)
+  ──────
+  ### Flag
+
+  The challenge flag format is picoCTF{p,q}:
+
+    picoCTF{73176001,67867967}
+
+  (If this order is rejected, swap them: picoCTF{67867967,73176001})
+
+
+  Morse Code                                                                      | Character
+  ---------------------------------------------------------------------------------|--------------------------------------------------------------------------------
+   .--. .. -.-. --- -.-. - ..-.                                                    | P I C O C T F
+   -- ----- .-. ... ...--                                                          | M 0 R S 3
+   -.-. ----- -.. ...--                                                            | C 0 D 3
+   .---- ...                                                                       | 1 S
+   ..-. ..- -.                                                                     | F U N
+   ---.. ....- ---.. ----- .- ..-. ----. -....                                     | 8 4 8 0 A F 9 6
+  ──────
+  ### Decoded Flag
+
+  Most picoCTF challenges expect lowercase:
+
+    picoCTF{m0rs3c0d31sfun8480af96}
+
+  If lowercase fails, try:
+
+  • Uppercase: picoCTF{M0RS3C0D31SFUN8480AF96}
+  • With underscores: picoCTF{m0rs3_c0d3_1s_fun_8480af96}
