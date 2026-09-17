@@ -1,0 +1,500 @@
+DISKO 2 — Detailed Walkthrough
+Platform: PicoCTF · Category: Forensics · Difficulty: Medium · Date: 2026-09-17
+
+1. Understanding the Challenge
+The challenge provides a raw disk image (disko-2.dd.gz) containing multiple partitions. The hint says:
+
+"The right one is Linux! One wrong step and it's all gone!"
+
+This means:
+
+There are multiple partitions with decoy content
+Only the Linux partition contains the real flag
+"One wrong step" = if you extract the wrong partition (FAT32), you'll find decoys or nothing useful
+2. Partition Layout (from mmls)
+Slot    Start       End         Length      Description
+000:    0           0           1           Primary Table
+001:    0           2047        2048        Unallocated (MBR gap)
+002:    2048        53247       51200       Linux (0x83)        ← TARGET
+003:    53248       118783      65536       Win95 FAT32 (0x0b)  ← DECOY
+004:    118784      204799      86016       Unallocated
+
+Key values for dd:
+
+skip=2048 → start sector of Linux partition
+count=51200 → number of sectors in Linux partition
+bs=512 → standard sector size
+3. Why dd with skip/count?
+The disk image is a raw binary — no filesystem abstraction. To isolate a partition:
+
+┌─────────────────────────────────────────────────────────────┐
+│  disko-2.dd (full disk)                                     │
+│                                                             │
+│  [MBR 512B][gap][ Linux Partition ][ FAT32 Partition ][gap] │
+│   offset 0   2048   sectors 2048-53247   53248-118783       │
+│                                                             │
+│  dd skip=2048 count=51200 → extracts ONLY the Linux part   │
+└─────────────────────────────────────────────────────────────┘
+
+Parameter	Meaning	Value
+bs=512	Block size (bytes)	512 (standard sector)
+skip=2048	Skip N blocks from start	2048 (partition start)
+count=51200	Read N blocks	51200 (partition size)
+
+Output: 51200 × 512 = 26,214,400 bytes = 25 MiB
+
+4. Finding the Flag
+strings linux.img | grep picoCTF
+
+How it works:
+
+strings extracts all sequences of ≥4 printable ASCII characters from the binary
+grep picoCTF filters for the flag pattern
+Result: exactly one match → picoCTF{4_P4Rt_1t_i5_90a3f3d1}
+No decoys in this case (unlike some similar challenges with ~100 fake flags).
+
+5. Alternative Methods (for harder variants)
+If strings returns multiple flags or nothing:
+
+# Mount the partition (needs root)
+sudo mkdir /mnt/disko
+sudo mount -o loop,ro linux.img /mnt/disko
+find /mnt/disko -type f -exec grep -l "picoCTF" {} \;
+
+# Check deleted files (ext filesystem)
+fls -r -p -o 2048 disko-2.dd | grep -i "del\|pico"
+
+# Read deleted file by inode
+icat -o 2048 disko-2.dd <inode>
+
+# Check unallocated space (carving)
+foremost -t all -i linux.img -o output/
+
+6. Flag
+picoCTF{4_P4Rt_1t_i5_90a3f3d1}
+
+The name 4_P4Rt_1t is a play on "for partition" — reinforcing the core skill tested.
+
+7. Key Concepts Tested
+Concept	Detail
+MBR / Partition Table	First 512 bytes of disk; describes partition layout
+mmls	Sleuth Kit tool to read partition tables from raw images
+dd with skip/count	Binary-level partition extraction without mounting
+strings	Extract readable text from binary data
+Filesystem types	0x83 = Linux ext, 0x0b = FAT32
+Offset calculation	Partition start sector × 512 = byte offset
+
+8. Quick Reference (Cheat Sheet)
+# Full pipeline
+gunzip disko-2.dd.gz
+mmls disko-2.dd                          # identify partitions
+dd if=disko-2.dd of=linux.img bs=512 skip=2048 count=51200
+strings linux.img | grep picoCTF         # extract flag
+
+──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ file disko-2.dd
+disko-2.dd: DOS/MBR boot sector; partition 1 : ID=0x83, start-CHS (0x0,32,33), end-CHS (0x3,80,13), startsector 2048, 51200 sectors; partition 2 : ID=0xb, start-CHS (0x3,80,14), end-CHS (0x7,100,29), startsector 53248, 65536 sectors
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ strings linux_partition.img | grep -i picoCTF   
+strings: 'linux_partition.img': No such file
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ strings disko-2.dd | grep -i picoCTF   
+picoCTF{4_P4Rt_1t_i5_d3f931a0}
+picoCTF{4_P4Rt_1t_i5_a3930df1}
+picoCTF{4_P4Rt_1t_i5_f1d0a339}
+picoCTF{4_P4Rt_1t_i5_fad03913}
+picoCTF{4_P4Rt_1t_i5_139df3a0}
+picoCTF{4_P4Rt_1t_i5_f931d3a0}
+picoCTF{4_P4Rt_1t_i5_30da391f}
+picoCTF{4_P4Rt_1t_i5_af33091d}
+picoCTF{4_P4Rt_1t_i5_9d0331fa}
+picoCTF{4_P4Rt_1t_i5_13a03f9d}
+picoCTF{4_P4Rt_1t_i5_3df91a30}
+picoCTF{4_P4Rt_1t_i5_39f3ad01}
+picoCTF{4_P4Rt_1t_i5_930d1fa3}
+picoCTF{4_P4Rt_1t_i5_90da3f31}
+picoCTF{4_P4Rt_1t_i5_0ad9133f}
+picoCTF{4_P4Rt_1t_i5_3ad039f1}
+picoCTF{4_P4Rt_1t_i5_339da10f}
+picoCTF{4_P4Rt_1t_i5_d33af901}
+picoCTF{4_P4Rt_1t_i5_93d0f3a1}
+picoCTF{4_P4Rt_1t_i5_9330afd1}
+picoCTF{4_P4Rt_1t_i5_9a3d10f3}
+picoCTF{4_P4Rt_1t_i5_d9f033a1}
+picoCTF{4_P4Rt_1t_i5_d390f1a3}
+picoCTF{4_P4Rt_1t_i5_0ad3139f}
+picoCTF{4_P4Rt_1t_i5_fa39d031}
+picoCTF{4_P4Rt_1t_i5_90a3f3d1}
+ronse paquetes en base xa en requiridos: ${picoCTF{4_P4Rt_1t_i5_903d13af}
+ce debcopicoCTF{4_P4Rt_1t_i5_393da1f0}dawanym pytaniom priorytety. Tylko pytania o pewnym lub wy
+Description-gl.UTF-8: Configurar unha rede empreganpicoCTF{4_P4Rt_1t_i5_1930da3f}escription-gu.UTF-8: 
+ChoicpicoCTF{4_P4Rt_1t_i5_a0f313d9}k Harf Kilidi), Sa
+Extended_picoCTF{4_P4Rt_1t_i5_3d1309af}u d'archivu Debian especific
+ExtenpicoCTF{4_P4Rt_1t_i5_30f931da}tse tiedostojen hakemiseen k
+ fald kanpicoCTF{4_P4Rt_1t_i5_1a33f09d}. Hvis du ikke kender svaret p
+picoCTF{4_P4Rt_1t_i5_913a30df}
+Extended_descriptionpicoCTF{4_P4Rt_1t_i5_331d0f9a}
+Description-ta.UTpicoCTF{4_P4Rt_1t_i5_339d0fa1}
+picoCTF{4_P4Rt_1t_i5_91fda330}
+nipicoCTF{4_P4Rt_1t_i5_09a331df}D?
+alinti negrpicoCTF{4_P4Rt_1t_i5_339a10df}og tikrai norite sukurti nauj
+picoCTF{4_P4Rt_1t_i5_0ad1393f}AXSIZE} 
+Description-ppicoCTF{4_P4Rt_1t_i5_13d093af}dados existentes
+Description-nb.UTF-8: Fant ipicoCTF{4_P4Rt_1t_i5_310d39fa} i denne partisjonen.
+an facerse funcionapicoCTF{4_P4Rt_1t_i5_039fda13} estes tres son equivalentes]\n intra.exemplo.com\n http://intra.exemplo.com/d-i/.lenny/preseed.cfg\n http://192.168.0.1/~phil/test47.txt\n floppy://preseed.cfg\n file:///hd-media/kiosk/./preseed.cfg\n\nPara unha instalaci
+Aug 30 02:00:45 in-target: Get:334 cpicoCTF{4_P4Rt_1t_i5_a031d9f3}c2 _Kali-last-snapshot_ - Official amd64 BD Binary-1 with firmware 20220804-16:57] kali-rolling/main amd64 libmp3lame0 amd64 3.100-3 [364 kB]
+Aug 30 02:00:55 in-target: Get:943 cdrom://[Kali GNU/Linux 2022.3rc2 _Kali-last-snapshot_ - Official amd64 BD Binary-1 with firmware picoCTF{4_P4Rt_1t_i5_d3f1039a}ain amd64 ruby-http-cookie all 1.0.3-1 [22.6 kB]
+Aug 29 picoCTF{4_P4Rt_1t_i5_31a03fd9}90522] pci 0000:00:17.0: PME# supported from D0 D3hot D3cold
+xHpicoCTF{4_P4Rt_1t_i5_a9d0f313}
+picoCTF{4_P4Rt_1t_i5_1f03d3a9}
+picoCTF{4_P4Rt_1t_i5_9a013f3d}
+picoCTF{4_P4Rt_1t_i5_f33d091a}
+picoCTF{4_P4Rt_1t_i5_1d9fa303}
+picoCTF{4_P4Rt_1t_i5_a3f9103d}
+picoCTF{4_P4Rt_1t_i5_f19a03d3}
+picoCTF{4_P4Rt_1t_i5_93fda130}
+picoCTF{4_P4Rt_1t_i5_30df3a91}
+picoCTF{4_P4Rt_1t_i5_09ad13f3}
+picoCTF{4_P4Rt_1t_i5_a0913df3}
+MESSAGE=vmware: picoCTF{4_P4Rt_1t_i5_913d03af} hypervisor : 66000000 Hz
+picoCTF{4_P4Rt_1t_i5_f19d3a03}STAMP=294323
+picoCTF{4_P4Rt_1t_i5_f3019a3d}
+picoCTF{4_P4Rt_1t_i5_309dfa13}
+picoCTF{4_P4Rt_1t_i5_0a193f3d}
+picoCTF{4_P4Rt_1t_i5_f9033d1a}
+_SOURCE_MONOTONIC_TIMESTAMP=3024picoCTF{4_P4Rt_1t_i5_f3013da9}
+picoCTF{4_P4Rt_1t_i5_33f0da91}
+picoCTF{4_P4Rt_1t_i5_a1f033d9}e
+picoCTF{4_P4Rt_1t_i5_f3d0139a}
+picoCTF{4_P4Rt_1t_i5_af91303d}
+picoCTF{4_P4Rt_1t_i5_af9d0133}
+picoCTF{4_P4Rt_1t_i5_f9331ad0}
+picoCTF{4_P4Rt_1t_i5_39fa01d3}
+picoCTF{4_P4Rt_1t_i5_a1df3903}
+picoCTF{4_P4Rt_1t_i5_1daf9033}
+picoCTF{4_P4Rt_1t_i5_931afd03}
+picoCTF{4_P4Rt_1t_i5_0d93a13f}
+picoCTF{4_P4Rt_1t_i5_903a13fd}
+picoCTF{4_P4Rt_1t_i5_ad1933f0}
+picoCTF{4_P4Rt_1t_i5_90d31a3f}
+picoCTF{4_P4Rt_1t_i5_39afd013}
+picoCTF{4_P4Rt_1t_i5_1fa09d33}
+picoCTF{4_P4Rt_1t_i5_01d93f3a}
+picoCTF{4_P4Rt_1t_i5_f30a193d}
+picoCTF{4_P4Rt_1t_i5_39afd301}
+picoCTF{4_P4Rt_1t_i5_9fda3103}
+picoCTF{4_P4Rt_1t_i5_af13d930}
+picoCTF{4_P4Rt_1t_i5_9130fa3d}
+picoCTF{4_P4Rt_1t_i5_d10f933a}
+picoCTF{4_P4Rt_1t_i5_df03931a}
+picoCTF{4_P4Rt_1t_i5_301d3fa9}
+picoCTF{4_P4Rt_1t_i5_d033fa91}
+picoCTF{4_P4Rt_1t_i5_0af31d39}
+picoCTF{4_P4Rt_1t_i5_af3093d1}
+picoCTF{4_P4Rt_1t_i5_0d913af3}
+picoCTF{4_P4Rt_1t_i5_01a3d93f}
+picoCTF{4_P4Rt_1t_i5_a3d3901f}
+picoCTF{4_P4Rt_1t_i5_d03f391a}
+picoCTF{4_P4Rt_1t_i5_f3d9013a}
+picoCTF{4_P4Rt_1t_i5_3f1a0d93}
+picoCTF{4_P4Rt_1t_i5_3d0913fa}
+picoCTF{4_P4Rt_1t_i5_01933adf}
+picoCTF{4_P4Rt_1t_i5_109da3f3}
+picoCTF{4_P4Rt_1t_i5_f093d13a}
+picoCTF{4_P4Rt_1t_i5_a0f1393d}
+picoCTF{4_P4Rt_1t_i5_df0139a3}
+picoCTF{4_P4Rt_1t_i5_03fa913d}
+picoCTF{4_P4Rt_1t_i5_13f90ad3}
+picoCTF{4_P4Rt_1t_i5_d39f1a03}
+picoCTF{4_P4Rt_1t_i5_303d9fa1}
+picoCTF{4_P4Rt_1t_i5_393d10af}
+picoCTF{4_P4Rt_1t_i5_01d3f9a3}
+picoCTF{4_P4Rt_1t_i5_d093a31f}
+picoCTF{4_P4Rt_1t_i5_fa330d19}
+picoCTF{4_P4Rt_1t_i5_df13309a}
+picoCTF{4_P4Rt_1t_i5_3031a9df}
+picoCTF{4_P4Rt_1t_i5_df19a330}
+picoCTF{4_P4Rt_1t_i5_01df3a93}
+picoCTF{4_P4Rt_1t_i5_13afd390}
+picoCTF{4_P4Rt_1t_i5_3fda3910}
+picoCTF{4_P4Rt_1t_i5_af93d310}
+picoCTF{4_P4Rt_1t_i5_03319adf}
+picoCTF{4_P4Rt_1t_i5_339a01df}
+picoCTF{4_P4Rt_1t_i5_3ad9f301}
+picoCTF{4_P4Rt_1t_i5_f31a903d}
+picoCTF{4_P4Rt_1t_i5_d930f31a}
+picoCTF{4_P4Rt_1t_i5_93daf130}
+picoCTF{4_P4Rt_1t_i5_9a30f13d}
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ sudo mkdir /mnt/part1
+sudo mount -o loop linux_partition.img /mnt/part1/
+ls -la /mnt/part1/
+find /mnt/part1/ -name "*flag*"
+[sudo] password for white: 
+mount: /mnt/part1/: failed to set up loop device for linux_partition.img.
+total 8
+drwxr-xr-x  2 root root 4096 Sep 17 11:12 .
+drwxr-xr-x 10 root root 4096 Sep 17 11:12 ..
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ # List all files including deleted
+fls -r -p -o 2048 disko-2.dd
+
+# Read a specific inode (e.g., 18291)
+icat -o 2048 disko-2.dd 18291
+d/d 11: lost+found
+d/d 13: bin
+r/r 14: bin/sqlitebrowser
+r/r 17: bin/dbus-daemon
+r/r 23: bin/dbus-uuidgen
+r/r 29: bin/xkbevd
+r/r 33: bin/cabextract
+r/r 42: bin/xfontsel
+r/r 43: bin/xkill
+r/r 44: bin/xlsatoms
+r/r 45: bin/xlsclients
+r/r 48: bin/xprop
+r/r 53: bin/xzdiff
+r/r 60: bin/tightvncpasswd
+r/r 72: bin/loadunimap
+r/r 74: bin/mk_modmap
+r/r 78: bin/screendump
+r/r 84: bin/setvtrgb
+r/r 88: bin/unicode_start
+r/r 90: bin/fc-cat
+r/r 95: bin/mount
+r/r 96: bin/umount
+r/r 104:        bin/instmodsh
+r/r 110:        bin/perlivp
+r/r 111:        bin/piconv
+r/r 112:        bin/pl2pm
+r/r 114:        bin/pod2man
+r/r 115:        bin/pod2text
+r/r 118:        bin/prove
+r/r 120:        bin/ptardiff
+l/l 130:        bin/xzegrep
+l/l 137:        bin/compare-im6
+r/r 139:        bin/x86_64-linux-gnu-cpp-13
+r/r 141:        bin/apt-cache
+r/r 145:        bin/apt-key
+r/r 147:        bin/dbilogstrip
+r/r 148:        bin/dccleancrw
+r/r 150:        bin/dcfujiturn
+r/r 155:        bin/dbiprof
+r/r 157:        bin/dh_perl_dbi
+r/r 164:        bin/sdiff
+r/r 166:        bin/python3.12
+r/r 168:        bin/busctl
+r/r 180:        bin/hostname
+r/r 184:        bin/infocmp
+r/r 196:        bin/getfattr
+r/r 199:        bin/ldapdelete
+r/r 201:        bin/ldapmodify
+r/r 205:        bin/ldapurl
+l/l 207:        bin/ldapadd
+r/r 211:        bin/vmtoolsd
+r/r 218:        bin/vmware-rpctool
+r/r 220:        bin/vmware-vgauth-cmd
+r/r 229:        bin/look
+r/r 231:        bin/unicode_stop
+l/l 232:        bin/awk
+r/r 234:        bin/bzdiff
+r/r 46: bin/xlsfonts
+r/r 64: bin/codepage
+r/r 21: bin/dbus-send
+r/r 63: bin/chvt
+r/r 30: bin/xkbprint
+r/r 36: bin/listres
+r/r 62: bin/deb-systemd-invoke
+r/r 56: bin/xzmore
+r/r 40: bin/xev
+r/r 32: bin/xkbwatch
+r/r 54: bin/xzgrep
+r/r 57: bin/cpio
+r/r 35: bin/editres
+r/r 66: bin/dumpkeys
+r/r 73: bin/mapscrn
+r/r 80: bin/setkeycodes
+r/r 81: bin/setleds
+r/r 89: bin/fc-cache
+r/r 91: bin/fc-conflist
+r/r 98: bin/encguess
+r/r 99: bin/rpcinfo
+r/r 100:        bin/m4
+r/r 107:        bin/perlbug
+r/r 108:        bin/perlthanks
+r/r 119:        bin/ptar
+r/r 121:        bin/ptargrep
+r/r 122:        bin/shasum
+r/r 125:        bin/xsubpp
+r/r 126:        bin/zipdetails
+l/l 127:        bin/unxz
+r/r 133:        bin/perl5.40-x86_64-linux-gnu
+r/r 138:        bin/lightdm-gtk-greeter-settings
+r/r 140:        bin/apt
+r/r 144:        bin/apt-get
+r/r 146:        bin/apt-mark
+r/r 149:        bin/dcfujigreen
+r/r 151:        bin/dcfujiturn16
+r/r 165:        bin/mt-gnu
+r/r 167:        bin/stunnel3
+r/r 172:        bin/ping
+r/r 179:        bin/rgrep
+l/l 181:        bin/dnsdomainname
+l/l 185:        bin/nisdomainname
+r/r 186:        bin/tabs
+l/l 187:        bin/ypdomainname
+r/r 189:        bin/toe
+r/r 191:        bin/tset
+r/r 195:        bin/attr
+r/r 197:        bin/setfattr
+r/r 206:        bin/ldapwhoami
+r/r 214:        bin/lowntfs-3g
+r/r 216:        bin/vmware-namespace-cmd
+r/r 221:        bin/vmware-vmblock-fuse
+l/l 227:        bin/rbash
+r/r 228:        bin/colrm
+r/r 230:        bin/dbus-launch
+l/l 233:        bin/psfaddtable
+r/r 25: bin/ncursesw6-config
+r/r 76: bin/psfxtable
+r/r 79: bin/setfont
+r/r 67: bin/fgconsole
+r/r 18: bin/dbus-run-session
+r/r 50: bin/xwininfo
+r/r 28: bin/xkbcomp
+r/r 24: bin/ncurses6-config
+r/r 117:        bin/podchecker
+r/r 87: bin/splitfont
+r/r 22: bin/dbus-update-activation-environment
+r/r 27: bin/xkbbell
+r/r 92: bin/fc-list
+r/r 109:        bin/perldoc
+r/r 101:        bin/rpcgen
+r/r 75: bin/openvt
+r/r 41: bin/xfd
+r/r 52: bin/xz
+r/r 20: bin/dbus-monitor
+r/r 70: bin/kbdinfo
+r/r 86: bin/showkey
+r/r 69: bin/kbd_mode
+r/r 55: bin/xzless
+r/r 61: bin/deb-systemd-helper
+r/r 51: bin/lzmainfo
+r/r 102:        bin/h2ph
+r/r 106:        bin/libnetcfg
+r/r 113:        bin/pod2html
+r/r 123:        bin/splain
+l/l 128:        bin/xzcat
+l/l 131:        bin/xzfgrep
+l/l 134:        bin/pidof
+r/r 135:        bin/python3-qr
+l/l 136:        bin/compare
+r/r 142:        bin/apt-cdrom
+r/r 152:        bin/dcparse
+r/r 158:        bin/bash
+l/l 160:        bin/sh
+r/r 162:        bin/diff
+r/r 170:        bin/hostnamectl
+r/r 174:        bin/find
+r/r 175:        bin/xargs
+r/r 176:        bin/egrep
+r/r 178:        bin/grep
+r/r 188:        bin/tic
+l/l 193:        bin/infotocap
+r/r 200:        bin/ldapexop
+r/r 203:        bin/ldappasswd
+r/r 208:        bin/VGAuthService
+r/r 209:        bin/vm-support
+r/r 210:        bin/vmhgfs-fuse
+r/r 217:        bin/unrar-nonfree
+r/r 219:        bin/vmware-toolbox-cmd
+r/r 222:        bin/vmware-xferlogs
+r/r 224:        bin/2to3-2.7
+r/r 225:        bin/keyctl
+l/l 16: bin/python3.11-config
+r/r 59: bin/tmux
+r/r 26: bin/setxkbmap
+r/r 71: bin/loadkeys
+r/r 93: bin/corelist
+r/r 38: bin/xdpyinfo
+r/r 94: bin/cpan
+r/r 47: bin/xmessage
+r/r 105:        bin/json_pp
+r/r 49: bin/xvinfo
+r/r 34: bin/appres
+r/r 103:        bin/h2xs
+r/r 116:        bin/pod2usage
+r/r 97: bin/enc2xs
+l/l 58: bin/which
+r/r 65: bin/deallocvt
+r/r 85: bin/showconsolefont
+r/r 68: bin/getkeycodes
+r/r 37: bin/viewres
+r/r 39: bin/xdriinfo
+r/r 15: bin/x86_64-linux-gnu-python3.11-config
+r/r 31: bin/xkbvleds
+r/r 83: bin/setmetamode
+r/r 82: bin/setlogcons
+r/r 19: bin/dbus-cleanup-sockets
+r/r 77: bin/resizecons
+r/r 124:        bin/streamzip
+l/l 129:        bin/xzcmp
+r/r 132:        bin/cpan5.40-x86_64-linux-gnu
+r/r 143:        bin/apt-config
+r/r 153:        bin/dcraw
+r/r 154:        bin/json_xs
+r/r 156:        bin/dbiproxy
+r/r 159:        bin/dash
+r/r 161:        bin/cmp
+r/r 163:        bin/diff3
+r/r 169:        bin/stunnel4
+r/r 171:        bin/journalctl
+l/l 173:        bin/ping4
+r/r 177:        bin/fgrep
+r/r 182:        bin/clear
+l/l 183:        bin/domainname
+r/r 190:        bin/tput
+l/l 192:        bin/captoinfo
+l/l 194:        bin/reset
+r/r 198:        bin/ldapcompare
+r/r 202:        bin/ldapmodrdn
+r/r 204:        bin/ldapsearch
+r/r 212:        bin/vmware-alias-import
+r/r 213:        bin/vmware-checkvm
+r/r 215:        bin/vmware-hgfsclient
+r/r 223:        bin/pyfiglet
+r/r 226:        bin/clear_console
+V/V 6401:       $OrphanFiles
+-/r * 235:      $OrphanFiles/OrphanFile-235
+Metadata address too large for image (6401)
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ mmls disko-2.dd          
+DOS Partition Table
+Offset Sector: 0
+Units are in 512-byte sectors
+
+      Slot      Start        End          Length       Description
+000:  Meta      0000000000   0000000000   0000000001   Primary Table (#0)
+001:  -------   0000000000   0000002047   0000002048   Unallocated
+002:  000:000   0000002048   0000053247   0000051200   Linux (0x83)
+003:  000:001   0000053248   0000118783   0000065536   Win95 FAT32 (0x0b)
+004:  -------   0000118784   0000204799   0000086016   Unallocated
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ # 3. Extract the Linux partition
+dd if=disko-2.dd of=linux.img bs=512 skip=2048 count=51200
+
+# 4. Hunt for flags
+strings linux.img | grep picoCTF
+51200+0 records in
+51200+0 records out
+26214400 bytes (26 MB, 25 MiB) copied, 0.246724 s, 106 MB/s
+picoCTF{4_P4Rt_1t_i5_90a3f3d1}
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ 
