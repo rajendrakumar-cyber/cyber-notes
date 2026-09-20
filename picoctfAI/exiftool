@@ -1,0 +1,167 @@
+ExifTool handles this transparently — when you write -SubSecDateTimeOriginal='1970:01:01 00:00:00.001', it splits the value into the date part (written to DateTimeOriginal) and the sub-second part (written to SubSecTimeOriginal). 
+
+The Samsung SEFT format (in detail)
+The Samsung Extended Feature Trailer (SEFT) is a proprietary binary structure appended after the JPEG's EOI marker (FF D9).  It was reverse-engineered by Brian K. Reid (Hacker Factor, 2024).
+
+Structure:
+
+SEFT Header:
+  Offset 0x00:  "SEFT" magic (4 bytes)
+  Offset 0x04:  Version (2 bytes) = 107
+  Offset 0x06:  Record count (2 bytes) = 6
+  ...
+
+Index Table (one entry per record):
+  Each entry:
+    Offset +0x00:  Record type (4 bytes LE)   e.g., 0x00000a01
+    Offset +0x04:  Record offset (4 bytes LE)  (negative = from end of file)
+    Offset +0x08:  Record length (4 bytes LE)
+    Offset +0x0C:  Data length (4 bytes LE)
+
+Record 0x0a01 (Image_UTC_Data):
+  ┌─────────────────────────────────────────────────────┐
+  │  Field name length: 14 (0x0E)                      │
+  │  Field name:      "Image_UTC_Data" (14 ASCII bytes) │
+  │  Value length:      13 (0x0D)                      │
+  │  Value:             "1700513181420" (13 ASCII)     │
+  └─────────────────────────────────────────────────────┘
+
+The 13-byte value is the Unix timestamp in milliseconds as an ASCII string. ExifTool reads this, converts it to a human-readable datetime with timezone, and displays it as Samsung: TimeStamp. 
+
+Why exiftool can't write it: The SEFT format is proprietary, undocumented, and exiftool's Samsung plugin only implements a reader for it. There's no write path. 
+
+Finding and patching the exact bytes
+Method 1: exiftool -v3 to find the offset 
+
+exiftool -v3 original.jpg 2>&1 | grep -A5 "Image_UTC_Data"
+
+Output:
+
+  SamsungTrailer_0x0a01Name = Image_UTC_Data
+  - Tag '0x0a01-name' (14 bytes):
+    3c8a6b: 49 6d 61 67 65 5f 55 54 43 5f 44 61 74 61  [Image_UTC_Data]
+  TimeStamp = 1700513181420
+  - Tag '0x0a01' (13 bytes):
+    3c8a79: 31 37 30 30 35 31 33 31 38 31 34 32 30      [1700513181420]
+
+The value is at offset 0x3c8a79 — 13 bytes of ASCII. 
+
+Method 2: sed one-liner
+
+sed -i 's/Image_UTC_Data1700513181420/Image_UTC_Data0000000000001/g' original.jpg
+
+This works because the name and value are contiguous in the binary — the 14-byte name is immediately followed by the 13-byte value. Since both are ASCII, a simple string replace is safe.
+
+Method 3: xxd (for precision)
+
+# Find the offset
+exiftool -time:all -v3 original.jpg 2>&1 | grep "0x0a01'"
+
+# Patch at exact offset (e.g., 0x3c8a79)
+printf '0000000000001' | xxd -r -p > /tmp/patch.bin
+dd if=/tmp/patch.bin of=original.jpg bs=1 seek=$((0x3c8a79)) count=13 conv=notrunc
+
+Method 4: GUI hex editor (bless, imhex, 010 Editor) 
+
+Open the file, search for Image_UTC_Data, and replace the 13 digits after it with 0000000000001. 
+
+Why the value is 0000000000001 and not 0
+The target is 1970:01:01 00:00:00.001 — that's 1 millisecond after the epoch, not the epoch itself. 
+
+Unix epoch (ms) = 0          →  1970:01:01 00:00:00.000
+Target             = 1        →  1970:01:01 00:00:00.001  ✓
+
+The 13-digit padding (0000000000001) is required because the field is a fixed-width 13-byte ASCII field — Samsung always writes 13 digits (enough for timestamps up to year 2286). 
+
+Verification
+# Check all 7 tags
+exiftool original.jpg | grep -E "Modify Date|Date/Time Original|Create Date|Time Stamp"
+
+Expected:
+
+Modify Date          : 1970:01:01 00:00:00
+Date/Time Original   : 1970:01:01 00:00:00
+Create Date          : 1970:01:01 00:00:00
+Time Stamp           : 1970:01:01 00:00:00.001+00:00
+
+The +00:00 timezone on Time Stamp is automatically derived by exiftool — the SEFT value is a UTC epoch, so exiftool displays it with +00:00. The checker accepts any equivalent timezone representation. 
+
+──(venv)─(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ exiftool -ModifyDate='1970:01:01 00:00:00' original.jpg
+exiftool -DateTimeOriginal='1970:01:01 00:00:00' original.jpg
+exiftool -CreateDate='1970:01:01 00:00:00' original.jpg
+exiftool -SubSecCreateDate='1970:01:01 00:00:00.001' original.jpg
+exiftool -SubSecDateTimeOriginal='1970:01:01 00:00:00.001' original.jpg
+exiftool -SubSecModifyDate='1970:01:01 00:00:00.001' original.jpg
+    1 image files updated
+    1 image files updated
+    1 image files updated
+    1 image files updated
+    1 image files updated
+    1 image files updated
+                                                                                                        
+┌──(venv)─(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ strings original.jpg | grep "Image_UTC_Data"
+Image_UTC_Data170051318120
+└─$ sed -i 's/Image_UTC_Data1700513181420/Image_UTC_Data0000000000001/g' original.jpg   
+                                                                                                        
+┌──(venv)─(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ exiftool original.jpg | grep "Time Stamp"
+Time Stamp                      : 1970:01:01 05:30:00.001+05:30
+                                                                                                        
+┌──(venv)─(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ nc -w 2 mimas.picoctf.net 55016 < original.jpg
+nc mimas.picoctf.net 54422
+MD5 of your picture:
+412331ca77b633d2529dc0e0ab5ad6eb  test.out
+
+Checking tag 1/7
+Looking at IFD0: ModifyDate
+Looking for '1970:01:01 00:00:00'
+Found: 1970:01:01 00:00:00
+Great job, you got that one!
+
+Checking tag 2/7
+Looking at ExifIFD: DateTimeOriginal
+Looking for '1970:01:01 00:00:00'
+Found: 1970:01:01 00:00:00
+Great job, you got that one!
+
+Checking tag 3/7
+Looking at ExifIFD: CreateDate
+Looking for '1970:01:01 00:00:00'
+Found: 1970:01:01 00:00:00
+Great job, you got that one!
+
+Checking tag 4/7
+Looking at Composite: SubSecCreateDate
+Looking for '1970:01:01 00:00:00.001'
+Found: 1970:01:01 00:00:00.001
+Great job, you got that one!
+
+Checking tag 5/7
+Looking at Composite: SubSecDateTimeOriginal
+Looking for '1970:01:01 00:00:00.001'
+Found: 1970:01:01 00:00:00.001
+Great job, you got that one!
+
+Checking tag 6/7
+Looking at Composite: SubSecModifyDate
+Looking for '1970:01:01 00:00:00.001'
+Found: 1970:01:01 00:00:00.001
+Great job, you got that one!
+
+Checking tag 7/7
+Timezones do not have to match, as long as it's the equivalent time.
+Looking at Samsung: TimeStamp
+Looking for '1970:01:01 00:00:00.001+00:00'
+Found: 1970:01:01 00:00:00.001+00:00
+Great job, you got that one!
+
+You did it!
+picoCTF{71m3_7r4v311ng_p1c7ur3_ed953b57}
+                                                                                                        
+┌──(venv)─(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ 
+
+                                
