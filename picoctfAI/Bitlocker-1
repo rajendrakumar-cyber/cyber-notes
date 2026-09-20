@@ -1,0 +1,139 @@
+itlocker-1 — Detailed Walkthrough
+What's happening technically
+BitLocker encrypts a volume using XTS-AES-128/256. The volume key (FVEK) is itself encrypted by a Volume Master Key (VMK), which is derived from the user's password via PBKDF2 with 1,048,576 (1M) SHA-256 iterations — that's why it's slow to crack. The hash format bitlocker2john extracts looks like:
+
+$bitlocker$0$16$cb4809fe9628471a411f8380e0f668db$1048576$12$<salt>$<hash>
+
+The 1048576 is the iteration count, making even dictionary attacks computationally expensive. 
+
+Step-by-step
+1. Identify the file
+
+file bitlocker-1.dd
+# → DOS/MBR boot sector, NTFS, BitLocker-encrypted volume detected
+
+The -FVE-FS- signature in the boot sector is what identifies a BitLocker volume. 
+
+2. Extract the hash
+
+bitlocker2john -i bitlocker-1.dd > bitlocker_hash.txt
+
+This reads the BitLocker metadata (the "FVE metadata" at the start of the volume) and outputs the password hash in John the Ripper's custom format. 
+
+3. Crack the password
+
+john --wordlist=/usr/share/wordlists/rockyou.txt bitlocker_hash.txt
+
+Or with hashcat (faster on GPU):
+
+hashcat -m 22100 -a 0 bitlocker_hash.txt /usr/share/wordlists/rockyou.txt
+
+-m 22100 = BitLocker hash mode
+-a 0 = straight dictionary attack 
+Result: jacqueline (a common name, found in rockyou)
+
+The (? ) next to the result means John couldn't 100% verify it's correct (BitLocker's format doesn't always allow verification), but it's almost certainly right. 
+
+4. Decrypt with Dislocker
+
+sudo mkdir -p /mnt/bitlocker
+sudo dislocker -V bitlocker-1.dd -u"jacqueline" -- /mnt/bitlocker
+
+Key points:
+
+-V (capital) = the volume/image file
+-u = user password (no space between -u and the password!)
+-- = separator before the output directory
+Output: a file called dislocker-file — this is a decrypted virtual NTFS image 
+5. Mount and read the flag
+
+sudo mkdir -p /mnt/unlocked
+sudo mount -o loop /mnt/bitlocker/dislocker-file /mnt/unlocked
+cat /mnt/unlocked/flag.txt
+
+-o loop tells the kernel to treat the file as a block device (like a USB drive), so the NTFS filesystem inside can be read normally. 
+
+picoCTF{us3_b3tt3r_p4ssw0rd5_pl5!_3242adb1}
+
+6. Clean up
+
+sudo umount /mnt/unlocked
+sudo rmdir /mnt/unlocked /mnt/bitlocker
+
+
+┌──(venv)─(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ bitlocker2john -i bitlocker-1.dd > bitlocker_hash.txt   
+
+Signature found at 0x3
+Version: 8 
+Invalid version, looking for a signature with valid version...
+
+Signature found at 0x2195000
+Version: 2 (Windows 7 or later)
+
+VMK entry found at 0x21950c5
+
+VMK encrypted with Recovery Password found at 0x21950e6
+Searching AES-CCM from 0x2195102
+Trying offset 0x2195195....
+VMK encrypted with AES-CCM!!
+
+VMK entry found at 0x2195241
+
+VMK encrypted with User Password found at 2195262
+VMK encrypted with AES-CCM
+
+Signature found at 0x2c1d000
+Version: 2 (Windows 7 or later)
+
+VMK entry found at 0x2c1d0c5
+
+VMK entry found at 0x2c1d241
+
+Signature found at 0x373a000
+Version: 2 (Windows 7 or later)
+
+VMK entry found at 0x373a0c5
+
+VMK entry found at 0x373a241
+                                                                                                        
+┌──(venv)─(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ john --wordlist=/usr/share/wordlists/rockyou.txt bitlocker_hash.txt   
+Note: This format may emit false positives, so it will keep trying even after finding a possible candidate.
+Using default input encoding: UTF-8
+Loaded 2 password hashes with 2 different salts (BitLocker, BitLocker [SHA-256 AES 32/64])
+Cost 1 (iteration count) is 1048576 for all loaded hashes
+Will run 8 OpenMP threads
+Press 'q' or Ctrl-C to abort, almost any other key for status
+jacqueline       (?)     
+jacqueline       (?)     
+2g 0:00:02:32 0.02% (ETA: 2026-09-29 11:26) 0.01310g/s 22.54p/s 45.13c/s 45.13C/s cupcake1..meredith
+Session aborted
+                                                                                                        
+┌──(venv)─(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ sudo mkdir -p /mnt/bitlocker /mnt/unlocked
+[sudo] password for white: 
+                                                                                                        
+┌──(venv)─(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ sudo dislocker -V bitlocker-1.dd -u"jacqueline" -- /mnt/bitlocker 
+sudo: dislocker: command not found
+                                                                                                        
+┌──(venv)─(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ sudo apt install dislocker                                       
+The following packages were automatically installed and are no longer required:
+  libabsl20240722  libpoppler147      node-cjs-module-lexer  python3.13-minimal  sdparm
+  libcdb1          libpython3.13-dev  python3.13             python3.13-venv
+  libllhttp9.3     libtlsrpt0         python3.13-dev         rpcsvc-proto
+Use 'sudo apt autoremove' to remove them.
+
+┌──(venv)─(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ sudo dislocker -V bitlocker-1.dd -u"jacqueline" -- /mnt/bitlocker
+                                                                                                        
+┌──(venv)─(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ sudo mount -o loop /mnt/bitlocker/dislocker-file /mnt/unlocked
+                                                                                                        
+┌──(venv)─(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ cat /mnt/unlocked/flag.txt   
+picoCTF{us3_b3tt3r_p4ssw0rd5_pl5!_3242adb1}                                                                                                        
+┌──(venv)─(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ 
