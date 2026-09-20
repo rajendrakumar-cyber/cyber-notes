@@ -1,0 +1,75 @@
+A group of underground hackers might be using this legit site to communicate. Use your forensic techniques to uncover their message Try it here!
+
+Solution
+Once you start the instance you can go to http://standard-pizzas.picoctf.net:56409/ and if you scroll through the "Country Flags" you will come across "Upanzi, Republic The" and see the image saying Upanzi Network which is obviously not a country flag. Upanzi Network is a part of CyLab-Africa.
+
+You can also use curl, wget, or just look through the source to see the list of countries in html. For instance curl http://standard-pizzas.picoctf.net:56409/ > index.html
+
+This is the line of interest:
+
+{ name: "Upanzi, Republic The",img: "flags/upz.png", style:"width: 120px!important; height: 90px!important;" },
+
+You can see it has upz.png which could be looked into and downloaded with the following command: wget http://standard-pizzas.picoctf.net:56409/flags/upz.png
+
+If you need you can set up a virtual environment with python with the following commands: python3 -m venv venv and then source venv/bin/activate.
+
+Once that is done you can install the stepic package with pip: pip install stepic
+
+Lastly, run it with the decode flag. Another method could be using apt install to get the package: sudo apt install stepic
+
+The use this command to get the flag: stepic -i upz.png -d
+
+Flag: picoCTF{fl4g_h45_fl4ga66...}
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ wget http://standard-pizzas.picoctf.net:59077/flags/upz.png
+--2026-09-20 09:36:30--  http://standard-pizzas.picoctf.net:59077/flags/upz.png
+Resolving standard-pizzas.picoctf.net (standard-pizzas.picoctf.net)... 
+3.22.195.189
+Connecting to standard-pizzas.picoctf.net (standard-pizzas.picoctf.net)|3.22.195.189|:59077... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 1788393 (1.7M) [image/png]
+Saving to: ‘upz.png’
+
+upz.png                   100%[=====================================>]   1.71M   227KB/s    in 7.9s    
+
+2026-09-20 09:36:39 (222 KB/s) - ‘upz.png’ saved [1788393/1788393]
+
+                                                                                                        
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ 
+                                                                                                        
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ python3 -m venv venv          
+                                                                                                        
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ source venv/bin/activate                      
+                                                                                                        
+┌──(venv)─(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ pip install stepic
+
+
+Collecting stepic
+  Downloading stepic-0.5.0.tar.gz (219 kB)
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... done
+  Preparing metadata (pyproject.toml) ... done
+Collecting pillow (from stepic)
+  Downloading pillow-12.3.0-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.1 kB)
+Downloading pillow-12.3.0-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (6.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.9/6.9 MB 459.2 kB/s  0:00:14
+Building wheels for collected packages: stepic
+  Building wheel for stepic (pyproject.toml) ... done
+  Created wheel for stepic: filename=stepic-0.5.0-py3-none-any.whl size=12506 sha256=10188049537894e497d7582adbadb4b703841f0337c0a103baff9f01e98836e7
+  Stored in directory: /home/white/.cache/pip/wheels/00/ee/c9/2c465315814dc84c5668ec98c538cc09cfb0e541fbde1814f1
+Successfully built stepic
+Installing collected packages: pillow, stepic
+Successfully installed pillow-12.3.0 stepic-0.5.0
+                                                                                                        
+┌──(venv)─(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ stepic -i upz.png -d
+
+
+/home/white/white/Music/PICO-CTF/picoctfAI/fornsicis/venv/lib/python3.14/site-packages/PIL/Image.py:3578: DecompressionBombWarning: Image size (150658990 pixels) exceeds limit of 89478485 pixels, could be decompression bomb DOS attack.
+  warnings.warn(
+picoCTF{fl4g_h45_fl4gad68aa4a}                                                                                                        
+┌──(venv)─(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
