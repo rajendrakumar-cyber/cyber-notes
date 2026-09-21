@@ -1,0 +1,184 @@
+──────
+  ## 1. Introduction & Profile Questions
+  ### Q1: "Tell me about yourself and why you want to become an Information Security Auditor at TuxCentrix."
+
+  │ Answer:
+  │ "I am a Computer Science graduate with hands-on technical experience in Linux systems, SIEM monitoring, and cybersecurity competitions like Hack The Box and
+  │ national CTFs. Through these labs, I realized that technical vulnerabilities often originate from missing security controls, poor access management, or
+  │ unmonitored logs.
+  │ I want to combine my technical understanding with Governance, Risk, and Compliance (GRC). TuxCentrix works directly on ISO 27001 implementation, risk
+  │ assessments, and IT audits, and I am eager to assist senior consultants in evaluating controls, reviewing evidence, and helping organizations maintain robust
+  │ security postures."
+  ### Q2: "You have a technical / CTF background. Why choose Auditing and Compliance over penetration testing or SOC?"
+
+  │ Answer:
+  │ "Technical testing shows where a single exploit exists at one moment in time, but auditing and GRC establish the policies, continuous controls, and governance
+  │ that protect the entire organization consistently. Having a technical foundation actually makes me a more thorough auditor—when I test an access control,
+  inspect
+  │ server privileges, or review SIEM audit logs, I understand the underlying operating system and how an attacker could exploit a control failure."
+
+  ### Q3: "Are you willing to work from Kochi and travel for on-site client audits?"
+
+  │ Answer:
+  │ "Yes, absolutely. I am ready to relocate to Kochi and fully open to traveling to client locations as required for physical walk-throughs, evidence gathering,
+  and
+  │ stakeholder interviews."
+  ──────
+  ## 2. ISO/IEC 27001 & ISMS Fundamentals
+
+  ### Q4: "What is ISO/IEC 27001 and what is an ISMS?"
+
+  │ Answer:
+  │ "ISO/IEC 27001 is the international standard for managing information security. It specifies the requirements for establishing, implementing, maintaining, and
+  │ continually improving an Information Security Management System (ISMS).
+  │ An ISMS is a systematic framework of policies, procedures, and technical controls designed to manage sensitive company data and protect the CIA Triad
+  │ (Confidentiality, Integrity, and Availability) using a risk-based approach."
+
+  ### Q5: "What is the difference between ISO 27001 Mandatory Clauses (4 to 10) and Annex A Controls?"
+
+  │ Answer:
+  │
+  │ • Mandatory Clauses (4–10): Define how the management system operates:
+  │     • Clause 4: Context of the Organization
+  │     • Clause 5: Leadership & Commitment
+  │     • Clause 6: Planning (Risk Assessment & Objectives)
+  │     • Clause 7: Support (Resources, Competence, Awareness)
+  │     • Clause 8: Operation (Execution of risk assessments and controls)
+  │     • Clause 9: Performance Evaluation (Internal Audit & Management Review)
+  │     • Clause 10: Improvement (Non-conformities & Corrective Actions)
+  │ • Annex A: A catalog of specific security controls organizations select to mitigate risks identified in Clause 6.
+
+  ### Q6: "What changed between ISO 27001:2013 and ISO 27001:2022?"
+
+  │ Answer:
+  │ "ISO 27001:2022 modernized and restructured the controls:
+  │
+  │ 1. Controls were consolidated from 114 controls across 14 domains down to 93 controls across 4 themes:
+  │     • Organizational (37 controls)
+  │     • People (8 controls)
+  │     • Physical (14 controls)
+  │     • Technological (34 controls)
+  │ 2. Introduced 11 brand-new controls, including Threat Intelligence, Cloud Security, Web Filtering, Data Masking, Data Leakage Prevention (DLP), and Monitoring
+  │ Activities.
+  │ 3. Added metadata attributes (Control Types, Cybersecurity Concepts, Operational Capabilities) to make tracking easier."
+  ### Q7: "What is a Statement of Applicability (SoA)?"
+  │ Answer:
+  │ "The Statement of Applicability (SoA) is one of the most critical documents in ISO 27001. It lists all 93 controls from Annex A, states whether each control is
+  │ applicable or excluded, explains the justification for inclusion or exclusion, and describes how the applicable controls are implemented."
+  ──────
+  ## 3. IT Audit Concepts & Methodology
+
+  ### Q8: "What are IT General Controls (ITGC) and what are the main domains?"
+
+  │ Answer:
+  │ "ITGCs are foundational controls that ensure the reliable, secure, and accurate operation of systems and financial applications. The 4 primary domains are:
+  │
+  │ 1. Access Control / Logical Security: User onboarding, role-based access, MFA, privileged access reviews, and revoking leavers' accounts.
+  │ 2. Change Management: Ensuring system code and infrastructure changes are tested, documented, approved, and tracked before deployment.
+  │ 3. Computer Operations & Backup Management: Job scheduling, batch processing, data backup verification, and incident/disaster recovery.
+  │ 4. System Development Life Cycle (SDLC): Secure development standards, testing environments separate from production, and release management."*
+
+  ### Q9: "What is the difference between Test of Design (TOD) and Test of Operating Effectiveness (TOE)?"
+
+  │ Answer:
+  │
+  │ • Test of Design (TOD): Evaluates whether the control, as documented, is designed adequately to prevent or detect a security failure (e.g., Is there a
+  documented
+  │ policy requiring quarterly access reviews?).
+  │ • Test of Operating Effectiveness (TOE): Tests whether the control actually operated consistently throughout the audit period (e.g., Can the client show signed
+  │ evidence that access reviews were performed in Q1, Q2, Q3, and Q4 without exception?)."*
+
+  ### Q10: "What is an Audit Non-Conformance (NC), and what is the difference between Major and Minor NC?"
+
+  │ Answer:
+  │
+  │ • Non-Conformance (NC): A failure to meet a requirement of the standard or an internal policy.
+  │ • Major NC: The complete absence or total breakdown of a required process or control that jeopardizes the integrity of the ISMS (e.g., no internal audit was
+  │ conducted, or no risk assessment has been performed). This prevents ISO certification.
+  │ • Minor NC: An isolated lapse or single failure in an otherwise functioning process (e.g., one terminated employee out of fifty samples had their account
+  │ disabled after 48 hours instead of the required 24 hours).
+  │ • Opportunity for Improvement (OFI): A suggestion that is not a non-conformance, but would enhance efficiency or security.
+
+  ### Q11: "What constitutes valid audit evidence?"
+
+  │ Answer:
+  │ "Valid audit evidence must be sufficient, reliable, and verifiable:
+  │
+  │ • Direct system screenshots showing timestamp and logged-in user.
+  │ • System-generated exports (CSV/logs) straight from the source (e.g., Active Directory user list, AWS IAM policy export).
+  │ • Signed approval tickets (e.g., Jira change request with manager approval).
+  │ • Formally signed review minutes or policy acknowledgement sign-offs."*
+  ──────
+  ## 4. Risk Assessment & Control Testing (Hands-on)
+
+  ### Q12: "Explain the components of Risk: Asset, Threat, Vulnerability, Impact, and Likelihood."
+
+  │ Answer:
+  │
+  │ • Asset: Anything of value to the organization (e.g., Customer Database).
+  │ • Threat: A potential event that can cause harm (e.g., Ransomware or external hacker).
+  │ • Vulnerability: A flaw or weakness that can be exploited (e.g., Unpatched software or weak passwords).
+  │ • Impact: The severity of harm if the threat occurs (financial, reputational, legal).
+  │ • Likelihood: The probability that the threat will exploit the vulnerability.
+  │ • Risk Equation: Risk = Likelihood × Impact."*
+
+  ### Q13: "What is the difference between Inherent Risk and Residual Risk?"
+
+  │ Answer:
+  │
+  │ • Inherent Risk: The raw level of risk present in an asset before applying any security controls or mitigations.
+  │ • Residual Risk: The remaining risk level after security controls and countermeasures have been implemented. The organization's management must decide if the
+  │ residual risk is below their acceptable risk tolerance."*
+
+  ### Q14: "How would you audit the User Access Management (Joiner, Mover, Leaver) process?"
+
+  │ Answer:
+  │ "I would perform a sample-based test:
+  │
+  │ 1. Joiners: Request HR's list of new hires over the past 6 months. Sample 5–10 users and verify whether their system accounts have an approved access request
+  │ ticket matching their job role (principle of least privilege).
+  │ 2. Leavers: Request the terminated employee list from HR. Sample 5–10 employees and check the system logs (Active Directory, email, cloud console) to confirm
+  │ access was revoked within the policy timeframe (e.g., same day or within 24 hours).
+  │ 3. Movers: Sample employees who changed roles and check whether old permissions were removed rather than accumulated."*
+
+  ### Q15: "How would you audit Logging and Monitoring (ISO 27001:2022 Control 8.15)?"
+
+  │ Answer:
+  │ "I would verify:
+  │
+  │ 1. Scope: Are event logs captured for critical servers, firewalls, and applications (failed logins, privilege escalation, admin changes)?
+  │ 2. Protection of Logs: Are logs stored centrally (e.g., in Wazuh SIEM or Splunk) with write-once/read-only permissions so administrators cannot alter or delete
+  │ audit trails?
+  │ 3. Clock Synchronization: Are all systems synchronized via NTP so log timestamps correlate accurately during an investigation?
+  │ 4. Review & Alerting: Can the team prove that alerts are reviewed regularly with documented incident escalation steps?"*
+  ──────
+  ## 5. Policy & Documentation
+
+  ### Q16: "What is the difference between a Policy, a Standard, a Procedure, and a Guideline?"
+
+  │ Answer:
+  │
+  │ • Policy (High-Level / Mandatory): Sets executive intent and rules (e.g., 'All company assets must be protected with strong authentication').
+  │ • Standard (Mandatory): Specific technical requirements (e.g., 'Passwords must be at least 14 characters with MFA enabled').
+  │ • Procedure / SOP (Mandatory Step-by-Step): The operational workflow to execute a task (e.g., 'Steps 1 to 5 to provision an account in Active Directory').
+  │ • Guideline (Recommended / Optional): Best practice advice (e.g., 'Tips for selecting a memorable passphrase')."*
+  ### Q17: "If a department manager resists your audit finding and claims it's not a real risk, how do you handle it?"
+  │ Answer:
+  │ "I remain objective, professional, and evidence-driven:
+  │
+  │ 1. I review the objective evidence directly with the manager and reference the specific policy or ISO 27001 requirement.
+  │ 2. I explain the business impact and practical risk rather than treating it as a punitive exercise.
+  │ 3. If there is still a disagreement, I document both the observed condition and management's rationale, and escalate the matter to the lead audit consultant for
+  │ review."
+  ──────
+  ### Quick Cheat Sheet to Review Before the Interview
+
+   Term                                                                 | What It Means in 1 Sentence
+  ----------------------------------------------------------------------|-------------------------------------------------------------------------------------------
+   ISMS                                                                 | The systematic framework of policies and controls to protect information assets.
+   SoA                                                                  | Statement of Applicability: Table documenting which of the 93 ISO controls apply and why.
+   ITGC                                                                 | IT General Controls covering Access, Change Management, Operations, and SDLC.
+   Control 8.15                                                         | ISO 27001:2022 control requiring audit logging, monitoring, and log protection.
+   CAPA                                                                 | Corrective and Preventive Action: How an organization fixes a non-conformance root cause.
+   Least Privilege                                                      | Giving users only the minimum access necessary to perform their job duties.
+
