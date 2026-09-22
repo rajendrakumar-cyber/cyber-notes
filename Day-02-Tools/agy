@@ -1,0 +1,4 @@
+creating resume on AGYMob Psycho 100 — Unzipped an Android app file, found a hidden text file inside it, and decoded it from hex to reveal the flag.
+Endianness v2 — Got a corrupted-looking image file where every 4 bytes were in the wrong order. You wrote a quick Python script to swap them back, and the JPEG popped open with the flag in it.
+Dear Diary — The big one. You poked around a whole disk image, found the flag was shredded into 10 tiny pieces scattered across the filesystem journal, and reassembled them by hand: pic + oCT + F{1 + _53 + 3_n + 4m3 + 5_8 + 0d2 + 4b3 + 0}. The twist? The flag was hidden in file names inside the journal, not in actual file contents.
+Pcap Poisoning — The easy one. Just grepped a network capture file for the flag string and found it sitting in plain sight in a TCP packet.
