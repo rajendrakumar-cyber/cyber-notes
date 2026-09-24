@@ -1,0 +1,145 @@
+Operation Oni
+Forensics
+Medium
+by LT 'syreal' Jones
+·
+picoCTF 2022
+Download this disk image, find the key and log into the remote machine.
+
+Note: if you are using the webshell, download and extract the disk image into /tmp not your home directory.
+
+Download disk image
+Remote machine: ssh -i key_file -p 54106 ctf-player@saturn.picoctf.net
+Instance
+Expires in 10:34
+Operation Oni — Detailed Breakdown
+The Scenario
+You're given a compressed disk image (disk.img.gz) representing a compromised system. The attacker generated an SSH keypair on it and used the public key to authenticate to a remote server (saturn.picoctf.net).  Your job: extract the private key from the disk and use it to log in.
+
+Step-by-Step
+1. Download and decompress:
+
+cd /tmp
+wget https://artifacts.picoctf.net/c/372/disk.img.gz
+gunzip disk.img.gz
+
+2. Inspect partitions:
+
+fdisk -l disk.img
+
+Partition	Start Sector	Type	Size
+1	2048	Linux (0x83)	100M (boot)
+2	206848	Linux (0x83)	129M (root)
+
+3. Mount the second partition (offset = 206848 × 512 = 105906176):
+
+sudo mount -o loop,offset=105906176 disk.img /mnt
+
+4. Locate the key:
+
+sudo ls /mnt/root/.ssh/
+# id_ed25519      id_ed25519.pub
+
+5. Copy and fix permissions:
+
+sudo cp /mnt/root/.ssh/id_ed25519 /tmp/key_file
+chmod 600 /tmp/key_file
+
+⚠️ Why chmod 600? SSH refuses to use a private key if it's readable by group or others. The key on the disk has permissions rw------- (600), but once you cp it as a regular user, it may end up as 644 or 664. SSH will throw:
+
+WARNING: UNPROTECTED PRIVATE KEY FILE!
+Permissions 0644 for '/tmp/key_file' are too open.
+
+6. SSH in:
+
+ssh -i /tmp/key_file -p 54106 ctf-player@saturn.picoctf.net
+
+7. Grab the flag:
+
+cat flag.txt
+# picoCTF{k3y_5l3u7h_<dynamic_suffix>}
+
+Sleuth Kit Method (no mount required)
+This is the "proper" forensic approach — you never mount the image (preserving evidence integrity):
+
+# List partitions
+mmls disk.img
+
+# List root directory of partition 2
+fls -o 206848 disk.img
+
+# Navigate to /root (inode 470)
+fls -o 206848 disk.img 470
+# r/r 2344: .ash_history
+# d/d 3916: .ssh
+
+# Navigate to .ssh (inode 3916)
+fls -o 206848 disk.img 3916
+# r/r 2345: id_ed25519
+# r/r 2346: id_ed25519.pub
+
+# Extract the private key (inode 2345)
+icat -o 206848 disk.img 2345 > key_file
+chmod 600 key_file
+
+The shell history (.ash_history, inode 2344) reveals what the attacker did:
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ gunzip disk.img.gz
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ sudo mount -o loop,offset=105906176 disk.img /mnt   
+[sudo] password for white: 
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ sudo cp /mnt/root/.ssh/id_ed25519 /tmp/key_file
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ sudo chmod 600 /tmp/key_file
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ ssh -i /tmp/key_file -p 54106 ctf-player@saturn.picoctf.net   
+** WARNING: connection is not using a post-quantum key exchange algorithm.
+** This session may be vulnerable to "store now, decrypt later" attacks.
+** The server may need to be upgraded. See https://openssh.com/pq.html
+Load key "/tmp/key_file": Permission denied
+ctf-player@saturn.picoctf.net's password: 
+Permission denied, please try again.
+ctf-player@saturn.picoctf.net's password: 
+Permission denied, please try again.
+ctf-player@saturn.picoctf.net's password: 
+ctf-player@saturn.picoctf.net: Permission denied (publickey,password).
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ icat -o 206848 disk.img 2345 > key_file
+chmod 600 key_file
+ssh -i key_file -p 54106 ctf-player@saturn.picoctf.net
+** WARNING: connection is not using a post-quantum key exchange algorithm.
+** This session may be vulnerable to "store now, decrypt later" attacks.
+** The server may need to be upgraded. See https://openssh.com/pq.html
+Welcome to Ubuntu 20.04.5 LTS (GNU/Linux 6.17.0-1019-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+This system has been minimized by removing packages and content that are
+not required on a system that users do not log into.
+
+To restore this content, you can run the 'unminimize' command.
+
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+
+ctf-player@challenge:~$ ls
+flag.txt
+ctf-player@challenge:~$ cat flag.txt 
+picoCTF{k3y_5l3u7h_af277f77}ctf-player@challenge:~$ 
+
+ssh-keygen -t ed25519
+ls .ssh/
+halt
+
