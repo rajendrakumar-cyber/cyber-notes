@@ -1,0 +1,98 @@
+File Types — Detailed Breakdown
+The Core Lesson
+File extensions are lies. The file is named Flag.pdf but isn't a PDF at all. In forensics, you never trust metadata — you trust the file magic bytes (the first few bytes that identify the actual format). The file command reads these magic bytes, not the extension.
+
+The Compression Chain Explained
+Each layer was chosen to test knowledge of a specific tool. Here's why each exists and what it does:
+
+#	Format	Tool	Magic Bytes	Purpose
+1	SHAR (shell archive)	sh / uudecode	#!/bin/sh	Unix shell script that recreates files from base64-encoded data. Ancient (1980s).
+2	AR (archive)	ar	!<arch>\n	Binary archive format from GNU toolchain (used for .a static libraries).
+3	CPIO	cpio	070701 / 070707	"Copy In/Out" — the original Unix archiver (1971). Still used in tar internally.
+4	Bzip2	bzip2	BZh9	Block-sorting compressor (1996). Better ratio than gzip, slower.
+5	Gzip	gzip	1f 8b	DEFLATE compression (1992). The internet standard.
+6	Lzip	lzip	fd 37 7a 58 5a 00	LZMA-based, designed as a gzip replacement with better compression.
+7	LZ4	lz4	04 22 4d 18	Extremely fast compression (2011). Sacrifices ratio for speed.
+8	LZMA	xz / lzma	5d 00 00	The compression algorithm behind 7z. Best-in-class ratio.
+9	LZOP	lzop	89 4c 4f	LZO-based. Fast, used in Linux kernel initramfs.
+10	Lzip (again)	lzip	fd 37 7a 58 5a 00	Repeated to test if you'd blindly follow the pattern.
+11	XZ	xz	fd 37 7a 58 5a 00	Container format for LZMA2 (the modern version of LZMA).
+12	Hex text	xxd -r -p	ASCII hex pairs	Final encoding — the flag is hex-encoded to hide it in plain sight.
+
+Why This Order?
+The chain was designed to be progressively less familiar:
+
+SHAR → AR → CPIO: Classic Unix archivers. Most CTF players know these.
+Bzip2 → Gzip: Ubiquitous. Everyone uses these daily.
+Lzip → LZ4 → LZMA → LZOP: Niche. These are the "gotcha" layers that waste time.
+XZ → Hex: The finish.
+The file Command — Your Best Friend
+Under the hood, file reads a database (/etc/magic or /usr/share/file/magic) of known magic byte signatures. A few examples:
+
+% PDF-1.x          → PDF
+% PK\x03\x04       → ZIP
+BZh9               → Bzip2
+\x1f\x8b           → Gzip
+\xfd7zXZ\x00       → XZ/Lzip
+\x04\x22\x4d\x18   → LZ4
+\x89LZO            → LZOP
+!<arch>            → AR
+070701            → CPIO (old ASCII format)
+
+Why xxd -r -p at the End?
+The final file contains a hex string like:
+
+7069636f4354467b66316c656e406d335f6d316e3170756c407431306e5f663062326375723137795f37396230316332367d
+
+xxd -r -p reverses hex encoding:
+
+-r = reverse (decode instead of encode)
+-p = postscript format (pure hex, no addresses)
+This is the same encoding used in:
+
+Memory dumps
+Network packet captures
+Hex editors
+Certificate fingerprints
+Real-World Parallel
+This challenge mirrors a real forensic scenario:
+
+An attacker hides a file by changing its extension (.pdf instead of .sh)
+They nest it in multiple compression layers to slow down analysis
+They hex-encode the payload so even strings won't find it
+
+─(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ ./Flag.sh
+mv flag flag.ar
+ar x flag.ar
+mv flag flag.cpio
+cpio -i < flag.cpio
+bzip2 -d flag && mv flag.out flag
+gunzip -c flag > flag2 && mv flag2 flag
+lzip -d flag && mv flag.out flag
+lz4 -d flag flag2 && mv flag2 flag
+mv flag flag.lzma && lzma -d flag.lzma
+file flag
+x - created lock directory _sh00046.
+x - extracting flag (text)
+x - removed lock directory _sh00046.
+2 blocks
+bzip2: Can't guess original name for flag -- using flag.out
+flag                           : decoded 265 bytes                             
+flag: lzop compressed data - version 1.040, LZO1X-1, os: Unix
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ mv flag flag.lzo && lzop -d flag.lzo
+file flag
+flag: lzip compressed data, version: 1
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ lzip -d flag && mv flag.out flag
+mv flag flag.xz && xz -d flag.xz
+file flag
+cat flag | xxd -r -p
+flag: ASCII text
+picoCTF{f1len@m3_m@n1pul@t10n_f0r_0b2cur17y_79b01c26}
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ 
