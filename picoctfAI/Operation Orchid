@@ -1,0 +1,82 @@
+Operation Orchid
+Forensics
+Medium
+by LT 'syreal' Jones
+·
+picoCTF 2022
+Download this disk image and find the flag.
+
+Note: if you are using the webshell, download and extract the disk image into /tmp not your home directory.
+
+Download compressed disk image
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ gunzip disk.flag.img.gz                                   
+gzip: disk.flag.img already exists; do you wish to overwrite (y or n)? y
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ fdisk -l disk.flag.img   
+Disk disk.flag.img: 400 MiB, 419430400 bytes, 819200 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0xb11a86e3
+
+Device         Boot  Start    End Sectors  Size Id Type
+disk.flag.img1 *      2048 206847  204800  100M 83 Linux
+disk.flag.img2      206848 411647  204800  100M 82 Linux swap / Solaris
+disk.flag.img3      411648 819199  407552  199M 83 Linux
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ sudo mount -o loop,offset=210763776 disk.flag.img /mnt   
+[sudo] password for white: 
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ ls /mnt/root/
+ls: cannot open directory '/mnt/root/': Permission denied
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ ls /mnt      
+bin  boot  dev  etc  home  lib  lost+found  media  mnt  opt  proc  root  run  sbin  srv  swap  sys  tmp  usr  var
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ sudo ls /mnt/root/
+flag.txt.enc
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ sudo cat  /mnt/root/flag.txt.enc
+Salted__S�+%���+�O��k�ђ(A����c��
+                                @]ԣ
+L�ޢȤ7� ���؎$�'%                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ openssl aes256 -d -salt -in flag.txt.enc -out flag.txt -k unbreakablepassword1234567
+Can't open "flag.txt.enc" for reading, No such file or directory
+4067C551507F0000:error:80000002:system library:BIO_new_file:No such file or directory:../crypto/bio/bss_file.c:67:calling fopen(flag.txt.enc, rb)
+4067C551507F0000:error:10000080:BIO routines:BIO_new_file:no such file:../crypto/bio/bss_file.c:75:
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ sudo ls /mnt/root/
+flag.txt.enc
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ sudo cp /mnt/root/flag.txt.enc /tmp/
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ cd /tmp                              
+                                                                                                                                                                      
+┌──(white㉿white)-[/tmp]
+└─$ 
+                                                                                                                                                                      
+┌──(white㉿white)-[/tmp]
+└─$ openssl aes256 -d -salt -in flag.txt.enc -out flag.txt -k unbreakablepassword1234567
+*** WARNING : deprecated key derivation used.
+Using -iter or -pbkdf2 would be better.
+bad decrypt
+402765FA9B7F0000:error:1C800064:Provider routines:ossl_cipher_unpadblock:bad decrypt:../providers/implementations/ciphers/ciphercommon_block.c:107:
+                                                                                                                                                                      
+┌──(white㉿white)-[/tmp]
+└─$ cat flag.txt                         
+picoCTF{h4un71ng_p457_1d02081e}                                                                                                                                                                      
+┌──(white㉿white)-[/tmp]
+└─$ 
+The attacker thought they were thorough — they encrypted the flag and shredded the plaintext. But they forgot that .ash_history (the shell history file) contained the exact openssl command with the password. In real forensics, shell history is one of the first places to look
