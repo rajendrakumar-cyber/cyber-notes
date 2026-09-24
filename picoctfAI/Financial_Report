@@ -1,0 +1,79 @@
+The Challenge
+You're given a PDF: Financial_Report_for_ABC_Labs.pdf. It contains a "Cost Benefit Analysis" table where certain cells appear blacked out. The hint — "How can you be sure of the redaction?" — is the key: you can't. The "redaction" is cosmetic only.
+
+Why the Redaction Fails
+A PDF is a layered document format.  When someone "redacts" text by drawing a black rectangle over it (e.g., in MS Word or a basic PDF editor), they're adding a visual overlay — a filled rectangle object — on top of the original text.  The text itself remains fully intact in the PDF's content stream. It's like taping a black piece of paper over a word on a page; the word is still underneath. 
+
+This is fundamentally different from true redaction, which:
+
+Removes the text object from the content stream
+Flattens the page so the removed area becomes blank
+Produces a new document where the data no longer exists in the file 
+How to Solve It (Multiple Methods)
+Method 1: Copy-Paste (Easiest)
+Open the PDF in any viewer (Chrome, Adobe Reader, etc.), press Ctrl+A to select all text, then Ctrl+C and paste into a plain text editor. The "hidden" text appears.
+
+Method 2: pdftotext
+
+# Install if needed
+sudo apt install poppler-utils
+
+# Extract all text
+pdftotext Financial_Report_for_ABC_Labs.pdf
+
+# Grep for the flag
+grep -oE "picoCTF\{.*\}" Financial_Report_for_ABC_Labs.txt
+
+Method 3: Open in a Word Processor
+Open the PDF in LibreOffice Draw or MS Word. The black rectangles become movable objects — drag them away to reveal the text underneath. 
+
+Method 4: Inspect the Raw PDF
+Open the PDF in a text editor or use a tool like qpdf --qdf to decompress the content stream. You'll see the text operators (e.g., Tj or TJ) for the "redacted" strings still present in the file.
+
+The Flag
+The extracted text reveals:
+
+Financial Report for ABC Labs, Kigali, Rwanda for the year 2021.
+Breakdown - Just painted over in MS word.
+Cost Benefit Analysis
+Credit Debit
+This is not the flag, keep looking
+Expenses from the
+picoCTF{C4n_Y0u_S33_m3_fully}
+Redacted document.
+
+Flag: picoCTF{C4n_Y0u_S33_m3_fully}
+
+Real-World Significance
+This isn't just a CTF trick — it's a well-documented real-world vulnerability:
+
+NSA documents leaked in 2013 (by Edward Snowden) had "redacted" text that was trivially recoverable because the same overlay method was used. 
+Court filings in the US and UK have repeatedly had "redacted" personal information (names, addresses, financial data) recovered by journalists and researchers using the exact same copy-paste technique.
+──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ file Financial_Report_for_ABC_Labs.pdf 
+Financial_Report_for_ABC_Labs.pdf: PDF document, version 1.7, 1 page(s)
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ pdftotext Financial_Report_for_ABC_Labs.pdf 
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ grep -oE "picoCTF\{.*\}" Financial_Report_for_ABC_Labs.txt
+
+
+picoCTF{C4n_Y0u_S33_m3_fully}
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ cat Financial_Report_for_ABC_Labs.
+cat: Financial_Report_for_ABC_Labs.: No such file or directory
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ cat Financial_Report_for_ABC_Labs.txt
+Financial Report for ABC Labs, Kigali, Rwanda for the year 2021.
+Breakdown - Just painted over in MS word.
+
+Cost Benefit Analysis
+Credit Debit
+This is not the flag, keep looking
+Expenses from the
+picoCTF{C4n_Y0u_S33_m3_fully}
+Redacted document.
