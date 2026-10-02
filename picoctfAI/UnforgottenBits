@@ -1,0 +1,191 @@
+ ──────
+  ## 🧠 Forensic Mindset & Clue Map
+  When dealing with a 1GB raw disk image with no hints, a human investigator looks for:
+  1. User Home Directory: Who was using this machine, and what were they doing? (/home/yone)
+  2. Artifacts & Files: Pictures, text notes, chat logs, browser history, emails.
+  3. The "Tutorial" Clue: Often, challenge creators leave an intentional conversation showing how their system works.
+  4. The Challenge Title: "UnforgottenBits" strongly hints at file slack space (bits left behind in unused cluster sectors).
+  ──────
+  ## 🕵️ Step-by-Step Walkthrough
+
+    [Disk Image] 
+        ├── Partition 3 (Sector 731136) 
+              └── /home/yone/
+                    ├── gallery/  ──> 1.bmp, 2.bmp, 3.bmp (Decoys), 7.bmp (Target)
+                    ├── irclogs/  ──> #avidreader13.log (Reveals steghide + OpenSSL flow)
+                    ├── notes/    ──> 3.txt (Password hint) & 1.txt (Slack space data)
+                    └── .lynx/    ──> browsing-history.log (Reveals Golden Ratio Base)
+  ──────
+  ### Step 1: Inspect the Disk Image & Find the User Directory
+  First, find where the main file system lives:
+
+    # Check the partition layout
+    mmls disk.flag.img
+  What you see:
+  • Partition 1: Boot sector (Offset 2048)
+  • Partition 2: Linux Swap (Offset 206848)
+  • Partition 3: Linux ext4 (Offset 731136) — The main root filesystem
+
+  List the files in user yone's home directory using SleuthKit (fls) or Autopsy:
+
+    fls -o 731136 disk.flag.img 24
+
+  You find 5 interesting directories:
+
+  • gallery/ → Four bitmap images: 1.bmp, 2.bmp, 3.bmp, 7.bmp.
+  • notes/ → Three text notes: 1.txt, 2.txt, 3.txt.
+  • irclogs/ → Date folders containing IRC chat logs.
+  • .lynx/ → Lynx web browser history.
+  • Maildir/ → Email messages.
+  ──────
+  ### Step 2: Read the IRC Logs & Discover the "Tutorial"
+  Start reading through the text files and chat logs. In /home/yone/irclogs/01/04/#avidreader13.log, you find a conversation between yone786 and avidreader13:
+    [08:15] <yone786> First it’s steghide.
+    [08:15] <yone786> Use password: akalibardzyratrundle
+    [08:18] <yone786> The next is the encryption. Use openssl, AES, cbc.
+    [08:19] <yone786> salt=0f3fa17eeacd53a9 key=58593a7522257f2a... iv=7a12fd4dc1898efc...
+
+  Human Deductions:
+
+  1. The user hides encrypted data inside the .bmp images using steghide.
+  2. The extracted payload is encrypted using openssl aes-256-cbc.
+  3. Let's test this recipe on all four images in gallery/:
+
+    steghide extract -sf 1.bmp -p "akalibardzyratrundle"   # Extracts successfully
+    steghide extract -sf 2.bmp -p "akalibardzyratrundle"   # Extracts successfully
+    steghide extract -sf 3.bmp -p "akalibardzyratrundle"   # Extracts successfully
+    steghide extract -sf 7.bmp -p "akalibardzyratrundle"   # FAILS!
+
+  When you decrypt the extracted data from images 1, 2, and 3 using the provided keys, they turn out to be classic books: Les Misérables, Dracula, and Frankenstein.
+
+  │ Verdict: Images 1, 2, and 3 are decoys. 7.bmp is the real target.
+  ──────
+  ### Step 3: Crack the Password for 7.bmp
+
+  Why did 7.bmp fail? We need its unique passphrase.
+
+  1. Look at notes/3.txt:
+    cat notes/3.txt
+    # "I keep forgetting this, but it starts like: yasuoaatrox..."
+
+  2. Connect the Clues:
+      • Look at the previous working password: akalibardzyratrundle → akali + bard + zyra + trundle (4 League of Legends champions).
+      • In notes/3.txt: yasuo and aatrox are also League of Legends champions.
+      • In deleted emails, Yone references the XKCD 936 password rule: 4 random words joined together.
+      • Therefore, the password for 7.bmp is:
+
+
+    yasuo + aatrox + [Champion 3] + [Champion 4]
+
+  3. Brute-Force the Champions:
+  With ~160 champions, testing all pairs takes only a minute:
+    # make_wordlist.py
+    champions = ["ahri", "akali", "ashe", "cassiopeia", "darius", "garen", ...] # list of all LoL champions
+    with open("wordlist.txt", "w") as f:
+        for c1 in champions:
+            for c2 in champions:
+                f.write(f"yasuoaatrox{c1}{c2}\n")
+  Run stegcracker 7.bmp wordlist.txt or a quick Python script. It finds the match:
+
+    𝐲𝐚𝐬𝐮𝐨𝐚𝐚𝐭𝐫𝐨𝐱𝐚𝐬𝐡𝐞𝐜𝐚𝐬𝐬𝐢𝐨𝐩𝐞𝐢𝐚
+
+  4. Extract the hidden file:
+    steghide extract -sf 7.bmp -p "yasuoaatroxashecassiopeia" -xf out7.enc
+
+  ──────
+  ### Step 4: The Title Clue — Uncovering the Slack Space
+
+  If you try to decrypt out7.enc with the old keys from #avidreader13.log, OpenSSL outputs bad decrypt.
+
+  Where are the real keys?
+
+  • Look at the challenge name: UnforgottenBits.
+  • In digital forensics, "unforgotten bits" refers to Slack Space (the unused bytes at the end of a disk block).
+  • Check the notes folder. File notes/1.txt contains only 12 bytes (chizazerite\n), but the filesystem allocated a full 4096-byte block (block 56274).
+
+  Extract the raw block:
+
+    blkcat -o 731136 disk.flag.img 56274 | xxd
+
+  Behind the word chizazerite, you find a 1,905-character binary string with decimal points:
+
+    01010010100.01001001000100.01001010000100.00101010010101...
+  ──────
+  ### Step 5: Decode the Golden Ratio Base (φ-base)
+
+  How do you decode this binary string?
+  Check .lynx/browsing-history.log:
+
+    https://en.wikipedia.org/wiki/Church_encoding
+    https://cs.lmu.edu/~ray/notes/numenc/
+    https://www.wikiwand.com/en/Golden_ratio_base
+
+  Yone was reading about Golden Ratio Base (Phinary):
+
+  • Uses the golden ratio: φ = (1 + √5)/2 ≈ 1.6180339887.
+  • Notice that the string has 127 decimal points.
+  • Total length = 1,905 characters ⟹ 1905/127 = exactly 15 characters per token (11 integer bits + . + 3 fractional bits).
+  • 127 characters is the exact length of an ASCII string containing:
+  salt=<16 hex> key=<64 hex> iv=<32 hex>.
+
+  Run this Python script to decode the slack space:
+
+    import math, subprocess
+    
+    phi = (1 + math.sqrt(5)) / 2
+    
+    # Read block 56274 slack space
+    raw = subprocess.check_output(['blkcat', '-o', '731136', 'disk.flag.img', '56274'])
+    slack = raw[12:].decode('latin1', errors='ignore').strip('\x00').strip()
+    
+    # Split into 15-character tokens
+    tokens = [slack[i*15 : (i+1)*15] for i in range(len(slack) // 15)]
+    
+    def decode_token(token):
+        int_p, frac_p = token.split('.')
+        # Integer part: powers of phi >= 0 (from right to left)
+        val = sum(phi**i for i, b in enumerate(reversed(int_p)) if b == '1')
+        # Fractional part: negative powers of phi (from left to right)
+        val += sum(phi**(-(j+1)) for j, b in enumerate(frac_p) if b == '1')
+        return chr(round(val))
+    
+    decoded_text = "".join(decode_token(t) for t in tokens)
+    print(decoded_text)
+
+  Result:
+
+    salt=2350e88cbeaf16c9
+    key=a9f86b874bd927057a05408d274ee3a88a83ad972217b81fdc2bb8e8ca8736da
+    iv=908458e48fc8db1c5a46f18f0feb119f
+  ──────
+  ### Step 6: Decrypt the Flag
+
+  Now you have all three pieces: the ciphertext, the cipher parameters, and OpenSSL:
+
+    openssl enc -aes-256-cbc -d \
+      -S 2350e88cbeaf16c9 \
+      -K a9f86b874bd927057a05408d274ee3a88a83ad972217b81fdc2bb8e8ca8736da \
+      -iv 908458e48fc8db1c5a46f18f0feb119f \
+      -in out7.enc \
+      -out finallyReleased.txt
+
+  Read finallyReleased.txt:
+
+    avidreader13                                                 PAID
+        Les Mis, Dracula, Frankenstein, Swiss Family 
+        Robinson, Don Quixote, A Tale of Two Cities
+
+    513u7h                                                       PAID
+        Don Quixote
+
+    masterOfSp1n                                                 PAID
+        Swiss Family Robinson, A Tale of Two Cities
+
+    AwolCoyote                                                   PAID
+        Les Mis, Dracula
+
+    academy                                                    UNPAID
+        academy{f473_53413d_61d24cc8}
+
+  Flag: picoCTF{f473_53413d_61d24cc8}
+
