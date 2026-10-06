@@ -1,0 +1,254 @@
+Note: picoCTF 2023 "Invisible WORDs" (Forensics, Hard)
+
+Flag: academy{w0rd_d4wg_y0u_f0und_5h3113ys_m4573rp13c3_2a058da1}
+It was in plain text, inside the sentence "At that age I became acquainted with the celebrated ..." in the Frankenstein file. It was not zero-width characters, so the "invisible" part was the pixel layout, not the text.
+
+Key idea
+
+output.bmp has 32-bit pixels but only uses RGB555 color masks. That means only the low 16 bits (WORD) of each pixel are used for color, and the high 16 bits are ignored by viewers. The hidden zip is stored there.
+
+Steps
+zsteg failed with "dib_hdr_size 124 unsupported" because the BMP uses a V5 header.
+exiftool showed 32-bit depth, masks 0x7c00 / 0x03e0 / 0x001f, and 960×540. That is a mismatch, so some bits are unused.
+xxd -s 138 -l 128 output.bmp showed PK and then 03 04 with junk pairs between them, so the data sits in alternating WORDs.
+Extract bytes 2-3 of every 4-byte pixel, starting at offset 138:
+python
+   d = open("output.bmp","rb").read()
+   px = d[138:138+960*540*4]
+   open("hidden.zip","wb").write(b"".join(px[i+2:i+4] for i in range(0,len(px),4)))
+unzip failed on the missing end record, but 7z x hidden.zip worked (it only warned about trailing data).
+The zip held ZnJhbmtlbnN0ZWluLXRlc3QudHh0, which base64-decodes to frankenstein-test.txt, matching the "classics" hint.
+grep academy on the text gave the flag.
+Lessons
+Compare the bit depth against the color masks. Unused bits are a classic hiding place.
+Read the raw bytes with xxd before guessing. A broken-up magic number shows the layout.
+If unzip fails but file recognizes the zip, try 7z or binwalk.
+Don't run Python code in the shell. Use python3 -c or a .py file.
+
+I also added a short entry for this solve to your CTF practice notes. If
+──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ binwalk -R "\x50\x4b" output.bmp
+
+DECIMAL       HEXADECIMAL     DESCRIPTION
+--------------------------------------------------------------------------------
+140           0x8C            Raw signature (\x50\x4b)
+12849         0x3231          Raw signature (\x50\x4b)
+141648        0x22950         Raw signature (\x50\x4b)
+207200        0x32960         Raw signature (\x50\x4b)
+319337        0x4DF69         Raw signature (\x50\x4b)
+
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ zsteg -a output.bmp 
+/var/lib/gems/3.3.0/gems/zpng-0.4.6/lib/zpng/bmp/reader.rb:167:in `_read_bmp': dib_hdr_size 124 unsupported, want 40 (RuntimeError)
+        from /var/lib/gems/3.3.0/gems/zpng-0.4.6/lib/zpng/image.rb:178:in `_from_io'
+        from /var/lib/gems/3.3.0/gems/zpng-0.4.6/lib/zpng/image.rb:44:in `initialize'
+        from /var/lib/gems/3.3.0/gems/zpng-0.4.6/lib/zpng/image.rb:79:in `new'
+        from /var/lib/gems/3.3.0/gems/zpng-0.4.6/lib/zpng/image.rb:79:in `block in load'
+        from /var/lib/gems/3.3.0/gems/zpng-0.4.6/lib/zpng/image.rb:78:in `open'
+        from /var/lib/gems/3.3.0/gems/zpng-0.4.6/lib/zpng/image.rb:78:in `load'
+        from /home/white/.local/share/gem/ruby/3.3.0/gems/zsteg-0.2.14/lib/zsteg/cli/cli.rb:185:in `load_image'
+        from /home/white/.local/share/gem/ruby/3.3.0/gems/zsteg-0.2.14/lib/zsteg/cli/cli.rb:166:in `block in run'
+        from /home/white/.local/share/gem/ruby/3.3.0/gems/zsteg-0.2.14/lib/zsteg/cli/cli.rb:161:in `each'
+        from /home/white/.local/share/gem/ruby/3.3.0/gems/zsteg-0.2.14/lib/zsteg/cli/cli.rb:161:in `each_with_index'
+        from /home/white/.local/share/gem/ruby/3.3.0/gems/zsteg-0.2.14/lib/zsteg/cli/cli.rb:161:in `run'
+        from /home/white/.local/share/gem/ruby/3.3.0/gems/zsteg-0.2.14/lib/zsteg.rb:26:in `run'
+        from /home/white/.local/share/gem/ruby/3.3.0/gems/zsteg-0.2.14/bin/zsteg:8:in `<top (required)>'
+        from /usr/local/bin/zsteg:25:in `load'
+        from /usr/local/bin/zsteg:25:in `<main>'
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ strings -n 8 output.bmp | head
+5ZWO>luJ)LX
+SRJ353N{
+i!/[uJYV
+sNkg/Z_;
+hu^>51Fv
+\)1R{s3N
+k-Os(%c_1F
+3B?krZie
+|R:o?i%{w
+RB[Zp1ZJ
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ exiftool output.bmp 
+ExifTool Version Number         : 13.55
+File Name                       : output.bmp
+Directory                       : .
+File Size                       : 2.1 MB
+File Modification Date/Time     : 2026:10:06 19:44:44+05:30
+File Access Date/Time           : 2026:10:06 19:45:12+05:30
+File Inode Change Date/Time     : 2026:10:06 19:44:44+05:30
+File Permissions                : -rw-rw-r--
+File Type                       : BMP
+File Type Extension             : bmp
+MIME Type                       : image/bmp
+BMP Version                     : Windows V5
+Image Width                     : 960
+Image Height                    : 540
+Planes                          : 1
+Bit Depth                       : 32
+Compression                     : Bitfields
+Image Length                    : 2073600
+Pixels Per Meter X              : 11811
+Pixels Per Meter Y              : 11811
+Num Colors                      : Use BitDepth
+Num Important Colors            : All
+Red Mask                        : 0x00007c00
+Green Mask                      : 0x000003e0
+Blue Mask                       : 0x0000001f
+Alpha Mask                      : 0x00000000
+Color Space                     : sRGB
+Rendering Intent                : Proof (LCS_GM_GRAPHICS)
+Image Size                      : 960x540
+Megapixels                      : 0.518
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ xxd -s 138 -l 128 output.bmp
+0000008a: 3867 504b 9552 0304 c618 1400 ce3d 0000  8gPK.R.......=..
+0000009a: 104a 0800 6f56 4425 1016 375d 723e 3cde  .J..oVD%..7]r><.
+000000aa: 0e3a 6213 d55a ad95 ab39 0200 2d4e 82d8  .:b..Z...9..-N..
+000000ba: 693d 0600 ef41 1c00 4e49 1c00 314a 5a6e  i=...A..NI..1JZn
+000000ca: af1d 4a68 b452 626d 1146 746c 0909 626e  ..Jh.Rbm.Ftl..bn
+000000da: b44a 4e30 ac35 5a57 4f3e 6c75 4a29 4c58  .JN0.5ZWO>luJ)LX
+000000ea: a318 526c 5642 6333 d65a 5175 3146 6448  ..RlVBc3.ZQu1FdH
+000000fa: 0821 6830 ad1d 5554 b301 0900 6b45 039f  .!h0..UT....kE..
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ d = open("output.bmp","rb").read()
+raw = d[0x8c:]                      # start at the "PK"
+out = bytearray()
+for i in range(0, len(raw), 4):
+    out += raw[i:i+2]               # keep the first WORD, skip the second
+open("hidden.zip","wb").write(out)
+zsh: unknown sort specifier
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ file hidden.zip
+hidden.zip: cannot open `hidden.zip' (No such file or directory)
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ python3 -c '
+d = open("output.bmp","rb").read()
+px = d[138:138+960*540*4]
+out = b"".join(px[i+2:i+4] for i in range(0, len(px), 4))
+open("hidden.zip","wb").write(out)
+'
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ file hidden.zip
+unzip hidden.zip
+hidden.zip: Zip archive data, at least v2.0 to extract, compression method=deflate
+Archive:  hidden.zip
+  End-of-central-directory signature not found.  Either this file is not
+  a zipfile, or it constitutes one disk of a multi-part archive.  In the
+  latter case the central directory and zipfile comment will be found on
+  the last disk(s) of this archive.
+unzip:  cannot find zipfile directory in one of hidden.zip or
+        hidden.zip.zip, and cannot find hidden.zip.ZIP, period.
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ python3 -c '
+d = open("hidden.zip","rb").read()
+print("size:", len(d))
+p = d.rfind(b"PK\x05\x06")
+print("EOCD at:", p)
+if p != -1:
+    clen = int.from_bytes(d[p+20:p+22], "little")
+    open("trimmed.zip","wb").write(d[:p+22+clen])
+    print("wrote trimmed.zip")
+'
+unzip trimmed.zip
+size: 1036800
+EOCD at: 169573
+wrote trimmed.zip
+Archive:  trimmed.zip
+replace ZnJhbmtlbnN0ZWluLXRlc3QudHh0? [y]es, [n]o, [A]ll, [N]one, [r]ename: yes
+  inflating: ZnJhbmtlbnN0ZWluLXRlc3QudHh0  
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ zip -FF hidden.zip --out fixed.zip
+unzip fixed.zip
+# or
+7z x hidden.zip
+binwalk -e hidden.zip
+Fix archive (-FF) - salvage what can
+        zip warning: Missing end (EOCDR) signature - either this archive
+                     is not readable or the end is damaged
+Is this a single-disk archive?  (y/n): y
+  Assuming single-disk archive
+Scanning for entries...
+ copying: ZnJhbmtlbnN0ZWluLXRlc3QudHh0  (169389 bytes)
+Central Directory found...
+EOCDR found ( 1 169573)...
+Archive:  fixed.zip
+replace ZnJhbmtlbnN0ZWluLXRlc3QudHh0? [y]es, [n]o, [A]ll, [N]one, [r]ename: Y
+  inflating: ZnJhbmtlbnN0ZWluLXRlc3QudHh0  
+
+7-Zip 26.01 (x64) : Copyright (c) 1999-2026 Igor Pavlov : 2026-04-27
+ 64-bit locale=en_IN Threads:8 OPEN_MAX:4096, ASM
+
+Scanning the drive for archives:
+1 file, 1036800 bytes (1013 KiB)
+
+Extracting archive: hidden.zip
+           
+WARNINGS:
+There are data after the end of archive
+
+--
+Path = hidden.zip
+Type = zip
+WARNINGS:
+There are data after the end of archive
+Physical Size = 169595
+Tail Size = 867205
+Characteristics = Local Central
+
+    
+Would you like to replace the existing file:
+  Path:     ./ZnJhbmtlbnN0ZWluLXRlc3QudHh0
+  Size:     448642 bytes (439 KiB)
+  Modified: 2026-09-23 10:12:07
+with the file from archive:
+  Path:     ZnJhbmtlbnN0ZWluLXRlc3QudHh0
+  Size:     448642 bytes (439 KiB)
+  Modified: 2026-09-23 10:12:07
+? (Y)es / (N)o / (A)lways / (S)kip all / A(u)to rename all / (Q)uit? y
+
+Everything is Ok                   
+
+Archives with Warnings: 1
+
+Warnings: 1
+Size:       448642
+Compressed: 1036800
+
+DECIMAL       HEXADECIMAL     DESCRIPTION
+--------------------------------------------------------------------------------
+0             0x0             Zip archive data, at least v2.0 to extract, compressed size: 169389, uncompressed size: 448642, name: ZnJhbmtlbnN0ZWluLXRlc3QudHh0
+
+WARNING: One or more files failed to extract: either no utility was found or it's unimplemented
+
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ echo ZnJhbmtlbnN0ZWluLXRlc3QudHh0 | base64 -d
+frankenstein-test.txt                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ cp ZnJhbmtlbnN0ZWluLXRlc3QudHh0 frank.txt
+file frank.txt
+grep -a -i "picoCTF" frank.txt
+head -c 300 frank.txt
+frank.txt: Unicode text, UTF-8 (with BOM) text, with CRLF, LF line terminators
+The Project Gutenberg eBook of Frankenstein, by Mary Wollstonecraft Shelley
+
+This eBook is for the use of anyone anywhere in the United States and
+most other parts of the world at no cost and with almost no restrictions
+whatsoever. You may copy it, give it away or re-use it under the terms
+o                                                                             
+──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ cat frank.txt | grep academy                                                   
+At that age I became acquainted with the celebrated academy{w0rd_d4wg_y0u_f0und_5h3113ys_m4573rp13c3_2a058da1}
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ 
