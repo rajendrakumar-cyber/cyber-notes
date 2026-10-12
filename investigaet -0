@@ -1,0 +1,140 @@
+──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ exiftool investigative-reversing-0-mystery
+ExifTool Version Number         : 13.55
+File Name                       : investigative-reversing-0-mystery
+Directory                       : .
+File Size                       : 17 kB
+File Modification Date/Time     : 2026:10:12 19:55:32+05:30
+File Access Date/Time           : 2026:10:12 19:57:03+05:30
+File Inode Change Date/Time     : 2026:10:12 19:55:34+05:30
+File Permissions                : -rw-rw-r--
+File Type                       : ELF shared library
+File Type Extension             : so
+MIME Type                       : application/octet-stream
+CPU Architecture                : 64 bit
+CPU Byte Order                  : Little endian
+Object File Type                : Shared object file
+CPU Type                        : AMD x86-64
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ xxd investigative-reversing-0-mystery | tail -20   
+00004030: f000 0000 0800 0000 0300 0000 0000 0000  ................
+00004040: 1040 0000 0000 0000 1030 0000 0000 0000  .@.......0......
+00004050: 0800 0000 0000 0000 0000 0000 0000 0000  ................
+00004060: 0100 0000 0000 0000 0000 0000 0000 0000  ................
+00004070: f500 0000 0100 0000 3000 0000 0000 0000  ........0.......
+00004080: 0000 0000 0000 0000 1030 0000 0000 0000  .........0......
+00004090: 2300 0000 0000 0000 0000 0000 0000 0000  #...............
+000040a0: 0100 0000 0000 0000 0100 0000 0000 0000  ................
+000040b0: 0100 0000 0200 0000 0000 0000 0000 0000  ................
+000040c0: 0000 0000 0000 0000 3830 0000 0000 0000  ........80......
+000040d0: 7806 0000 0000 0000 1b00 0000 2c00 0000  x...........,...
+000040e0: 0800 0000 0000 0000 1800 0000 0000 0000  ................
+000040f0: 0900 0000 0300 0000 0000 0000 0000 0000  ................
+00004100: 0000 0000 0000 0000 b036 0000 0000 0000  .........6......
+00004110: 8002 0000 0000 0000 0000 0000 0000 0000  ................
+00004120: 0100 0000 0000 0000 0000 0000 0000 0000  ................
+00004130: 1100 0000 0300 0000 0000 0000 0000 0000  ................
+00004140: 0000 0000 0000 0000 3039 0000 0000 0000  ........09......
+00004150: fe00 0000 0000 0000 0000 0000 0000 0000  ................
+00004160: 0100 0000 0000 0000 0000 0000 0000 0000  ................
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ strings investigative-reversing-0-mystery                     
+/lib64/ld-linux-x86-64.so.2
+libc.so.6
+exit
+fopen
+puts
+__stack_chk_fail
+fputc
+fclose
+fread
+__cxa_finalize
+__libc_start_main
+GLIBC_2.4
+GLIBC_2.2.5
+_ITM_deregisterTMCloneTable
+__gmon_start__
+_ITM_registerTMCloneTable
+u/UH
+[]A\A]A^A_
+flag.txt
+mystery.png
+No flag found, please make sure this is run on the server
+mystery.png is missing, please run this on the server
+at insert
+;*3$"
+GCC: (Ubuntu 8.2.0-7ubuntu1) 8.2.0
+crtstuff.c
+deregister_tm_clones
+__do_global_dtors_aux
+completed.7930
+__do_global_dtors_aux_fini_array_entry
+frame_dummy
+__frame_dummy_init_array_entry
+mystery.c
+__FRAME_END__
+__init_array_end
+_DYNAMIC
+__init_array_start
+__GNU_EH_FRAME_HDR
+_GLOBAL_OFFSET_TABLE_
+__libc_csu_fini
+_ITM_deregisterTMCloneTable
+puts@@GLIBC_2.2.5
+fread@@GLIBC_2.2.5
+_edata
+fclose@@GLIBC_2.2.5
+__stack_chk_fail@@GLIBC_2.4
+fputc@@GLIBC_2.2.5
+__libc_start_main@@GLIBC_2.2.5
+__data_start
+__gmon_start__
+__dso_handle
+_IO_stdin_used
+__libc_csu_init
+__bss_start
+main
+fopen@@GLIBC_2.2.5
+exit@@GLIBC_2.2.5
+__TMC_END__
+_ITM_registerTMCloneTable
+__cxa_finalize@@GLIBC_2.2.5
+.symtab
+.strtab
+.shstrtab
+.interp
+.note.ABI-tag
+.note.gnu.build-id
+.gnu.hash
+.dynsym
+.dynstr
+.gnu.version
+.gnu.version_r
+.rela.dyn
+.rela.plt
+.init
+.plt.got
+.text
+.fini
+.rodata
+.eh_frame_hdr
+.eh_frame
+.init_array
+.fini_array
+.dynamic
+.data
+.bss
+.comment
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ strings investigative-reversing-0-mystery | grep  flag.txt  
+flag.txt
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ tail -c 26 investigative-reversing-0-mystery.png | xxd   
+00000000: 6163 6164 656d 7e80 6b35 7a73 6964 3671  academ~.k5zsid6q
+00000010: 5f61 6565 6264 6536 627d                 _aeebde6b}
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
