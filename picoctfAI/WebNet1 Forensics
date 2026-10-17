@@ -1,0 +1,157 @@
+You're right on the trail! That last line is the real flag starting in the binary data. You just need to see the full string:
+
+grep -a -A5 "academy{" output.txt
+
+Or more precisely, target that specific hex pattern and grab more context:
+
+grep -a -A10 "00 00 00 01 00 00 00 01 61 63 61 64 65 6d 79 7b" output.txt
+
+The flag bytes are there in hex — 61 63 61 64 65 6d 79 7b = academy{. You need the next ~20 bytes to complete it.
+
+Fastest way to just decode it all at once:
+
+ssldump -Aed -r capture.pcap -k picopico.key | grep -a -A10 "academy{"
+
+Or skip the hex entirely and pull the readable string:
+
+ssldump -Aed -r capture.pcap -k picopico.key | grep -a "academy{" | grep -v "this.is.not"
+
+That should print the full flag like:
+
+academy{honey.roasted.peanuts}
+
+(Or whatever your specific instance's flag is — just let it print the full hex line and decode the bytes.)
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ ssldump -r webnet1-capture.pcap -k picopico.key -d    
+New TCP connection #1: 128.237.140.23(57930) <-> 172.31.22.220(443)
+1 1  0.0297 (0.0297)  C>S  Handshake
+      ClientHello
+        Version 3.3 
+        cipher suites
+        TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+        TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384
+        TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384
+        TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
+        TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA
+        TLS_DH_DSS_WITH_AES_256_GCM_SHA384
+        TLS_DH_RSA_WITH_AES_256_GCM_SHA384
+        TLS_DHE_RSA_WITH_AES_256_GCM_SHA384
+        TLS_DHE_RSA_WITH_AES_256_CBC_SHA256
+        TLS_DH_RSA_WITH_AES_256_CBC_SHA256
+        TLS_DH_DSS_WITH_AES_256_CBC_SHA256
+        TLS_DHE_RSA_WITH_AES_256_CBC_SHA
+        TLS_DH_RSA_WITH_AES_256_CBC_SHA
+        TLS_DH_DSS_WITH_AES_256_CBC_SHA
+        TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384
+        TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384
+──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ ssldump -r capture.pcap -k picopico.key -d > output.txt   
+PCAP: capture.pcap: No such file or directory
+ERROR: Aborting
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ ssldump -r webnet1-capture.pcap -k picopico.key -d   > output.txt
+Cleaned 4 remaining connection(s) from connection pool
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ grep -a "picoCTF" output.txt   
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ grep -a "academy" output.txt   
+    61 67 3a 20 61 63 61 64 65 6d 79 7b 74 68 69 73    ag: academy{this
+    67 3a 20 61 63 61 64 65 6d 79 7b 74 68 69 73 2e    g: academy{this.
+    Pico-Flag: academy{this.is.not.your.flag.anymore}
+    00 00 00 01 00 00 00 01 61 63 61 64 65 6d 79 7b    ........academy{
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$                                                                                             grep -a -A5 "academy{" output.txt   
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ grep -a -A5 "academy{" output.txt   
+    61 67 3a 20 61 63 61 64 65 6d 79 7b 74 68 69 73    ag: academy{this
+    2e 69 73 2e 6e 6f 74 2e 79 6f 75 72 2e 66 6c 61    .is.not.your.fla
+    67 2e 61 6e 79 6d 6f 72 65 7d 0d 0a 43 6f 6e 74    g.anymore}..Cont
+    65 6e 74 2d 4c 65 6e 67 74 68 3a 20 38 34 37 0d    ent-Length: 847.
+    0a 4b 65 65 70 2d 41 6c 69 76 65 3a 20 74 69 6d    .Keep-Alive: tim
+    65 6f 75 74 3d 35 2c 20 6d 61 78 3d 31 30 30 0d    eout=5, max=100.
+--
+    67 3a 20 61 63 61 64 65 6d 79 7b 74 68 69 73 2e    g: academy{this.
+    69 73 2e 6e 6f 74 2e 79 6f 75 72 2e 66 6c 61 67    is.not.your.flag
+    2e 61 6e 79 6d 6f 72 65 7d 0d 0a 43 6f 6e 74 65    .anymore}..Conte
+    6e 74 2d 4c 65 6e 67 74 68 3a 20 31 30 30 0d 0a    nt-Length: 100..
+    4b 65 65 70 2d 41 6c 69 76 65 3a 20 74 69 6d 65    Keep-Alive: time
+    6f 75 74 3d 35 2c 20 6d 61 78 3d 31 30 30 0d 0a    out=5, max=100..
+--
+    Pico-Flag: academy{this.is.not.your.flag.anymore}
+    Keep-Alive: timeout=5, max=99
+    Connection: Keep-Alive
+    Content-Type: image/jpeg
+    
+    ---------------------------------------------------------------
+--
+    00 00 00 01 00 00 00 01 61 63 61 64 65 6d 79 7b    ........academy{
+    68 6f 6e 65 79 2e 72 6f 61 73 74 65 64 2e 70 65    honey.roasted.pe
+    61 6e 75 74 73 7d 00 00 ff e2 02 1c 49 43 43 5f    anuts}......ICC_
+    50 52 4f 46 49 4c 45 00 01 01 00 00 02 0c 6c 63    PROFILE.......lc
+    6d 73 02 10 00 00 6d 6e 74 72 52 47 42 20 58 59    ms....mntrRGB XY
+    5a 20 07 dc 00 01 00 19 00 03 00 29 00 39 61 63    Z .........).9ac
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ ssldump -Aed -r capture.pcap -k picopico.key | grep -a -A10 "academy{"   
+PCAP: capture.pcap: No such file or directory
+ERROR: Aborting
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ ssldump -Aed -r webnet1-capture.pcap -k picopico.key | grep -a -A10 "academy{"    
+    61 67 3a 20 61 63 61 64 65 6d 79 7b 74 68 69 73    ag: academy{this
+    2e 69 73 2e 6e 6f 74 2e 79 6f 75 72 2e 66 6c 61    .is.not.your.fla
+    67 2e 61 6e 79 6d 6f 72 65 7d 0d 0a 43 6f 6e 74    g.anymore}..Cont
+    65 6e 74 2d 4c 65 6e 67 74 68 3a 20 38 34 37 0d    ent-Length: 847.
+    0a 4b 65 65 70 2d 41 6c 69 76 65 3a 20 74 69 6d    .Keep-Alive: tim
+    65 6f 75 74 3d 35 2c 20 6d 61 78 3d 31 30 30 0d    eout=5, max=100.
+    0a 43 6f 6e 6e 65 63 74 69 6f 6e 3a 20 4b 65 65    .Connection: Kee
+    70 2d 41 6c 69 76 65 0d 0a 43 6f 6e 74 65 6e 74    p-Alive..Content
+    2d 54 79 70 65 3a 20 74 65 78 74 2f 68 74 6d 6c    -Type: text/html
+    0d 0a 0d 0a 1f 8b 08 00 00 00 00 00 00 03 a5 55    ...............U
+    5d 77 a2 3a 14 7d 6e 7f 45 ca 6b 0b 91 91 aa bd    ]w.:.}n.E.k.....
+--
+    67 3a 20 61 63 61 64 65 6d 79 7b 74 68 69 73 2e    g: academy{this.
+    69 73 2e 6e 6f 74 2e 79 6f 75 72 2e 66 6c 61 67    is.not.your.flag
+    2e 61 6e 79 6d 6f 72 65 7d 0d 0a 43 6f 6e 74 65    .anymore}..Conte
+    6e 74 2d 4c 65 6e 67 74 68 3a 20 31 30 30 0d 0a    nt-Length: 100..
+    4b 65 65 70 2d 41 6c 69 76 65 3a 20 74 69 6d 65    Keep-Alive: time
+    6f 75 74 3d 35 2c 20 6d 61 78 3d 31 30 30 0d 0a    out=5, max=100..
+    43 6f 6e 6e 65 63 74 69 6f 6e 3a 20 4b 65 65 70    Connection: Keep
+    2d 41 6c 69 76 65 0d 0a 43 6f 6e 74 65 6e 74 2d    -Alive..Content-
+    54 79 70 65 3a 20 74 65 78 74 2f 63 73 73 0d 0a    Type: text/css..
+    0d 0a 1f 8b 08 00 00 00 00 00 00 03 4b ca 4f a9    ............K.O.
+    54 a8 e6 52 50 28 48 4c 49 c9 cc 4b d7 2d c9 2f    T..RP(HLI..K.-./
+--
+    Pico-Flag: academy{this.is.not.your.flag.anymore}
+    Keep-Alive: timeout=5, max=99
+    Connection: Keep-Alive
+    Content-Type: image/jpeg
+    
+    ---------------------------------------------------------------
+1 15 1566577624.4885 (0.0294)  S>C V3.3(16408)  application_data
+    ---------------------------------------------------------------
+    ff d8 ff e0 00 10 4a 46 49 46 00 01 01 00 00 01    ......JFIF......
+    00 01 00 00 ff e1 00 82 45 78 69 66 00 00 4d 4d    ........Exif..MM
+    00 2a 00 00 00 08 00 05 01 1a 00 05 00 00 00 01    .*..............
+--
+    00 00 00 01 00 00 00 01 61 63 61 64 65 6d 79 7b    ........academy{
+    68 6f 6e 65 79 2e 72 6f 61 73 74 65 64 2e 70 65    honey.roasted.pe
+    61 6e 75 74 73 7d 00 00 ff e2 02 1c 49 43 43 5f    anuts}......ICC_
+    50 52 4f 46 49 4c 45 00 01 01 00 00 02 0c 6c 63    PROFILE.......lc
+    6d 73 02 10 00 00 6d 6e 74 72 52 47 42 20 58 59    ms....mntrRGB XY
+    5a 20 07 dc 00 01 00 19 00 03 00 29 00 39 61 63    Z .........).9ac
+    73 70 41 50 50 4c 00 00 00 00 00 00 00 00 00 00    spAPPL..........
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+    f6 d6 00 01 00 00 00 00 d3 2d 6c 63 6d 73 00 00    .........-lcms..
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ................
+Cleaned 4 remaining connection(s) from connection pool
+                                                                                                                                                                      
+┌──(white㉿white)-[~/…/Music/PICO-CTF/picoctfAI/fornsicis]
+└─$ 
