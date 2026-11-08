@@ -1,0 +1,98 @@
+Perceptron Play Alpha
+Now design a 2D perceptron! You're given points scattered in a 2D space, labeled as category 0 or category 1. Your task: find w₁, w₂, and b that correctly classify them all.
+
+Your task: Choose weights and bias for a 2D perceptron that separates the categories.
+
+Think about it: In 2D, you're looking for a line that has all one category on one side and all the other category on the other side. Once you find (or imagine) that line, you can express it mathematically using your two weights and your bias.
+
+
+
+
+──(white㉿white)-[~]
+└─$  nc chatelaine.cylabacademy.net 42997
+Hello, welcome to Perceptron Play!
+
+Tweak the weights of a single-layer perceptron and watch how the decision
+boundary moves. Your goal is to correctly classify every labeled point.
+
+Commands:
+  SHOW                    redraw the ASCII graph and point table
+  SET w1 w2 b             set the weights/bias directly (floats are fine)
+  ADJUST dw1 dw2 db       add offsets to the current weights
+  POINTS                  list the training points with their target labels
+  CHECK                   verify every point; prints the flag when perfect
+  RESET                   go back to the starting weights (all w1=1.0, w2=-1.0, b=0.0)
+  HELP                    show this message again
+  EXIT / QUIT             leave the playground
+
+Legend in the graph:
+  0  point labeled class 0 and currently classified correctly
+  1  point labeled class 1 and currently classified correctly
+  x  point that is misclassified right now
+  /  approximate decision boundary (where w1·x + w2·y + b ≈ 0)
+
+Start experimenting by typing SET or ADJUST, or just press CHECK once everything
+looks good! The starting weights are w1 = 1, w2 = -1, b = 0 so a boundary is
+visible immediately.
+
++4         |       /
++3         | x   /  
++2         |   1    
++1         | /   1  
++0 - - - - / - - - -
+-1       x |        
+-2 0 0 /   |        
+-3   /     |        
+-4 /       |        
+   -4-3-2-1+0+1+2+3+4
+
+Current weights -> w1: 1, w2: -1, b: 0
+
+  point    label  perceptron  activation
+  ------   -----  ----------  ----------
+  (-3,-2)     0        0        -1
+  (-1,-1)     0        1        0
+  (-4,-2)     0        0        -2
+  (+3,+1)     1        1        2
+  (+2,+2)     1        1        0
+  (+1,+3)     1        0        -2
+
+> 2
+Unknown command. Type HELP for a list of commands.
+> 1
+Unknown command. Type HELP for a list of commands.
+> SET w1 w2 b
+Expected three numeric values (w1 w2 b).
+> ADJUST dw1 dw2 db
+Expected three numeric values (w1 w2 b).
+> check
+Not quite yet. One or more points are still misclassified.
+> SET 1 1 -0.5
++4 / /     |        
++3     /   | 1      
++2     / / |   1    
++1         /     1  
++0 - - - - / / - - -
+-1       0 |   /    
+-2 0 0     |   / /  
+-3         |       /
+-4         |       /
+   -4-3-2-1+0+1+2+3+4
+
+Current weights -> w1: 1, w2: 1, b: -0.5
+
+  point    label  perceptron  activation
+  ------   -----  ----------  ----------
+  (-3,-2)     0        0        -5.5
+  (-1,-1)     0        0        -2.5
+  (-4,-2)     0        0        -6.5
+  (+3,+1)     1        1        3.5
+  (+2,+2)     1        1        3.5
+  (+1,+3)     1        1        3.5
+
+> CHECK
+Perfect! All points are classified correctly.
+academy{11n34r1y_53p4r4813_a4f2a27b}
+                                                                                                                                                                       
+┌──(white㉿white)-[~]
+└─$ 
